@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ações de Médio Prazo</title>
+<style>
+  :root{--navy:#001C54;--navy2:#0A2E7A;--canvas:#F2F4F7;--grey:#68717D;--muted:#98A2B3;--orange:#F2A93B;--grid:#E1E6EE;
+        --vc:#525C6B;--v0:#5E8FDB;--v1:#173A8A;--vt:#D97B0A;--up:#B5304A;--dn:#1F8F7A;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Calibri','Segoe UI',sans-serif;background:#DFE3EA;display:flex;justify-content:center;padding:28px 14px;color:var(--navy);-webkit-font-smoothing:antialiased;}
+  .card{width:1180px;max-width:100%;background:var(--canvas);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px -18px rgba(0,28,84,.35);}
+  .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:34px 42px 30px;position:relative;overflow:hidden;}
+  .header::after{content:"";position:absolute;right:-80px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(127,168,255,.18),transparent 70%);}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.22em;color:var(--orange);text-transform:uppercase;margin-bottom:10px;}
+  .header h1{font-size:30px;font-weight:700;color:#fff;line-height:1.12;}
+  .header h1 .thin{font-family:'Calibri Light','Calibri',sans-serif;font-weight:300;}
+  .header .sub{margin-top:12px;font-size:13.5px;color:#B9C6E6;line-height:1.55;max-width:860px;}
+  .pbtn{position:absolute;top:30px;right:34px;z-index:3;display:flex;align-items:center;gap:8px;background:var(--orange);color:#001C54;border:none;font-family:inherit;font-weight:700;font-size:13px;padding:10px 16px;border-radius:10px;cursor:pointer;box-shadow:0 6px 16px -6px rgba(0,0,0,.45)}
+  .pbtn:hover{background:#FFC066} .pbtn svg{width:16px;height:16px;display:block}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:24px 34px 0;}
+  .k{background:#fff;border:1px solid var(--grid);border-radius:16px;padding:16px 18px 15px 22px;position:relative;overflow:hidden;}
+  .k .b{position:absolute;left:0;top:0;bottom:0;width:6px;}
+  .k .kt{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--grey);margin-bottom:7px;}
+  .k .kv{font-size:30px;font-weight:700;line-height:1;white-space:nowrap;}
+  .k .kv small{font-size:14px;color:var(--grey);margin-left:4px;font-weight:700;}
+  .k .ks{font-size:12px;color:var(--grey);margin-top:8px;line-height:1.45;}
+  .k .ks b{color:var(--navy);}
+  .k.hi{background:linear-gradient(135deg,#062B6B,#001C54);border:none;}
+  .k.hi .kt{color:#9FB2DA;} .k.hi .kv{color:#fff;} .k.hi .kv small{color:#B9C6E6;} .k.hi .ks{color:#B9C6E6;} .k.hi .ks b{color:#fff;}
+  .up{color:var(--up)!important;} .dn{color:var(--dn)!important;} .k.hi .up{color:#FF9DB0!important;}
+
+  .sec{padding:24px 34px 0;}
+  .sec h2{font-size:17px;font-weight:700;}
+  .sec .cap{font-size:12.5px;color:var(--grey);margin-top:4px;line-height:1.5;max-width:940px;}
+  .box{background:#fff;border:1px solid var(--grid);border-radius:16px;padding:16px 18px;margin-top:11px;box-shadow:0 8px 22px -16px rgba(0,28,84,.3);position:relative;}
+  .two{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;}
+  .leg{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;font-weight:700;margin-top:8px;}
+  .leg span{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:7px;vertical-align:0;}
+  .leg .dot{width:11px;height:11px;border-radius:50%;vertical-align:-1px;}
+  .leg .ln{width:3px;height:14px;border-radius:1px;vertical-align:-2px;}
+
+  .read{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .rd{background:#fff;border:1px solid var(--grid);border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.55;color:#33415C;}
+  .rd .rt{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .rd .rt i{display:inline-block;width:22px;height:8px;border-radius:4px;}
+  .rd b{color:var(--navy);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .chip{border:1px solid var(--grid);background:#fff;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--navy);padding:7px 12px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .chip:hover{border-color:#B9C6E6;} .chip.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .chip i{display:inline-block;width:9px;height:9px;border-radius:50%;}
+  .chip .ar{opacity:.6;font-style:normal}
+
+  svg{display:block;width:100%;height:auto;fill:#001C54;}
+  svg text{font-family:'Calibri','Segoe UI',sans-serif;font-size:12.5px;}
+  svg .ax{font-size:11px;fill:#8A94A6;}
+  svg .lb{font-size:13px;font-weight:700;}
+  svg .sm{font-size:11.5px;fill:#68717D;}
+  svg .halo{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;}
+  .hit{cursor:pointer;} .hit:hover{opacity:.82;}
+  .sk text.hd{font-size:11px;font-weight:700;letter-spacing:.1em;fill:#68717D;text-transform:uppercase;}
+  .sk text.halo{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;}
+  .sk .lk{transition:opacity .15s;}
+  .sk.hov .lk{opacity:.12 !important;} .sk.hov .lk.on{opacity:.85 !important;}
+  .sk .nd{cursor:pointer;}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .tbl th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:right;padding:8px 8px;border-bottom:2px solid var(--grid);vertical-align:bottom;line-height:1.3;}
+  .tbl th:first-child{text-align:left;}
+  .tbl th .sw{display:block;width:100%;height:4px;border-radius:2px;margin-bottom:5px;}
+  .tbl td{padding:7px 8px;border-bottom:1px solid #EEF1F5;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .tbl td:first-child{text-align:left;font-weight:700;white-space:normal;}
+  .tbl tr.sub td:first-child{font-weight:400;padding-left:24px;color:#33415C;}
+  .tbl tr.sub td{color:#4A5568;font-size:12px;}
+  .tbl tr.tot td{font-weight:700;border-top:2px solid var(--navy);border-bottom:none;background:#F7F9FC;}
+  .tbl td.dl{border-left:1px solid #fff;}
+  .tbl td.dl small{display:block;font-size:10.5px;opacity:.8;}
+  .tbl .sepL{border-left:2px solid var(--grid);}
+  .tbl tr:hover td{background:#F7F9FC;}
+
+  .tip{position:fixed;pointer-events:none;background:#001C54;color:#fff;font-size:12.5px;line-height:1.5;padding:9px 12px;border-radius:10px;box-shadow:0 10px 24px -8px rgba(0,0,0,.4);display:none;z-index:50;max-width:360px;}
+  .tip .r{display:flex;align-items:center;gap:7px;justify-content:space-between;} .tip .r span{display:flex;align-items:center;gap:7px;} .tip .r i{width:10px;height:10px;border-radius:3px;display:inline-block;}
+  .tip .d{margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,.2);font-weight:700;color:#F2C27A;}
+  .notes{padding:18px 34px 0;font-size:12px;color:var(--grey);line-height:1.6;}
+  .notes b{color:var(--navy);}
+  .footer{margin-top:22px;background:var(--navy);padding:15px 42px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#B9C6E6;}
+  .footer .brand{font-weight:700;color:#fff;}.footer .brand span{color:var(--orange);}
+
+  @media (max-width:900px){.kpis,.read{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.header h1{font-size:24px}.pbtn{position:static;margin-bottom:14px}.tblw{overflow-x:auto}}
+  @media (max-width:560px){.kpis,.read{grid-template-columns:1fr}.sec,.kpis,.notes{padding-left:16px;padding-right:16px}.header{padding:24px 16px}}
+  @media print{
+    @page{size:A4 landscape;margin:8mm}
+    html{zoom:.86}
+    html,body{background:#fff !important}
+    body{padding:0 !important;display:block !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .card{width:100% !important;max-width:none !important;box-shadow:none !important;border-radius:0 !important;overflow:visible !important}
+    .pbtn,.tip,.chips{display:none !important}
+    .k,.rd,.box,svg,.tbl tr{break-inside:avoid;page-break-inside:avoid}
+    .sec h2,.sec .cap{break-after:avoid;page-break-after:avoid}
+    .pb{break-before:page;page-break-before:always}
+    svg.sk{max-height:160mm}
+    .tbl{font-size:11px}.tbl td{padding:3px 6px}.tbl td.dl small{display:inline;margin-left:4px}.tbl th{padding:5px 6px}
+    .header{padding:22px 34px 20px}.box.tblw{break-inside:auto}
+    .footer{break-inside:avoid}
+  }
+  .hm{width:100%;border-collapse:separate;border-spacing:3px;font-size:12.5px;}
+  .hm thead th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:center;padding:4px 6px 6px;font-weight:700;}
+  .hm thead th .sw{display:block;height:4px;border-radius:2px;margin-bottom:5px;}
+  .hm tbody th{text-align:left;font-weight:700;padding:0 10px 0 2px;white-space:nowrap;font-size:12.5px;}
+  .hm tr.sub th{font-weight:400;padding-left:20px;color:#4A5568;}
+  .hm td{text-align:center;padding:9px 6px;border-radius:6px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;width:21%;}
+  .hm td.z{background:#F7F9FC;color:#B0B8C5;font-weight:400;font-size:11.5px;}
+  .hm tr.tot th,.hm tr.tot td{border-top:2px solid var(--navy);background:none;color:var(--navy);font-size:13.5px;padding-top:11px;}
+  .hm tr.tot td{border-radius:0;} .hm tr.tot th{vertical-align:middle;padding-top:11px;}
+  .hmleg{display:flex;align-items:center;gap:10px;margin:14px 0 18px;font-size:11.5px;color:var(--grey);font-weight:700;}
+  .hmleg .gb{position:relative;flex:1;max-width:560px;height:10px;border-radius:5px;}
+  .hmleg em{position:absolute;top:13px;transform:translateX(-50%);font-style:normal;font-weight:400;font-size:10.5px;white-space:nowrap;}
+  .hmleg em::before{content:"";position:absolute;left:50%;top:-5px;width:1px;height:4px;background:#8A94A6;}
+
+  .header{padding-bottom:0 !important;}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px;position:relative;z-index:2;}
+  .tabs button{border:none;background:rgba(255,255,255,.12);color:#C9D6F0;font-family:inherit;font-size:13px;font-weight:700;padding:11px 13px;border-radius:12px 12px 0 0;cursor:pointer;display:flex;align-items:center;gap:7px}
+  .tabs button:hover{background:rgba(255,255,255,.2);color:#fff;}
+  .tabs button.on{background:var(--canvas);color:var(--navy);}
+  .tabs button .bd{font-size:11px;background:rgba(255,255,255,.18);border-radius:9px;padding:1px 7px;font-weight:700}
+  .tabs button.on .bd{background:#E1E6EE}
+  .tabs button .al{width:8px;height:8px;border-radius:50%;background:#FF7A90;display:inline-block}
+  .pane{display:none;} .pane.on{display:block;}
+  .hbtns{position:absolute;top:30px;right:34px;z-index:3;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:560px}
+  .hbtns .pbtn{position:static}
+  .ibtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);font-family:inherit;font-weight:700;font-size:13px;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .ibtn:hover{background:rgba(255,255,255,.24)} .ibtn svg,.pbtn svg{width:16px;height:16px}
+  .kpis.k5{grid-template-columns:repeat(5,1fr);}
+  .st{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap}
+  .st i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .who{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:10px;background:#EEF1F7;color:#001C54;white-space:nowrap;cursor:pointer}
+  .who:hover{background:#DDE4F0}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:8px;background:#F1ECF9;color:#6A3FA8;margin-left:6px;vertical-align:1px;white-space:nowrap}
+  .act{width:100%;border-collapse:collapse;font-size:13px}
+  .act th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:left;padding:8px 8px;border-bottom:2px solid var(--grid)}
+  .act td{padding:9px 8px;border-bottom:1px solid #EEF1F5;vertical-align:middle}
+  .act td.n{color:var(--muted);font-variant-numeric:tabular-nums;width:34px}
+  .act td.dt{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums}
+  .act td.pz{white-space:nowrap;font-size:12px;color:var(--grey)}
+  .act td.ck{width:34px;text-align:center}
+  .act td.obs{display:none}
+  .act tr.done td.tx{text-decoration:line-through;color:#8A94A6}
+  .act tr.grp td{background:#F2F4F7;font-weight:700;font-size:12px;letter-spacing:.04em;color:#001C54;padding:7px 8px;border-bottom:none}
+  .act tr.grp td small{font-weight:400;color:#68717D;margin-left:8px;letter-spacing:0}
+  .cb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid #98A2B3;border-radius:5px;cursor:pointer;display:inline-grid;place-content:center;background:#fff;margin:0}
+  .cb:checked{background:#1F8F7A;border-color:#1F8F7A}
+  .cb:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+  .pp{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:24px 34px 0;align-items:start}
+  .card2{background:#fff;border:1px solid var(--grid);border-radius:16px;padding:18px 20px}
+  .avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0A2E7A,#001C54);color:#fff;display:grid;place-content:center;font-size:20px;font-weight:700;margin-bottom:10px}
+  .pname{font-size:24px;font-weight:700}
+  .pmini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .pmini div{background:#F7F9FC;border-radius:10px;padding:9px 11px} .pmini b{display:block;font-size:22px} .pmini span{font-size:11.5px;color:var(--grey)}
+  .nxt{margin-top:14px;font-size:12.5px;color:#33415C;line-height:1.5}
+  .nxt b{color:#001C54}
+  .ptitle{display:none}
+  .pfoot{display:none}
+  @media screen and (max-width:900px){.kpis.k5{grid-template-columns:1fr 1fr}.pp{grid-template-columns:1fr}.hbtns{position:static;justify-content:flex-start;margin-bottom:14px;max-width:none}}
+  @media print{
+    @page{size:A3 landscape;margin:10mm}
+    html{zoom:1}
+    html,body{background:#fff !important}
+    body{padding:0 !important;display:block !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .card{width:100% !important;max-width:none !important;box-shadow:none !important;border-radius:0 !important;overflow:visible !important}
+    .tabs,.hbtns,.tip,.chips,.noprint{display:none !important}
+    .header{padding:22px 30px 20px !important}
+    .pane{display:none !important}
+    body[data-print="ger"] #p-ger{display:block !important}
+    body[data-print="cur"] .pane.pcur{display:block !important}
+    body[data-print="all"] .pane.person{display:block !important;break-before:page;page-break-before:always}
+    body[data-print="all"] .pane.person:first-of-type{break-before:auto}
+    body[data-print="all"] .header{display:none}
+    body[data-print="all"] .footer{display:none}
+    .ptitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 4px;padding:14px 22px;border-radius:12px;background:linear-gradient(135deg,#001C54,#0A2E7A);color:#fff;font-size:22px;font-weight:700}
+    .ptitle span{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#F2A93B;display:block;margin-bottom:3px}
+    .ptitle em{font-style:normal;font-size:12px;color:#B9C6E6;font-weight:400;text-align:right}
+    body[data-print="ger"] .ptitle,body[data-print="cur"] .ptitle{display:none}
+    .person .ptitle{margin:6px 30px 0}
+    body[data-print="cur"] .header,body[data-print="cur"] .footer,body[data-print="cur"] .notes{display:none}
+    body[data-print="cur"] .person .ptitle,body[data-print="all"] .person .ptitle{display:flex}
+    body[data-print="all"] .notes{display:none}
+    .pp{grid-template-columns:330px 1fr !important;padding:14px 30px 0 !important}
+    .person .sec{padding-top:14px}
+    .person .card2 svg{max-height:44mm}
+    .person{zoom:.9}
+    .person .nextl{display:none}
+    .person .act td{padding:8px 8px}
+    .person .card2{padding:12px 16px}
+    .person .pmini b{font-size:18px}
+    .person .avatar{display:none}
+    .person .pmini{grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+    .person .pmini div{padding:6px 9px}
+    .person .pname{font-size:20px}
+    .act td.obs{display:table-cell;width:28%;border-left:1px dashed #C5CCD8}
+    .act th.obs{display:table-cell !important}
+    .act{font-size:13.5px}
+    .act td{padding:11px 8px}
+    .act tr,.k,.box,.card2,svg{break-inside:avoid;page-break-inside:avoid}
+    .cb{border-color:#525C6B}
+    .pfoot{display:flex;justify-content:space-between;margin:14px 30px 0;font-size:11px;color:#68717D}
+    .sec h2{break-after:avoid}
+    .kpis.k5{grid-template-columns:repeat(5,1fr) !important}
+    .two{grid-template-columns:1fr 1.15fr !important}
+    .act tr.grp{break-after:avoid}
+  }
+
+  .act td.obs{width:23%;display:table-cell}
+  .pbtn svg,.ibtn svg{fill:none}
+  .ob{width:100%;border:1px solid #DCE1E8;border-radius:7px;padding:6px 8px;font-family:inherit;font-size:12.5px;color:#001C54;background:#FAFBFD;min-width:140px}
+  .ob:focus{outline:2px solid #B9C6E6;background:#fff}
+  .by{display:block;font-size:11px;color:#68717D;margin-top:3px;white-space:nowrap}
+  .msg{margin:14px 34px 0;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.45}
+  .msg.err{background:#FDECEF;color:#8A1F35;border:1px solid #F3C2CC} .msg.ok{background:#E8F6F1;color:#13614F;border:1px solid #BFE6D9}
+  .conn{margin-top:12px;font-size:12px;color:#B9C6E6;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .conn i{width:8px;height:8px;border-radius:50%;background:#F2A93B;display:inline-block} .conn.live i{background:#3FD0A8}
+  .conn select{font-family:inherit;font-size:12.5px;font-weight:700;padding:5px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+  .conn select option{color:#001C54}
+  [hidden]{display:none!important}
+  .tblw{overflow-x:auto} .act{min-width:860px}
+  body{padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+  @media print{.act td.obs{width:28%;border-left:1px dashed #C5CCD8}.ob{border:none;background:none;padding:0;font-size:12.5px}.ob::placeholder{color:transparent}.msg,.conn,.by{display:none!important}.act{min-width:0}}
+</style>
+</head><body data-print="ger">
+<div class="card">
+  <div class="header">
+    <div class="hbtns">
+      <button class="ibtn" id="bAll" type="button" title="Uma folha A3 para cada responsável"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>Imprimir todos</button>
+      <button class="pbtn" id="bCur" type="button" title="Imprime a aba aberta em A3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span id="bCurT">Imprimir esta aba</span></button>
+    </div>
+    <span class="eyebrow">BR-277 &middot; Duplicação &middot; Irati</span>
+    <h1>Ações de Médio Prazo<br><span class="thin">Atividades por responsável e data limite</span></h1>
+    <div class="sub" id="hsub">Carregando as ações…</div>
+    <div class="conn" id="conn"><i></i><span id="connT">Conectando…</span><label for="who">Quem está marcando:</label><select id="who"></select></div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+  <div class="msg" id="msg" hidden></div>
+
+  <div class="pane on" id="p-ger">
+    <div class="kpis k5" id="gk"></div>
+    <div class="sec">
+      <div class="two" style="grid-template-columns:1fr 1.15fr">
+        <div><h2>Situação por responsável</h2><div class="cap">Ações de cada responsável pela situação em relação à data limite. Clique no nome para abrir a aba.</div><div class="box"><svg id="gBar"></svg></div></div>
+        <div><h2>Ações por data limite</h2><div class="cap">Quantas ações vencem em cada data, pela situação.</div><div class="box"><svg id="gDay"></svg></div></div>
+      </div>
+      <div class="leg" id="leg1" style="margin-top:10px"></div>
+    </div>
+    <div class="sec">
+      <h2>Linha do tempo das datas limite</h2>
+      <div class="cap">Cada círculo marca uma data limite; o número indica quantas ações vencem naquele dia para o responsável. A linha vermelha é hoje e as faixas cinza são os fins de semana.</div>
+      <div class="box tblw"><svg id="gTl" style="min-width:760px"></svg></div>
+    </div>
+    <div class="sec">
+      <h2>Todas as ações, por data limite</h2>
+      <div class="cap">Marque a caixa quando a ação for concluída e registre observações. Tudo fica salvo e aparece para todos que abrem esta página.</div>
+      <div class="chips noprint" id="gF"></div>
+      <div class="box tblw" style="padding:6px 12px"><table class="act" id="gT"></table></div>
+    </div>
+    <div class="pfoot" id="pf-ger"></div>
+  </div>
+  <div id="persons"></div>
+
+  <div class="notes" id="notes"></div>
+  <div class="footer"><div class="brand">TRIPOLONI <span>CONSTRUTORA</span></div><div>Contrato VIAR-OBR-383-2025 &middot; Via Araucária</div></div>
+</div>
+<div class="tip" id="tip"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+/* ====== CONFIGURAÇÃO: cole aqui os dados do seu projeto Supabase (Project Settings > API) ====== */
+const SUPABASE_URL = "https://hzsflfqdvkvxfhtqmjtd.supabase.co";      // ex.: https://abcdefghijkl.supabase.co
+const SUPABASE_KEY = "sb_publishable_jRzo91HhoE3xbojkF_6igg_7XE-BCSO";     // a chave "anon public" ou "publishable"
+</script>
+<script>
+const RESP0=(new URLSearchParams(location.search).get("r")||location.hash.slice(1)||"").toLowerCase().replace(/[^a-z]/g,"");
+const $=id=>document.getElementById(id);
+const tipEl=$("tip");
+const tip=(e,h)=>{tipEl.innerHTML=h;tipEl.style.display="block";let x=e.clientX+14,y=e.clientY+14;if(x+tipEl.offsetWidth>innerWidth-8)x=e.clientX-tipEl.offsetWidth-14;if(y+tipEl.offsetHeight>innerHeight-8)y=e.clientY-tipEl.offsetHeight-14;tipEl.style.left=x+"px";tipEl.style.top=y+"px";};
+const hide=()=>tipEl.style.display="none";
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const capN=s=>String(s).split(" ").map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(" ").replace("Araucaria","Araucária");
+const DOW=["dom","seg","ter","qua","qui","sex","sáb"];
+const pd=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);};
+const fd=dt=>String(dt.getDate()).padStart(2,"0")+"/"+String(dt.getMonth()+1).padStart(2,"0");
+const fdl=dt=>fd(dt)+"/"+dt.getFullYear();
+const T0=(()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());})();
+const days=dt=>Math.round((dt-T0)/864e5);
+const ST={venc:{n:"Vencida",c:"#B5304A",bg:"#FBE9ED"},hoje:{n:"Vence hoje",c:"#C77700",bg:"#FFF3DC"},sem:{n:"Próximos 7 dias",c:"#2B57A8",bg:"#E8EEF9"},dep:{n:"Mais de 7 dias",c:"#7A8699",bg:"#EFF1F4"},ok:{n:"Concluída",c:"#1F8F7A",bg:"#E3F4EF"}};
+const ORDER=["venc","hoje","sem","dep","ok"];
+const tok=r=>String(r).normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z]/g,"").toLowerCase();
+const ini=r=>String(r).split(" ").map(w=>w[0]).join("").slice(0,2);
+const kp=(t,big,sub,c,hi)=>`<div class="k${hi?" hi":""}"><div class="b" style="background:${c}"></div><div class="kt">${t}</div><div class="kv">${big}</div><div class="ks">${sub}</div></div>`;
+const CONFIG_OK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_KEY.length>20;
+const SB=(CONFIG_OK&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}}):null;
+const isoLocal=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fromDb=r=>({id:r.id,n0:r.n,r:r.responsavel,a:r.atividade,d:r.data_limite,done:!!r.concluida,doneAt:r.concluida_em||"",by:r.concluida_por||"",obs:r.observacao||""});
+
+let A=[],PEOPLE=[],LOADED=false,CUR="p-ger";
+const stat=x=>x.done?"ok":days(x.dt)<0?"venc":days(x.dt)===0?"hoje":days(x.dt)<=7?"sem":"dep";
+const prazo=x=>{if(x.done)return "concluída";const d=days(x.dt);return d<0?`vencida há ${-d} dia${d<-1?"s":""}`:d===0?"hoje":d===1?"amanhã":`em ${d} dias`;};
+const stPill=s=>`<span class="st" style="background:${ST[s].bg};color:${ST[s].c}"><i style="background:${ST[s].c}"></i>${ST[s].n}</span>`;
+const cnt=(L,s)=>L.filter(x=>stat(x)===s).length;
+function msg(t,ok){const m=$("msg");m.className="msg "+(ok?"ok":"err");m.innerHTML=t;m.hidden=false;clearTimeout(msg.tm);msg.tm=setTimeout(()=>{m.hidden=true;},7000);}
+
+/* quem esta marcando */
+const WKEY="acoes_mp_quem";
+function whoSel(){const s=$("who");let saved="";try{saved=localStorage.getItem(WKEY)||"";}catch(e){}
+  const def=RESP0?(PEOPLE.find(p=>tok(p)===RESP0)||""):saved;
+  s.innerHTML=`<option value="">escolha seu nome</option>`+PEOPLE.map(p=>`<option value="${esc(p)}" ${p===def?"selected":""}>${esc(capN(p))}</option>`).join("")+`<option value="OUTRO" ${def==="OUTRO"?"selected":""}>Outra pessoa</option>`;
+  s.onchange=()=>{try{localStorage.setItem(WKEY,s.value);}catch(e){}};}
+const who=()=>$("who").value==="OUTRO"?"Outra pessoa":$("who").value?capN($("who").value):"";
+
+/* abas */
+function tabs(){
+  $("tabs").innerHTML=`<button type="button" data-t="p-ger" class="${CUR==="p-ger"?"on":""}">Visão geral<span class="bd">${A.length}</span></button>`+PEOPLE.map(r=>{const L=A.filter(x=>x.r===r),al=cnt(L,"venc")+cnt(L,"hoje");return `<button type="button" data-t="p-${tok(r)}" class="${CUR==="p-"+tok(r)?"on":""}">${al?'<span class="al" title="tem ações vencidas ou vencendo hoje"></span>':""}${esc(capN(r))}<span class="bd">${L.length-cnt(L,"ok")}</span></button>`;}).join("");
+  $("tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+}
+function go(t){CUR=t;document.querySelectorAll(".pane").forEach(p=>{p.classList.toggle("on",p.id===t);p.classList.toggle("pcur",p.id===t);});tabs();
+  const r=PEOPLE.find(p=>"p-"+tok(p)===t);$("bCurT").textContent=r?"Imprimir "+capN(r):"Imprimir visão geral";hide();}
+
+/* tabela */
+function table(el,L,showWho,grp){
+  let h=`<thead><tr><th class="ck">Feito</th><th>Nº</th><th>Atividade</th>${showWho?"<th>Responsável</th>":""}<th>Data limite</th><th>Prazo</th><th>Situação</th><th class="obs">Observações</th></tr></thead><tbody>`,last=null;
+  L.forEach(x=>{const s=stat(x);
+    if(grp&&x.d!==last){const n=L.filter(y=>y.d===x.d).length,d=days(x.dt);h+=`<tr class="grp"><td colspan="${showWho?8:7}">${DOW[x.dt.getDay()]}, ${fdl(x.dt)}<small>${n} ${n>1?"ações":"ação"} · ${d<0?`há ${-d} dia${d<-1?"s":""}`:d===0?"hoje":d===1?"amanhã":`em ${d} dias`}</small></td></tr>`;last=x.d;}
+    h+=`<tr class="${s==="ok"?"done":""}"><td class="ck"><input type="checkbox" class="cb" data-id="${esc(x.id)}" ${x.done?"checked":""} aria-label="Marcar a ação ${x.n0} como concluída"></td><td class="n">${x.n0}</td><td class="tx">${esc(x.a)}${x.pr?'<span class="tag">pavimento rígido</span>':""}</td>${showWho?`<td><span class="who" data-go="p-${tok(x.r)}">${esc(capN(x.r))}</span></td>`:""}<td class="dt">${fdl(x.dt)}</td><td class="pz">${prazo(x)}</td><td>${stPill(s)}${x.done&&(x.by||x.doneAt)?`<span class="by">${x.by?"por "+esc(x.by):""}${x.doneAt?" em "+fd(pd(x.doneAt)):""}</span>`:""}</td><td class="obs"><input type="text" class="ob" data-id="${esc(x.id)}" value="${esc(x.obs||"")}" placeholder="anotação" maxlength="400" aria-label="Observação da ação ${x.n0}"></td></tr>`;});
+  el.innerHTML=h+"</tbody>";
+  el.querySelectorAll(".cb").forEach(c=>c.onchange=()=>save(c.dataset.id,{done:c.checked},c));
+  el.querySelectorAll(".ob").forEach(o=>{o.onchange=()=>save(o.dataset.id,{obs:o.value.trim()},o);o.onkeydown=e=>{if(e.key==="Enter")o.blur();};});
+  el.querySelectorAll(".who").forEach(w=>w.onclick=()=>go(w.dataset.go));
+}
+
+/* graficos */
+function barChart(svg){
+  const W=520,ml=120,mr=40,rh=34,mt=8,H=mt+PEOPLE.length*rh+8,mx=Math.max(1,...PEOPLE.map(r=>A.filter(x=>x.r===r).length)),bw=W-ml-mr;let s="";
+  PEOPLE.forEach((r,k)=>{const y=mt+k*rh,L=A.filter(x=>x.r===r);let x0=ml;
+    s+=`<text class="nm" data-go="p-${tok(r)}" x="${ml-12}" y="${y+rh/2+4}" text-anchor="end" font-weight="700" style="cursor:pointer">${esc(capN(r))}</text>`;
+    ORDER.forEach(st=>{const n=cnt(L,st);if(!n)return;const w=bw*n/mx;s+=`<rect class="hit" data-r="${esc(r)}" x="${x0}" y="${y+6}" width="${Math.max(w-1.5,1)}" height="${rh-12}" rx="3" fill="${ST[st].c}"/>`;if(w>18)s+=`<text x="${x0+w/2}" y="${y+rh/2+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" style="pointer-events:none">${n}</text>`;x0+=w;});
+    s+=`<text x="${x0+6}" y="${y+rh/2+4}" font-weight="700" fill="#33415C">${L.length}</text>`;});
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.innerHTML=s;
+  svg.querySelectorAll("rect.hit").forEach(b=>{const r=b.dataset.r,L=A.filter(x=>x.r===r);b.onmousemove=e=>tip(e,`<b>${esc(capN(r))} · ${L.length} ações</b>`+ORDER.map(st=>cnt(L,st)?`<div class="r"><span>${ST[st].n}</span><b>${cnt(L,st)}</b></div>`:"").join(""));b.onmouseleave=hide;b.onclick=()=>go("p-"+tok(r));b.style.cursor="pointer";});
+  svg.querySelectorAll("text.nm").forEach(t=>t.onclick=()=>go(t.dataset.go));
+}
+function timeline(svg,people,W){
+  const ds=A.map(x=>+x.dt),d0=new Date(Math.min(+T0,...ds)),d1=new Date(Math.max(+T0,...ds));
+  const one=people.length===1,ml=one?14:120,mr=24,rh=one?56:34,mt=32,H=mt+people.length*rh+28,span=Math.max(1,days(d1)-days(d0)),cw=(W-ml-mr)/span,xs=dt=>ml+cw*(days(dt)-days(d0));
+  let s="";
+  for(let k=0;k<=span;k++){const dt=new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+k),x=xs(dt);
+    if(dt.getDay()===0||dt.getDay()===6)s+=`<rect x="${x-cw/2}" y="${mt-6}" width="${cw}" height="${H-mt-18}" fill="#F3F5F8"/>`;
+    if(dt.getDay()===1||k===0||k===span)s+=`<line x1="${x}" x2="${x}" y1="${mt-6}" y2="${H-24}" stroke="#E6EAF0"/><text class="ax" x="${x}" y="${H-8}" text-anchor="middle">${fd(dt)}</text>`;}
+  const xt=xs(T0),near=xt-ml<34;s+=`<line x1="${xt}" x2="${xt}" y1="${mt-12}" y2="${H-24}" stroke="#B5304A" stroke-width="2"/><text x="${near?xt-4:xt}" y="${mt-16}" text-anchor="${near?"start":"middle"}" font-size="11" font-weight="700" fill="#B5304A">hoje ${fd(T0)}</text>`;
+  people.forEach((r,k)=>{const y=mt+k*rh+rh/2,L=A.filter(x=>x.r===r),by={};
+    if(!one)s+=`<text x="${ml-12}" y="${y+4}" text-anchor="end" font-weight="700">${esc(capN(r))}</text>`;
+    s+=`<line x1="${ml}" x2="${W-mr}" y1="${y}" y2="${y}" stroke="#DCE1E8"/>`;
+    L.forEach(x=>(by[x.d]=by[x.d]||[]).push(x));
+    Object.entries(by).forEach(([d,G])=>{const sts=G.map(stat),w=ORDER.find(o=>sts.includes(o)),rr=Math.min(12,8+G.length*1.6);
+      s+=`<circle class="hit" data-r="${esc(r)}" data-d="${d}" cx="${xs(pd(d))}" cy="${y}" r="${rr}" fill="${ST[w].c}" stroke="#fff" stroke-width="2"/><text x="${xs(pd(d))}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" style="pointer-events:none">${G.length}</text>`;});});
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.innerHTML=s;
+  svg.querySelectorAll(".hit").forEach(c=>{const G=A.filter(x=>x.r===c.dataset.r&&x.d===c.dataset.d);c.onmousemove=e=>tip(e,`<b>${esc(capN(c.dataset.r))} · ${fdl(pd(c.dataset.d))}</b>`+G.map(x=>`<div style="margin-top:3px">${x.done?"✓ ":""}${esc(x.a)}</div>`).join(""));c.onmouseleave=hide;});
+}
+function dayChart(svg){
+  const dl=[...new Set(A.map(x=>x.d))].sort(),W=600,ml=30,mr=6,mt=24,mb=40,H=Math.max(250,PEOPLE.length*34+16),cw=(W-ml-mr)/Math.max(1,dl.length),bw=Math.min(46,cw*.62);
+  const mx=Math.max(1,...dl.map(d=>A.filter(x=>x.d===d).length)),ys=v=>mt+(H-mt-mb)*(1-v/mx);
+  let s="";for(let g=0;g<=mx;g+=Math.max(1,Math.ceil(mx/5)))s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="${g?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-6}" y="${ys(g)+4}" text-anchor="end">${g}</text>`;
+  dl.forEach((d,k)=>{const x=ml+k*cw+(cw-bw)/2,L=A.filter(y=>y.d===d);let acc=0;
+    ORDER.forEach(st=>{const n=cnt(L,st);if(!n)return;s+=`<rect class="hit" data-d="${d}" x="${x}" y="${ys(acc+n)}" width="${bw}" height="${Math.max(ys(acc)-ys(acc+n)-1,1)}" rx="3" fill="${ST[st].c}"/>`;acc+=n;});
+    const dt=pd(d);s+=`<text x="${x+bw/2}" y="${ys(acc)-6}" text-anchor="middle" font-weight="700">${L.length}</text><text x="${x+bw/2}" y="${H-mb+16}" text-anchor="middle" font-weight="700" font-size="11">${fd(dt)}</text><text class="ax" x="${x+bw/2}" y="${H-mb+30}" text-anchor="middle">${DOW[dt.getDay()]}</text>`;});
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.innerHTML=s;
+  svg.querySelectorAll(".hit").forEach(b=>{const L=A.filter(x=>x.d===b.dataset.d);b.onmousemove=e=>tip(e,`<b>${fdl(pd(b.dataset.d))} · ${L.length} ações</b>`+[...new Set(L.map(x=>x.r))].map(r=>`<div class="r"><span>${esc(capN(r))}</span><b>${L.filter(x=>x.r===r).length}</b></div>`).join(""));b.onmouseleave=hide;});
+}
+
+/* render */
+let GF="all",PENDING=false;
+const isTyping=()=>document.activeElement&&document.activeElement.classList.contains("ob");
+function renderAll(){
+  PENDING=false;if(!A.length){$("hsub").textContent=LOADED?"Nenhuma ação na planilha.":"Carregando as ações…";return;}
+  $("hsub").innerHTML=`${A.length} ações de ${PEOPLE.length} responsáveis, com datas limite entre ${fdl(A[0].dt)} e ${fdl(A[A.length-1].dt)}. Situação calculada em relação a hoje, ${fdl(T0)}.`;
+  $("gk").innerHTML=kp("Ações",`${A.length}<small>no total</small>`,`${PEOPLE.length} responsáveis · ${A.filter(x=>x.pr).length} ligadas ao pavimento rígido`,"#F2A93B",1)+
+    ["venc","hoje","sem","ok"].map(st=>kp(ST[st].n,`${cnt(A,st)}<small>${cnt(A,st)===1?"ação":"ações"}</small>`,st==="ok"?`${Math.round(cnt(A,"ok")/A.length*100)}% do total`:st==="sem"?`até ${fdl(new Date(T0.getFullYear(),T0.getMonth(),T0.getDate()+7))}`:st==="hoje"?fdl(T0):`data limite antes de ${fdl(T0)}`,ST[st].c)).join("");
+  $("leg1").innerHTML=ORDER.map(s=>`<div><span style="background:${ST[s].c}"></span>${ST[s].n}</div>`).join("");
+  barChart($("gBar"));dayChart($("gDay"));timeline($("gTl"),PEOPLE,1076);
+  $("gF").innerHTML=[["all","Todas",A.length],...ORDER.map(s=>[s,ST[s].n,cnt(A,s)])].map(([k,l,n])=>`<button type="button" class="chip${GF===k?" on":""}" data-k="${k}">${k==="all"?"":`<i style="background:${ST[k].c}"></i>`}${l}<span style="opacity:.6;margin-left:4px">${n}</span></button>`).join("");
+  $("gF").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{GF=c.dataset.k;renderAll();});
+  table($("gT"),A.filter(x=>GF==="all"||stat(x)===GF),true,true);
+  $("pf-ger").innerHTML=`<span>Ações de Médio Prazo · visão geral</span><span>impresso em ${fdl(T0)}</span>`;
+  $("persons").innerHTML=PEOPLE.map(r=>{const L=A.filter(x=>x.r===r),op=L.filter(x=>!x.done),nx=op[0],t=tok(r);
+    return `<div class="pane person${CUR==="p-"+t?" on pcur":""}" id="p-${t}">
+      <div class="ptitle"><div><span>Ações de médio prazo · BR-277 Irati</span>${esc(capN(r))}</div><em>${L.length} ações · impresso em ${fdl(T0)}<br>Tripoloni Construtora · Contrato VIAR-OBR-383-2025</em></div>
+      <div class="pp">
+        <div class="card2"><div class="avatar">${esc(ini(r))}</div><div class="pname">${esc(capN(r))}</div><div style="font-size:12.5px;color:#68717D">responsável por ${L.length} ${L.length>1?"ações":"ação"}</div>
+          <div class="pmini">${ORDER.map(st=>`<div><b style="color:${ST[st].c}">${cnt(L,st)}</b><span>${ST[st].n.toLowerCase()}</span></div>`).join("")}<div><b>${op.length}</b><span>em aberto</span></div></div>
+          <div class="nxt">${nx?`Próxima data limite: <b>${fdl(nx.dt)}</b> (${prazo(nx)})<br>${esc(nx.a)}`:"Todas as ações concluídas."}</div></div>
+        <div class="card2"><h2 style="font-size:15px;margin-bottom:2px">Linha do tempo</h2><div class="cap" style="font-size:12px;color:#68717D;margin-bottom:6px">Datas limite das ações. O número no círculo é a quantidade de ações do dia; a linha vermelha é hoje.</div><div class="tblw"><svg class="ptl" data-r="${esc(r)}" style="min-width:520px"></svg></div><div class="leg" style="font-size:11.5px">${ORDER.map(s=>`<div><span style="background:${ST[s].c}"></span>${ST[s].n}</div>`).join("")}</div>
+          ${op.length?`<div class="nextl"><h2 style="font-size:14px;margin:14px 0 6px">Próximas datas limite</h2>${op.slice(0,4).map(x=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-top:1px solid #EEF1F5;font-size:12.5px"><b style="white-space:nowrap;min-width:78px">${fdl(x.dt)}</b>${stPill(stat(x))}<span>${esc(x.a)}</span></div>`).join("")}</div>`:""}</div>
+      </div>
+      <div class="sec"><h2>Ações de ${esc(capN(r))}, por data limite</h2><div class="cap noprint">Marque a caixa quando concluir e anote o que for importante. Tudo fica salvo para todos. Na impressão, a coluna de observações sai com o que estiver anotado.</div>
+        <div class="box tblw" style="padding:6px 12px"><table class="act ptb" data-r="${esc(r)}"></table></div></div>
+      <div class="pfoot"><span>Ações de Médio Prazo · ${esc(capN(r))}</span><span>impresso em ${fdl(T0)}</span></div>
+    </div>`;}).join("");
+  document.querySelectorAll(".ptl").forEach(s=>timeline(s,[s.dataset.r],760));
+  document.querySelectorAll(".ptb").forEach(t=>table(t,A.filter(x=>x.r===t.dataset.r),false,false));
+  if(CUR==="p-ger")$("p-ger").classList.add("pcur");
+  tabs();
+}
+function schedule(){if(isTyping()){PENDING=true;return;}renderAll();}
+document.addEventListener("focusout",()=>setTimeout(()=>{if(PENDING&&!isTyping())renderAll();},60));
+
+/* dados da planilha */
+function ingest(res){
+  const rows=(res&&res.rows)||[];
+  A=rows.filter(x=>x.d&&x.a&&x.r).map(x=>({...x,r:String(x.r).trim().toUpperCase(),dt:pd(x.d),pr:/pavimento r[ií]gido/i.test(x.a)})).sort((p,q)=>p.dt-q.dt||p.r.localeCompare(q.r)||p.n0-q.n0);
+  const np=[...new Set(A.map(x=>x.r))].sort((a,b)=>A.filter(x=>x.r===b).length-A.filter(x=>x.r===a).length||a.localeCompare(b));
+  const first=!LOADED;LOADED=true;PEOPLE=np;
+  if(first){whoSel();const t=RESP0&&PEOPLE.some(p=>tok(p)===RESP0)?"p-"+RESP0:"p-ger";CUR=t;}
+  $("conn").className="conn live";$("connT").textContent=`Ligado · atualizado às ${new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`;
+  schedule();if(first)go(CUR);
+}
+let LOADING=false;
+async function load(){
+  if(!SB){$("conn").className="conn";$("connT").textContent=CONFIG_OK?"Não foi possível carregar o Supabase. Confira a conexão com a internet.":"Falta configurar SUPABASE_URL e SUPABASE_KEY no início do arquivo.";return;}
+  if(LOADING)return;LOADING=true;
+  try{const {data,error}=await SB.from("acoes").select("*");if(error)throw error;ingest({rows:(data||[]).map(fromDb)});}
+  catch(e){$("conn").className="conn";$("connT").textContent="Não foi possível ler as ações ("+(e.message||e)+"). Recarregue a página.";}
+  finally{LOADING=false;}
+}
+async function save(id,patch,el){const x=A.find(y=>y.id===id);if(!SB||!x)return;
+  if("done" in patch&&!who()){el.checked=!patch.done;msg("Escolha o seu nome em \"Quem está marcando\", no topo da página, antes de marcar.");$("who").focus();return;}
+  const prev={done:x.done,doneAt:x.doneAt,by:x.by,obs:x.obs},upd={atualizado_em:new Date().toISOString()};
+  if("done" in patch){x.done=patch.done;x.doneAt=patch.done?isoLocal(new Date()):"";x.by=patch.done?who():"";upd.concluida=x.done;upd.concluida_em=x.doneAt||null;upd.concluida_por=x.by||null;renderAll();}
+  if("obs" in patch){x.obs=String(patch.obs).slice(0,400);upd.observacao=x.obs;}
+  try{const {data,error}=await SB.from("acoes").update(upd).eq("id",id).select();if(error)throw error;
+    if(!data||!data.length)throw new Error("o banco recusou a gravação; confira as permissões da tabela");Object.assign(x,fromDb(data[0]));schedule();}
+  catch(e){Object.assign(x,prev);renderAll();msg("Não foi possível salvar: "+esc(e.message||e)+". Tente de novo.");}
+}
+$("notes").innerHTML=`<b>Como usar:</b> escolha o seu nome em "Quem está marcando", abra a sua aba, marque a caixa "Feito" quando concluir uma ação e registre observações. Tudo fica salvo e aparece para todos que abrem esta página, em qualquer computador ou celular. A situação (vencida, vence hoje, próximos 7 dias, mais de 7 dias) é recalculada pela data do dia. Para imprimir em A3, use os botões do topo.`;
+const doPrint=m=>{document.body.dataset.print=m;hide();setTimeout(()=>window.print(),60);};
+$("bCur").onclick=()=>doPrint(CUR==="p-ger"?"ger":"cur");
+$("bAll").onclick=()=>doPrint("all");
+window.addEventListener("afterprint",()=>{document.body.dataset.print="ger";});
+load();setInterval(()=>{if(!document.hidden&&!isTyping())load();},60000);
+if(SB){try{SB.channel("acoes-mudancas").on("postgres_changes",{event:"*",schema:"public",table:"acoes"},()=>{clearTimeout(load.t);load.t=setTimeout(load,400);}).subscribe();}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
+</script></body></html>
