@@ -44,6 +44,14 @@ h1 .thin{font-weight:300;display:block;font-size:19px}
 svg{display:block;width:100%;height:auto;fill:var(--ink)} svg text{font-family:var(--font);font-size:12px} svg .ax{font-size:11px;fill:#8A94A6} svg .lb{font-size:12.5px;font-weight:700}
 .hit{cursor:pointer}
 .flt{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:11px}
+.pfilt{display:flex;flex-direction:column;gap:12px;margin-top:11px}
+.pfrow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.fhint{font-weight:600;color:#98A2B3;text-transform:none;letter-spacing:0;font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px}
+.chip{font-family:inherit;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;border:1.5px solid var(--grid);background:#fff;color:#33415C;cursor:pointer;display:inline-flex;align-items:center;gap:6px;line-height:1}
+.chip:hover{border-color:#B9C3D4}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
 .fld{display:flex;flex-direction:column;gap:4px} .fld label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--grey)}
 input,select,textarea{font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--paper);border:1px solid var(--grid);border-radius:9px;padding:8px 10px}
 input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#B9C6E6}
@@ -64,6 +72,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .tb td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
 .tb td.n{color:var(--muted);width:38px;font-variant-numeric:tabular-nums}
 .tb tr.rem td.ac{text-decoration:line-through;color:#8A94A6}
+.tb tr.canc td.ac{color:#98A2B3}
+.edx{font-family:inherit;font-size:10.5px;font-weight:700;color:var(--andamento);background:#EEF2F9;border:1px solid #D7DEEA;border-radius:6px;padding:1px 7px;cursor:pointer;vertical-align:1px;white-space:nowrap}
+.edx:hover{background:#E1E8F4}
 .tb tr:hover td{background:#F7F9FC}
 .cb{appearance:none;-webkit-appearance:none;width:21px;height:21px;border:2px solid #98A2B3;border-radius:5px;cursor:pointer;display:inline-grid;place-content:center;background:#fff}
 .cb:checked{background:var(--prazo);border-color:var(--prazo)} .cb:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
@@ -78,7 +89,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .tip{position:fixed;pointer-events:none;background:#001C54;color:#fff;font-size:12.5px;line-height:1.5;padding:9px 12px;border-radius:10px;box-shadow:0 10px 24px -8px rgba(0,0,0,.4);display:none;z-index:60;max-width:340px}
 .tip .r{display:flex;justify-content:space-between;gap:12px}
 .modal{position:fixed;inset:0;background:rgba(0,10,40,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
-.modal.on{display:flex} .modal .inner{background:#fff;border-radius:16px;padding:22px 24px;max-width:460px;width:100%;max-height:90vh;overflow:auto}
+.modal.on{display:flex} .modal .inner{background:#fff;border-radius:16px;padding:22px 24px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
 .modal h3{font-size:18px;margin-bottom:12px}
 [hidden]{display:none!important}
 @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.form{grid-template-columns:1fr}.header,.pane,.notes{padding-left:16px;padding-right:16px}h1{font-size:23px}}
@@ -112,6 +123,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
       <h2>Situação no período</h2>
       <div class="cap">Cada restrição pela sua situação atual. "Atrasada" é calculada: está em aberto e já passou da data limite.</div>
       <div class="box"><svg id="gSit"></svg><div class="leg" id="legSit"></div></div>
+    </div>
+    <div class="sec">
+      <h2>Restrições por pacote de trabalho</h2>
+      <div class="cap">Quantas restrições em cada pacote no período selecionado, divididas pela situação atual.</div>
+      <div class="box tblw"><svg id="gPac" style="min-width:680px"></svg><div class="leg" id="legPac"></div></div>
+    </div>
+    <div class="sec">
+      <h2>Situação por responsável</h2>
+      <div class="cap">Resumo geral do período: a situação das restrições de cada responsável.</div>
+      <div class="box tblw"><svg id="gResp" style="min-width:680px"></svg><div class="leg" id="legResp"></div></div>
     </div>
     <div class="sec">
       <h2>IRR por semana</h2>
@@ -158,12 +179,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
     </div>
     <div class="sec">
       <h2>Plano de ação</h2>
-      <div class="cap">Escolha um responsável para ver só as ações dele. Marque a caixa quando a restrição for removida (resolvida). Clique no prazo ou na remoção para alterar.</div>
-      <div class="flt">
-        <div class="fld"><label for="pResp">Responsável</label><select id="pResp"><option value="">Todos</option></select></div>
-        <div class="fld"><label for="pStatus">Situação</label><select id="pStatus"><option value="">Todas</option><option value="aberta">Em aberto</option><option value="atrasada">Atrasadas</option><option value="removida">Removidas</option><option value="cancelada">Canceladas</option></select></div>
-        <div class="fld" style="flex:1;min-width:180px"><label for="pBusca">Buscar</label><input id="pBusca" placeholder="texto na ação, pacote, local…"></div>
-        <div class="fld"><label>Subgrupos</label><div style="display:flex;gap:8px"><button class="btn sec" id="pExp" type="button" style="padding:9px 12px">Expandir</button><button class="btn sec" id="pRec" type="button" style="padding:9px 12px">Recolher</button></div></div>
+      <div class="cap">Filtre por situação e por responsável (dá para escolher vários de cada). Ao filtrar por responsável, aparece um resumo por responsável; sem filtro, a lista vem corrida por data limite. Marque a caixa quando a restrição for removida. Clique nas datas ou em "editar" para alterar a ação enquanto ela estiver em aberto.</div>
+      <div class="pfilt">
+        <div class="pfrow">
+          <div class="fld" style="flex:1;min-width:200px"><label for="pBusca">Buscar</label><input id="pBusca" placeholder="texto na ação, pacote, local…"></div>
+          <div class="fld"><label>Subgrupos</label><div style="display:flex;gap:8px"><button class="btn sec" id="pExp" type="button" style="padding:9px 12px">Expandir</button><button class="btn sec" id="pRec" type="button" style="padding:9px 12px">Recolher</button></div></div>
+        </div>
+        <div class="fld"><label>Situação <span id="pStatHint" class="fhint"></span></label><div class="chips" id="pStatChips"></div></div>
+        <div class="fld"><label>Responsável <span id="pRespHint" class="fhint"></span></label><div class="chips" id="pRespChips"></div></div>
       </div>
       <div class="box tblw" style="padding:4px 10px"><table class="tb" id="tPlan"></table></div>
     </div>
@@ -214,7 +237,9 @@ function weekMonday(k){const [y,w]=k.split("-").map(Number);const simple=new Dat
 function weekRange(a,b){const out=[];let k=weekKey(a),end=weekKey(b);let m=weekMonday(k),guard=0;while(guard++<400){const kk=weekKey(isoT(m));out.push(kk);if(kk===end)break;m.setDate(m.getDate()+7);}return out;}
 
 /* estado */
-let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null;
+let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set();
+const STATOPT=[["andamento","Em andamento"],["atrasada","Atrasadas"],["semdata","Sem data"],["removida","Removidas"],["cancelada","Canceladas"]];
+const statKey=x=>{const k=sit(x);return (k==="prazo"||k==="atraso")?"removida":(k==="cancel"?"cancelada":k);};
 const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return""}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const who=()=>{const v=$("quem")?$("quem").value:"";return v&&v!=="__outro"?v:"";};
@@ -241,8 +266,29 @@ function renderDash(){
     kpi("TMD · tempo médio disponível",`${mtmd.toFixed(1)}<small>dias</small>`,`da identificação até o prazo (${tmd.length})`,"#1F8F7A")+
     kpi("TMR · tempo médio de remoção",`${mtmr.toFixed(1)}<small>dias</small>`,`da identificação até a remoção (${tmr.length})`,"#B5304A");
   sitBar($("gSit"),by,L.length);$("legSit").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
+  groupChart($("gPac"),L,x=>x.pacote||"Sem pacote",15);$("legPac").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
+  groupChart($("gResp"),L,x=>capN(x.responsavel)||"Sem responsável",40);$("legResp").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
   weekCharts(L);
   proxTable(L);
+}
+function groupChart(svg,L,keyf,cap){
+  const m=new Map();
+  L.forEach(x=>{const g=keyf(x);if(!m.has(g))m.set(g,{label:g,by:{},total:0});const o=m.get(g);const k=sit(x);o.by[k]=(o.by[k]||0)+1;o.total++;});
+  let rows=[...m.values()].sort((a,b)=>b.total-a.total);
+  if(rows.length>cap){const rest=rows.slice(cap);rows=rows.slice(0,cap);const o={label:"Outros ("+rest.length+")",by:{},total:0};rest.forEach(r=>{o.total+=r.total;SORD.forEach(k=>{if(r.by[k])o.by[k]=(o.by[k]||0)+r.by[k];});});rows.push(o);}
+  if(!rows.length){svg.removeAttribute("viewBox");svg.innerHTML="";return;}
+  const W=1180,ml=168,mr=44,mt=4,rowH=30,barH=19,H=mt+rows.length*rowH+4,bw=W-ml-mr,maxT=Math.max(1,...rows.map(r=>r.total));
+  const clip=s=>{s=String(s);return s.length>26?s.slice(0,25)+"…":s;};
+  let s="";
+  rows.forEach((r,i)=>{const y=mt+i*rowH,cy=y+barH/2;
+    s+=`<text x="${ml-10}" y="${cy+4}" text-anchor="end" font-size="12.5" fill="#33415C">${esc(clip(r.label))}</text>`;
+    let x=ml;const parts=[];
+    SORD.forEach(k=>{const v=r.by[k]||0;if(!v)return;const w=bw*v/maxT;s+=`<rect class="hit" data-g="${esc(r.label)}" x="${x.toFixed(1)}" y="${y}" width="${Math.max(w,1).toFixed(1)}" height="${barH}" fill="${SIT[k].c}"/>`;if(w>20)s+=`<text x="${(x+w/2).toFixed(1)}" y="${cy+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" style="pointer-events:none">${v}</text>`;x+=w;parts.push(`<div class="r"><span><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${SIT[k].c};margin-right:5px"></i>${SIT[k].n}</span><b>${v}</b></div>`);});
+    s+=`<text x="${(ml+bw*r.total/maxT+6).toFixed(1)}" y="${cy+4}" font-size="11.5" font-weight="700" fill="#33415C">${r.total}</text>`;
+    s+=`<rect class="hit" data-tip="1" x="${ml}" y="${y}" width="${bw}" height="${barH}" fill="transparent" data-h="${esc(parts.join(''))}" data-l="${esc(r.label)}" data-t="${r.total}"/>`;
+  });
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.innerHTML=s;
+  svg.querySelectorAll('.hit[data-tip]').forEach(r=>{r.onmousemove=e=>tip(e,`<b>${esc(r.dataset.l)}</b>`+r.dataset.h+`<div class="r" style="margin-top:3px"><span>Total</span><b>${r.dataset.t}</b></div>`);r.onmouseleave=hide;});
 }
 const kpi=(t,big,sub,c,hi)=>`<div class="k${hi?" hi":""}"><div class="b" style="background:${c}"></div><div class="kt">${t}</div><div class="kv">${big}</div><div class="ks">${sub}</div></div>`;
 
@@ -315,43 +361,110 @@ function proxTable(L){
 }
 
 /* ===================== PLANO DE AÇÃO ===================== */
-function planSet(){const r=$("pResp").value,st=$("pStatus").value,q=($("pBusca").value||"").toLowerCase();
-  return ALL.filter(x=>{if(r&&x.responsavel!==r)return false;
-    if(st==="atrasada"){if(!(x.status==="aberta"&&x.data_limite&&x.data_limite<TODAY))return false;}
-    else if(st&&x.status!==st)return false;
-    if(q&&!((x.acao||"")+" "+(x.pacote||"")+" "+(x.local||"")+" "+(x.setor||"")).toLowerCase().includes(q))return false;
+function planSet(){const q=($("pBusca").value||"").toLowerCase();
+  return ALL.filter(x=>{if(PRESP.size&&!PRESP.has(x.responsavel||""))return false;
+    if(PSTAT.size&&!PSTAT.has(statKey(x)))return false;
+    if(q&&!((x.acao||"")+" "+(x.pacote||"")+" "+(x.local||"")+" "+(x.setor||"")+" "+(x.categoria||"")).toLowerCase().includes(q))return false;
     return true;}).sort((a,b)=>(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);}
-function renderPlan(){
-  const L=planSet();
-  const groups=new Map();
-  L.forEach(x=>{const key=x.responsavel||"—";if(!groups.has(key))groups.set(key,[]);groups.get(key).push(x);});
-  const sc=k=>groups.get(k).filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata"||s==="atrasada";}).length;
-  const order=[...groups.keys()].sort((a,b)=>sc(b)-sc(a)||a.localeCompare(b));
-  GKEYS=order;
-  const cell=x=>{const k=sit(x);return `<td class="ck"><input type="checkbox" class="cb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} aria-label="Marcar restrição ${x.n} como removida"></td><td class="n">${x.n}</td><td class="ac">${esc(x.acao)}${x.pacote?`<div style="font-size:11px;color:#98A2B3">${esc(x.pacote)}${x.local?" · "+esc(x.local):""}</div>`:""}</td><td>${esc(capN(x.responsavel))}</td><td class="dt">${fd(x.data_identificacao)}</td><td class="dt"><button class="edl" data-ed="prazo" data-id="${esc(x.id)}">${x.data_limite?fd(x.data_limite):"definir"}</button></td><td class="dt">${x.status==="removida"?`<button class="edl" data-ed="remocao" data-id="${esc(x.id)}">${x.data_remocao?fd(x.data_remocao):"definir"}</button>`+(x.removido_por?`<div style="font-size:10.5px;color:#98A2B3">${esc(capN(x.removido_por))}</div>`:""):'<span style="color:#C5CCD8">—</span>'}</td><td>${sitPill(k)}</td>`;};
-  let h=`<thead><tr><th class="ck">Rem.</th><th>Nº</th><th>Ação / restrição</th><th>Responsável</th><th>Identif.</th><th>Limite</th><th>Remoção</th><th>Situação</th></tr></thead><tbody>`;
-  if(!L.length)h+=`<tr><td colspan="8" style="color:#98A2B3;padding:14px">Nenhuma restrição com esse filtro.</td></tr>`;
-  order.forEach((key,gi)=>{
-    const g=groups.get(key),col=COLLAPSED.has(key);
-    const ab=g.filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata";}).length;
-    const at=g.filter(x=>sit(x)==="atrasada").length,rm=g.filter(x=>x.status==="removida").length;
-    h+=`<tr class="grp" data-g="${gi}"><td colspan="8"><span class="car">${col?"▸":"▾"}</span> <b>${key==="—"?"Sem responsável":esc(capN(key))}</b> <span class="gc">${g.length} ${g.length===1?"item":"itens"}${at?` · <b style="color:#B5304A">${at} atrasada${at>1?"s":""}</b>`:""}${ab?` · ${ab} em aberto`:""}${rm?` · ${rm} removida${rm>1?"s":""}`:""}</span></td></tr>`;
-    if(!col)h+=g.map(x=>`<tr class="${x.status==="removida"?"rem":""}">${cell(x)}</tr>`).join("");
-  });
-  $("tPlan").innerHTML=h+`</tbody><tfoot><tr><td colspan="8" style="color:#68717D;padding:10px 8px">${L.length} ${L.length===1?"restrição":"restrições"} · ${order.length} ${order.length===1?"responsável":"responsáveis"}</td></tr></tfoot>`;
-  $("tPlan").querySelectorAll(".grp").forEach(tr=>tr.onclick=()=>{const k=GKEYS[+tr.dataset.g];if(k==null)return;if(COLLAPSED.has(k))COLLAPSED.delete(k);else COLLAPSED.add(k);renderPlan();});
+function renderChips(){
+  $("pStatChips").innerHTML=STATOPT.map(([k,lbl])=>{const kk=k==="removida"?"prazo":(k==="cancelada"?"cancel":k);return `<button type="button" class="chip${PSTAT.has(k)?" on":""}" data-k="${k}"><span class="dot" style="background:${SIT[kk].c}"></span>${lbl}</button>`;}).join("");
+  $("pRespChips").innerHTML=RESP.map(r=>`<button type="button" class="chip${PRESP.has(r)?" on":""}" data-r="${esc(r)}">${esc(capN(r))}</button>`).join("")||`<span style="font-size:12.5px;color:#98A2B3">—</span>`;
+  $("pStatHint").textContent=PSTAT.size?"("+PSTAT.size+" selecionada"+(PSTAT.size>1?"s":"")+")":"· todas";
+  $("pRespHint").textContent=PRESP.size?"("+PRESP.size+" selecionado"+(PRESP.size>1?"s":"")+")":"· todos";
+  $("pStatChips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const k=c.dataset.k;PSTAT.has(k)?PSTAT.delete(k):PSTAT.add(k);renderChips();renderPlan();});
+  $("pRespChips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const r=c.dataset.r;PRESP.has(r)?PRESP.delete(r):PRESP.add(r);renderChips();renderPlan();});
+}
+function dtCell(x,campo,val,aberta){
+  if(aberta)return `<button class="edl" data-ed="${campo}" data-id="${esc(x.id)}">${val?fd(val):"definir"}</button>`;
+  return val?fd(val):'<span style="color:#C5CCD8">—</span>';
+}
+function cell(x){const k=sit(x),aberta=x.status==="aberta";
+  return `<td class="ck"><input type="checkbox" class="cb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} ${x.status==="cancelada"?"disabled":""} aria-label="Marcar restrição ${x.n} como removida"></td>`+
+    `<td class="n">${x.n}</td>`+
+    `<td class="ac">${esc(x.acao)}${x.pacote||x.local?`<div style="font-size:11px;color:#98A2B3">${esc(x.pacote||"")}${x.pacote&&x.local?" · ":""}${esc(x.local||"")}</div>`:""}${aberta?` <button class="edx" data-id="${esc(x.id)}" type="button">editar</button>`:""}</td>`+
+    `<td>${esc(capN(x.responsavel))}</td>`+
+    `<td class="dt">${dtCell(x,"ident",x.data_identificacao,aberta)}</td>`+
+    `<td class="dt">${dtCell(x,"prazo",x.data_limite,aberta)}</td>`+
+    `<td class="dt">${x.status==="removida"?`<button class="edl" data-ed="remocao" data-id="${esc(x.id)}">${x.data_remocao?fd(x.data_remocao):"definir"}</button>`+(x.removido_por?`<div style="font-size:10.5px;color:#98A2B3">${esc(capN(x.removido_por))}</div>`:""):'<span style="color:#C5CCD8">—</span>'}</td>`+
+    `<td>${sitPill(k)}</td>`;
+}
+function wirePlan(){
+  $("tPlan").querySelectorAll(".grp").forEach(tr=>tr.onclick=()=>{const key=GKEYS[+tr.dataset.g];if(key==null)return;if(COLLAPSED.has(key))COLLAPSED.delete(key);else COLLAPSED.add(key);renderPlan();});
   $("tPlan").querySelectorAll(".cb").forEach(c=>c.onchange=()=>toggleRem(c.dataset.id,c.checked,c));
   $("tPlan").querySelectorAll(".edl").forEach(b=>b.onclick=()=>editData(b.dataset.id,b.dataset.ed));
+  $("tPlan").querySelectorAll(".edx").forEach(b=>b.onclick=()=>editRow(b.dataset.id));
+}
+function grpHeader(gi,key,g,col){
+  const ab=g.filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata";}).length;
+  const at=g.filter(x=>sit(x)==="atrasada").length,rm=g.filter(x=>x.status==="removida").length;
+  const prox=g.filter(x=>x.status==="aberta"&&x.data_limite).map(x=>x.data_limite).sort()[0];
+  return `<tr class="grp" data-g="${gi}"><td colspan="8"><span class="car">${col?"▸":"▾"}</span> <b>${key==="—"?"Sem responsável":esc(capN(key))}</b> <span class="gc">${g.length} ${g.length===1?"item":"itens"}${at?` · <b style="color:#B5304A">${at} atrasada${at>1?"s":""}</b>`:""}${ab?` · ${ab} em aberto`:""}${rm?` · ${rm} removida${rm>1?"s":""}`:""}${prox?` · próxima ${fd(prox)}`:""}</span></td></tr>`;
+}
+function renderPlan(){
+  const L=planSet();
+  const head=`<thead><tr><th class="ck">Rem.</th><th>Nº</th><th>Ação / restrição</th><th>Responsável</th><th>Identif.</th><th>Limite</th><th>Remoção</th><th>Situação</th></tr></thead><tbody>`;
+  let h=head;GKEYS=[];
+  if(!L.length){h+=`<tr><td colspan="8" style="color:#98A2B3;padding:14px">Nenhuma restrição com esse filtro.</td></tr>`;}
+  else if(PRESP.size){
+    const groups=new Map();
+    L.forEach(x=>{const key=x.responsavel||"—";if(!groups.has(key))groups.set(key,[]);groups.get(key).push(x);});
+    const sc=k=>groups.get(k).filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata"||s==="atrasada";}).length;
+    const order=[...groups.keys()].sort((a,b)=>sc(b)-sc(a)||a.localeCompare(b));
+    GKEYS=order;
+    order.forEach((key,gi)=>{const g=groups.get(key),col=COLLAPSED.has(key);
+      h+=grpHeader(gi,key,g,col);
+      if(!col)h+=g.map(x=>`<tr class="${x.status==="removida"?"rem":x.status==="cancelada"?"canc":""}">${cell(x)}</tr>`).join("");});
+  } else {
+    h+=L.map(x=>`<tr class="${x.status==="removida"?"rem":x.status==="cancelada"?"canc":""}">${cell(x)}</tr>`).join("");
+  }
+  const foot=PRESP.size?` · ${GKEYS.length} ${GKEYS.length===1?"responsável":"responsáveis"}`:"";
+  $("tPlan").innerHTML=h+`</tbody><tfoot><tr><td colspan="8" style="color:#68717D;padding:10px 8px">${L.length} ${L.length===1?"restrição":"restrições"}${foot}</td></tr></tfoot>`;
+  wirePlan();
 }
 
 /* edições */
+const DTLBL={ident:"Data de identificação",prazo:"Data limite",remocao:"Data de remoção"},
+      DTFLD={ident:"data_identificacao",prazo:"data_limite",remocao:"data_remocao"};
 function editData(id,campo){const x=ALL.find(y=>y.id===id);if(!x)return;
   if(campo==="remocao"&&!who()){msg('Escolha o seu nome em "Quem está preenchendo", no topo da página, antes de alterar a data de remoção.',false);$("quem").focus();return;}
   EDOPEN=true;MODAL_CANCEL=null;
-  const val=campo==="prazo"?(x.data_limite||""):(x.data_remocao||"");
-  $("modalIn").innerHTML=`<h3>${campo==="prazo"?"Data limite":"Data de remoção"}</h3><div class="fld"><label>Restrição ${x.n}</label><div style="font-size:13px;color:#33415C;margin-bottom:10px">${esc(x.acao)}</div></div><input type="date" id="mData" value="${val}" style="width:100%">${campo==="remocao"?`<div style="font-size:12.5px;color:#68717D;margin-top:10px">Registrado por <b>${esc(capN(who()))}</b></div>`:""}<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Salvar</button></div>`;
+  const val=x[DTFLD[campo]]||"";
+  $("modalIn").innerHTML=`<h3>${DTLBL[campo]}</h3><div class="fld"><label>Restrição ${x.n}</label><div style="font-size:13px;color:#33415C;margin-bottom:10px">${esc(x.acao)}</div></div><input type="date" id="mData" value="${val}" style="width:100%">${campo==="remocao"?`<div style="font-size:12.5px;color:#68717D;margin-top:10px">Registrado por <b>${esc(capN(who()))}</b></div>`:""}<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Salvar</button></div>`;
   $("modal").classList.add("on");
-  $("mCanc").onclick=closeModal;$("mOk").onclick=async()=>{const v=$("mData").value||null;const upd=campo==="prazo"?{data_limite:v}:{data_remocao:v,removido_por:who()};MODAL_CANCEL=null;await patch(id,upd);closeModal();};
+  $("mCanc").onclick=closeModal;$("mOk").onclick=async()=>{const v=$("mData").value||null;const upd={};upd[DTFLD[campo]]=v;if(campo==="remocao")upd.removido_por=who();MODAL_CANCEL=null;await patch(id,upd);closeModal();};
+}
+function editRow(id){const x=ALL.find(y=>y.id===id);if(!x)return;
+  if(x.status!=="aberta"){msg("Essa restrição já foi concluída ou cancelada; não pode mais ser editada.",false);return;}
+  EDOPEN=true;MODAL_CANCEL=null;
+  const dl=(lid,arr)=>`<datalist id="${lid}">${arr.map(v=>`<option value="${esc(v)}">`).join("")}</datalist>`;
+  const F=(lbl,el)=>`<div class="fld" style="margin-bottom:11px"><label>${lbl}</label>${el}</div>`;
+  $("modalIn").innerHTML=`<h3>Editar restrição ${x.n}</h3>`+
+    F("Ação / restrição",`<textarea id="eAcao" style="width:100%;min-height:70px">${esc(x.acao||"")}</textarea>`)+
+    `<div class="two" style="gap:11px">`+
+      F("Data de identificação",`<input type="date" id="eIdent" value="${x.data_identificacao||""}" style="width:100%">`)+
+      F("Data limite",`<input type="date" id="ePrazo" value="${x.data_limite||""}" style="width:100%">`)+
+    `</div>`+
+    F("Responsável",`<input id="eResp" list="elResp" value="${esc(capN(x.responsavel))}" style="width:100%">${dl("elResp",RESP.map(capN))}`)+
+    `<div class="two" style="gap:11px">`+
+      F("Pacote de trabalho",`<input id="ePac" list="elPac" value="${esc(x.pacote||"")}" style="width:100%">${dl("elPac",PAC)}`)+
+      F("Categoria",`<input id="eCat" list="elCat" value="${esc(x.categoria||"")}" style="width:100%">${dl("elCat",CAT)}`)+
+    `</div>`+
+    `<div class="two" style="gap:11px">`+
+      F("Setor / equipe",`<input id="eSetor" list="elSetor" value="${esc(x.setor||"")}" style="width:100%">${dl("elSetor",SETOR)}`)+
+      F("Local",`<input id="eLocal" value="${esc(x.local||"")}" style="width:100%">`)+
+    `</div>`+
+    F("Comentários",`<input id="eObs" value="${esc(x.obs||"")}" style="width:100%">`)+
+    `<div style="margin-top:4px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Salvar alterações</button></div>`;
+  $("modal").classList.add("on");
+  $("mCanc").onclick=closeModal;
+  $("mOk").onclick=async()=>{
+    const ac=$("eAcao").value.trim();if(!ac){msg("A ação não pode ficar em branco.",false);$("eAcao").focus();return;}
+    const upd={acao:ac,data_identificacao:$("eIdent").value||null,data_limite:$("ePrazo").value||null,
+      responsavel:($("eResp").value.trim().toUpperCase()||null),pacote:$("ePac").value.trim()||null,
+      categoria:$("eCat").value.trim()||null,setor:$("eSetor").value.trim()||null,
+      local:$("eLocal").value.trim()||null,obs:$("eObs").value.trim()||null};
+    MODAL_CANCEL=null;await patch(id,upd);closeModal();
+  };
 }
 function closeModal(){$("modal").classList.remove("on");EDOPEN=false;if(MODAL_CANCEL){const f=MODAL_CANCEL;MODAL_CANCEL=null;f();}schedule();}
 $("modal").onclick=e=>{if(e.target===$("modal"))closeModal();};
@@ -397,9 +510,10 @@ function rebuildLists(){
   CAT=[...new Set(ALL.map(x=>x.categoria).filter(Boolean))].sort();
   const opts=arr=>arr.map(v=>`<option value="${esc(v)}">${esc(capN(v))}</option>`).join("");
   const dl=arr=>arr.map(v=>`<option value="${esc(v)}">`).join("");
-  const keepR=$("dResp").value,keepP=$("pResp").value;
+  const keepR=$("dResp").value;
   $("dResp").innerHTML=`<option value="">Todos</option>`+opts(RESP);$("dResp").value=keepR;
-  $("pResp").innerHTML=`<option value="">Todos</option>`+opts(RESP);$("pResp").value=keepP;
+  [...PRESP].forEach(r=>{if(!RESP.includes(r))PRESP.delete(r);});
+  renderChips();
   $("lResp").innerHTML=dl(RESP);$("lPac").innerHTML=dl(PAC);$("lSetor").innerHTML=dl(SETOR);$("lCat").innerHTML=dl(CAT);
   const cur=who()||lsGet("mp_quem");
   $("quem").innerHTML=`<option value="">— selecione —</option>`+opts(RESP)+`<option value="__outro">Outra pessoa…</option>`;
@@ -413,7 +527,7 @@ function render(){PENDING=false;renderDash();renderPlan();}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id===b.dataset.t));hide();});
 ["de","ate","dResp"].forEach(i=>$(i).onchange=renderDash);
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
-["pResp","pStatus"].forEach(i=>$(i).onchange=renderPlan);$("pBusca").oninput=renderPlan;
+$("pBusca").oninput=renderPlan;
 $("pExp").onclick=()=>{COLLAPSED.clear();renderPlan();};
 $("pRec").onclick=()=>{COLLAPSED=new Set(GKEYS);renderPlan();};
 $("quem").onchange=()=>{const s=$("quem");if(s.value==="__outro"){const nm=(prompt("Digite o seu nome:")||"").trim().toUpperCase();if(nm){let o=[...s.options].find(op=>op.value===nm);if(!o){o=document.createElement("option");o.value=nm;o.textContent=capN(nm);s.insertBefore(o,s.querySelector('option[value="__outro"]'));}s.value=nm;}else{s.value=lsGet("mp_quem");}}lsSet("mp_quem",who());};
