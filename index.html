@@ -69,6 +69,8 @@ svg{display:block;width:100%;height:auto;fill:var(--ink)} svg text{font-family:v
 .asub{font-size:12.5px;color:var(--grey);margin-top:2px}
 .astats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .astat{background:#fff;border:1px solid var(--grid);border-radius:12px;padding:10px 12px}
+.astat.hitc:hover{border-color:#B9C3D4}
+.astat.astat-on{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
 .astat b{font-size:22px;font-weight:800;display:block;line-height:1.1}
 .astat span{font-size:11px;color:var(--grey);font-weight:600}
 .aright{background:var(--paper);border:1px solid var(--grid);border-radius:16px;padding:16px 18px}
@@ -153,6 +155,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
       <h2>Situação no período</h2>
       <div class="cap">Cada restrição pela sua situação atual. "Atrasada" é calculada: está em aberto e já passou da data limite.</div>
       <div class="box"><svg id="gSit"></svg><div class="leg" id="legSit"></div></div>
+    </div>
+    <div class="sec csec" data-k="tl">
+      <h2>Linha do tempo das ações em aberto</h2>
+      <div class="cap">Datas limite do que ainda está em aberto no período. O número no círculo é a quantidade de ações do dia; a linha vermelha é hoje. Clique numa bolinha para ver essas ações no banco de dados.</div>
+      <div class="box tblw"><div id="gTl"></div><div class="leg" id="legTl"></div></div>
     </div>
     <div class="sec csec" data-k="pac">
       <h2>Restrições por pacote de trabalho</h2>
@@ -280,7 +287,9 @@ function weekMonday(k){const [y,w]=k.split("-").map(Number);const simple=new Dat
 function weekRange(a,b){const out=[];let k=weekKey(a),end=weekKey(b);let m=weekMonday(k),guard=0;while(guard++<400){const kk=weekKey(isoT(m));out.push(kk);if(kk===end)break;m.setDate(m.getDate()+7);}return out;}
 
 /* estado */
-let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),COLLSET=null;
+let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),PDATE="",COLLSET=null,AFILT=new Set(),ADATE="";
+const ABKT=[["vencida","vencida","#B5304A"],["hoje","vence hoje","#E0A500"],["prox7","próximos 7 dias","#2B57A8"],["mais7","mais de 7 dias","#68717D"],["semdata","sem data","#D97B0A"],["concluida","concluída","#1F8F7A"]];
+function bkt(x){if(x.status==="removida")return "concluida";if(x.status==="cancelada")return "cancel";if(!x.data_limite)return "semdata";const n=diff(TODAY,x.data_limite);if(n<0)return "vencida";if(n===0)return "hoje";if(n<=7)return "prox7";return "mais7";}
 const STATOPT=[["andamento","Em andamento"],["atrasada","Atrasadas"],["semdata","Sem data"],["removida","Removidas"],["cancelada","Canceladas"]];
 const statKey=x=>{const k=sit(x);return (k==="prazo"||k==="atraso")?"removida":(k==="cancel"?"cancelada":k);};
 const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return""}};
@@ -309,6 +318,9 @@ function renderDash(){
     kpi("TMD · tempo médio disponível",`${mtmd.toFixed(1)}<small>dias</small>`,`da identificação até o prazo (${tmd.length})`,"#1F8F7A")+
     kpi("TMR · tempo médio de remoção",`${mtmr.toFixed(1)}<small>dias</small>`,`da identificação até a remoção (${tmr.length})`,"#B5304A");
   sitBar($("gSit"),by,L.length);$("legSit").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
+  const abL=L.filter(x=>x.status==="aberta");
+  $("gTl").innerHTML=buildTimeline(abL,"");$("legTl").innerHTML=legTLitems;
+  $("gTl").querySelectorAll(".tlc").forEach(c=>{c.onmousemove=e=>tip(e,`<b>${fd(c.dataset.dt)}</b><div>${c.dataset.c} ${c.dataset.c==="1"?"ação em aberto":"ações em aberto"}</div><div style="margin-top:3px;color:#F2A93B;font-size:11px">clique para ver no banco de dados</div>`);c.onmouseleave=hide;c.onclick=()=>goPlan({date:c.dataset.dt});});
   groupChart($("gPac"),L,x=>x.pacote||"",v=>v||"Sem pacote",15,"pacote");$("legPac").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
   groupChart($("gResp"),L,x=>x.responsavel||"",v=>capN(v)||"Sem responsável",40,"resp");$("legResp").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
   weekCharts(L);
@@ -408,14 +420,16 @@ function proxTable(L){
 function planSet(){const q=($("pBusca").value||"").toLowerCase();
   return ALL.filter(x=>{if(PRESP.size&&!PRESP.has(x.responsavel||""))return false;
     if(PPAC.size&&!PPAC.has(x.pacote||""))return false;
+    if(PDATE&&x.data_limite!==PDATE)return false;
     if(PSTAT.size&&!PSTAT.has(statKey(x)))return false;
     if(q&&!((x.acao||"")+" "+(x.pacote||"")+" "+(x.local||"")+" "+(x.setor||"")+" "+(x.categoria||"")).toLowerCase().includes(q))return false;
     return true;}).sort((a,b)=>(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);}
 function showTab(id){document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x.dataset.t===id));document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id===id));hide();}
 function goPlan(f){
-  PPAC=new Set();PRESP=new Set();PSTAT=new Set();COLLAPSED=new Set();
+  PPAC=new Set();PRESP=new Set();PSTAT=new Set();COLLAPSED=new Set();PDATE="";
   if(f.pacote!=null)PPAC.add(f.pacote);
   if(f.resp!=null)PRESP.add(f.resp);
+  if(f.date)PDATE=f.date;
   if(f.status){const m=(f.status==="prazo"||f.status==="atraso")?"removida":(f.status==="cancel"?"cancelada":f.status);PSTAT.add(m);}
   $("pBusca").value="";renderChips();renderPlan();showTab("pane-plan");
   $("pane-plan").scrollIntoView({behavior:"smooth",block:"start"});
@@ -423,10 +437,12 @@ function goPlan(f){
 function renderActive(){
   const parts=[];
   [...PPAC].forEach(p=>parts.push(`<span class="fchip">Pacote: <b>${esc(p||"Sem pacote")}</b> <span class="x" data-pac="${esc(p)}">✕</span></span>`));
+  if(PDATE)parts.push(`<span class="fchip">Data limite: <b>${fd(PDATE)}</b> <span class="x" data-date="1">✕</span></span>`);
   if(!parts.length){$("pActive").innerHTML="";return;}
   $("pActive").innerHTML=parts.join("")+`<button class="lnkclear" id="pClear" type="button">Limpar filtros</button>`;
   $("pActive").querySelectorAll(".x[data-pac]").forEach(b=>b.onclick=()=>{PPAC.delete(b.dataset.pac);renderChips();renderPlan();});
-  $("pClear").onclick=()=>{PPAC=new Set();PRESP=new Set();PSTAT=new Set();$("pBusca").value="";renderChips();renderPlan();};
+  const dx=$("pActive").querySelector(".x[data-date]");if(dx)dx.onclick=()=>{PDATE="";renderChips();renderPlan();};
+  $("pClear").onclick=()=>{PPAC=new Set();PRESP=new Set();PSTAT=new Set();PDATE="";$("pBusca").value="";renderChips();renderPlan();};
 }
 function renderChips(){
   $("pStatChips").innerHTML=STATOPT.map(([k,lbl])=>{const kk=k==="removida"?"prazo":(k==="cancelada"?"cancel":k);return `<button type="button" class="chip${PSTAT.has(k)?" on":""}" data-k="${k}"><span class="dot" style="background:${SIT[kk].c}"></span>${lbl}</button>`;}).join("");
@@ -495,23 +511,25 @@ function prazoTxt(x){
   if(n===1)return `<span style="color:#2B57A8">amanhã</span>`;
   return `<span style="color:#68717D">em ${n} dias</span>`;
 }
-function acompTimeline(abertas){
-  const withd=abertas.filter(x=>x.data_limite);
+function buildTimeline(acts,selDate){
+  const withd=acts.filter(x=>x.data_limite);
   if(!withd.length)return `<div style="color:#98A2B3;font-size:12.5px;padding:8px 2px">Nenhuma ação em aberto com data limite.</div>`;
   const d7=isoT(new Date(T0.getTime()+7*864e5));
   const dates=withd.map(x=>x.data_limite).concat([TODAY]);dates.sort();
   const min=pd(dates[0]),max=pd(dates[dates.length-1]);
   const span=Math.max(1,Math.round((max-min)/864e5));
-  const W=1120,H=116,ml=16,mr=16,axisY=66,bw=W-ml-mr;
+  const W=1120,H=118,ml=16,mr=16,axisY=66,bw=W-ml-mr;
   const xf=d=>ml+bw*((pd(d)-min)/864e5)/span;
   const g={};withd.forEach(x=>{(g[x.data_limite]=g[x.data_limite]||[]).push(x);});
   let s=`<line x1="${ml}" x2="${W-mr}" y1="${axisY}" y2="${axisY}" stroke="#D7DEEA" stroke-width="2"/>`;
   const hx=xf(TODAY),ha=hx>W-70?"end":hx<70?"start":"middle",htx=ha==="end"?hx-2:ha==="start"?hx+2:hx;s+=`<line x1="${hx.toFixed(1)}" x2="${hx.toFixed(1)}" y1="22" y2="${axisY+12}" stroke="#B5304A" stroke-width="2"/><text x="${htx.toFixed(1)}" y="16" text-anchor="${ha}" font-size="11" font-weight="700" fill="#B5304A">hoje ${fdm(TODAY)}</text>`;
-  Object.keys(g).sort().forEach(dt=>{const arr=g[dt],x=xf(dt),col=dt<TODAY?"#B5304A":dt===TODAY?"#E0A500":dt<=d7?"#2B57A8":"#98A2B3";
-    s+=`<circle cx="${x.toFixed(1)}" cy="${axisY}" r="11" fill="${col}"/><text x="${x.toFixed(1)}" y="${axisY+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" style="pointer-events:none">${arr.length}</text><text x="${x.toFixed(1)}" y="${axisY+26}" text-anchor="middle" font-size="10" fill="#68717D">${fdm(dt)}</text>`;
+  Object.keys(g).sort().forEach(dt=>{const arr=g[dt],x=xf(dt),col=dt<TODAY?"#B5304A":dt===TODAY?"#E0A500":dt<=d7?"#2B57A8":"#98A2B3",sel=selDate===dt;
+    s+=`<circle class="tlc hitc" data-dt="${dt}" data-c="${arr.length}" cx="${x.toFixed(1)}" cy="${axisY}" r="${sel?13:11}" fill="${col}" ${sel?'stroke="#001C54" stroke-width="3"':''}/><text x="${x.toFixed(1)}" y="${axisY+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" style="pointer-events:none">${arr.length}</text><text x="${x.toFixed(1)}" y="${axisY+26}" text-anchor="middle" font-size="10" fill="#68717D">${fdm(dt)}</text>`;
   });
   return `<svg viewBox="0 0 ${W} ${H}" style="min-width:700px">${s}</svg>`;
 }
+const legTLitems=`<div><span style="background:#B5304A"></span>Vencida</div><div><span style="background:#E0A500"></span>Vence hoje</div><div><span style="background:#2B57A8"></span>Próximos 7 dias</div><div><span style="background:#98A2B3"></span>Mais de 7 dias</div>`;
+const legTL=`<div class="leg" style="margin-top:8px">${legTLitems}</div>`;
 function renderAcomp(){
   const body=$("acompBody");if(!body)return;
   const r=$("aResp")?$("aResp").value:"";
@@ -526,23 +544,28 @@ function renderAcomp(){
   const conc=mine.filter(x=>x.status==="removida").length;
   const nome=capN(r),ini=(nome.trim()[0]||"?").toUpperCase();
   const prox=abertas.filter(x=>x.data_limite).sort((a,b)=>a.data_limite.localeCompare(b.data_limite)).slice(0,5);
-  const st=(v,lbl,c)=>`<div class="astat"><b style="color:${c||'var(--navy)'}">${v}</b><span>${lbl}</span></div>`;
-  const legTl=`<div class="leg" style="margin-top:8px"><div><span style="background:#B5304A"></span>Vencida</div><div><span style="background:#E0A500"></span>Vence hoje</div><div><span style="background:#2B57A8"></span>Próximos 7 dias</div><div><span style="background:#98A2B3"></span>Mais de 7 dias</div></div>`;
+  const st=(v,lbl,c,b)=>`<div class="astat hitc${AFILT.has(b)?" astat-on":""}" data-b="${b}"><b style="color:${c||'var(--navy)'}">${v}</b><span>${lbl}</span></div>`;
   const proxHtml=prox.length?prox.map(x=>`<div class="r"><span class="d">${fd(x.data_limite)}</span>${sitPill(sit(x))}<span style="flex:1">${esc(x.acao)}</span></div>`).join(""):`<div class="r" style="color:#98A2B3">Nenhuma ação em aberto com data.</div>`;
-  const rows=mine.slice().sort((a,b)=>(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);
-  const trows=rows.length?rows.map(x=>`<tr class="${x.status==="removida"?"rem":""}"><td class="ck"><input type="checkbox" class="acb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} aria-label="Concluir ${x.n}"></td><td class="n">${x.n}</td><td class="ac">${esc(x.acao)}${x.pacote?` <span class="ptag">${esc(x.pacote)}</span>`:""}</td><td class="dt">${x.data_limite?fd(x.data_limite):"—"}</td><td class="dt">${prazoTxt(x)}</td><td>${sitPill(sit(x))}</td><td><input class="aobs" data-id="${esc(x.id)}" value="${esc(x.obs||"")}" placeholder="anotação"></td></tr>`).join(""):`<tr><td colspan="7" style="color:#98A2B3;padding:14px">Nenhuma ação para ${esc(nome)}.</td></tr>`;
+  const pass=x=>{if(ADATE&&x.data_limite!==ADATE)return false;if(!AFILT.size)return true;for(const b of AFILT){if(b==="aberto"){if(x.status==="aberta")return true;}else if(bkt(x)===b)return true;}return false;};
+  const rows=mine.filter(pass).sort((a,b)=>(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);
+  const flabel={vencida:"vencidas",hoje:"vence hoje",prox7:"próximos 7 dias",mais7:"mais de 7 dias",concluida:"concluídas",aberto:"em aberto"};
+  const activeParts=[...AFILT].map(b=>`<span class="fchip">${flabel[b]||b} <span class="x" data-fb="${b}">✕</span></span>`);
+  if(ADATE)activeParts.push(`<span class="fchip">Data: <b>${fd(ADATE)}</b> <span class="x" data-fd="1">✕</span></span>`);
+  const activeHtml=activeParts.length?`<div class="pactive" style="margin:0 0 10px">${activeParts.join("")}<button class="lnkclear" id="aClear" type="button">Ver todas</button></div>`:"";
+  const trows=rows.length?rows.map(x=>`<tr class="${x.status==="removida"?"rem":""}"><td class="ck"><input type="checkbox" class="acb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} aria-label="Concluir ${x.n}"></td><td class="n">${x.n}</td><td class="ac">${esc(x.acao)}${x.pacote?` <span class="ptag">${esc(x.pacote)}</span>`:""}</td><td class="dt">${x.data_limite?fd(x.data_limite):"—"}</td><td class="dt">${prazoTxt(x)}</td><td>${sitPill(sit(x))}</td><td><input class="aobs" data-id="${esc(x.id)}" value="${esc(x.obs||"")}" placeholder="anotação"></td></tr>`).join(""):`<tr><td colspan="7" style="color:#98A2B3;padding:14px">Nenhuma ação com esse filtro.</td></tr>`;
   body.innerHTML=`
     <div class="sec"><div class="acard">
       <div class="aperson">
         <div class="aav">${esc(ini)}</div>
         <div class="aname">${esc(nome)}</div>
         <div class="asub">responsável por ${mine.length} ${mine.length===1?"ação":"ações"}</div>
-        <div class="astats">${st(venc,"vencida","#B5304A")}${st(hoje,"vence hoje","#E0A500")}${st(prox7,"próximos 7 dias","#2B57A8")}${st(mais7,"mais de 7 dias","#68717D")}${st(conc,"concluída","#1F8F7A")}${st(abertas.length,"em aberto","var(--navy)")}</div>
+        <div class="asub" style="margin-top:2px;color:#2B57A8">Clique num quadro para filtrar a lista.</div>
+        <div class="astats">${st(venc,"vencida","#B5304A","vencida")}${st(hoje,"vence hoje","#E0A500","hoje")}${st(prox7,"próximos 7 dias","#2B57A8","prox7")}${st(mais7,"mais de 7 dias","#68717D","mais7")}${st(conc,"concluída","#1F8F7A","concluida")}${st(abertas.length,"em aberto","var(--navy)","aberto")}</div>
       </div>
       <div class="aright">
         <h2 style="font-size:16px">Linha do tempo</h2>
-        <div class="cap">Datas limite das ações em aberto. O número no círculo é a quantidade de ações no dia; a linha vermelha é hoje.</div>
-        <div class="box tblw" style="margin-top:8px">${acompTimeline(abertas)}</div>${legTl}
+        <div class="cap">Datas limite das ações em aberto. Clique numa bolinha para ver as ações daquele dia. A linha vermelha é hoje.</div>
+        <div class="box tblw" style="margin-top:8px">${buildTimeline(abertas,ADATE)}</div>${legTL}
         <h2 style="font-size:16px;margin-top:16px">Próximas datas limite</h2>
         <div class="aprox">${proxHtml}</div>
       </div>
@@ -550,8 +573,14 @@ function renderAcomp(){
     <div class="sec">
       <h2>Ações de ${esc(nome)}, por data limite</h2>
       <div class="cap">Marque a caixa quando concluir e anote o que for útil. Tudo fica salvo para todos que abrem esta página.</div>
+      ${activeHtml}
       <div class="box tblw" style="padding:4px 10px"><table class="tb" id="tAcomp"><thead><tr><th class="ck">Feito</th><th>Nº</th><th>Atividade</th><th>Data limite</th><th>Prazo</th><th>Situação</th><th>Observações</th></tr></thead><tbody>${trows}</tbody></table></div>
     </div>`;
+  body.querySelectorAll(".astat[data-b]").forEach(t=>t.onclick=()=>{const b=t.dataset.b;AFILT.has(b)?AFILT.delete(b):AFILT.add(b);renderAcomp();});
+  body.querySelectorAll(".tlc").forEach(c=>{c.onmousemove=e=>tip(e,`<b>${fd(c.dataset.dt)}</b><div>${c.dataset.c} ${c.dataset.c==="1"?"ação em aberto":"ações em aberto"}</div><div style="margin-top:3px;color:#F2A93B;font-size:11px">clique para filtrar</div>`);c.onmouseleave=hide;c.onclick=()=>{ADATE=ADATE===c.dataset.dt?"":c.dataset.dt;renderAcomp();};});
+  const ac=$("aClear");if(ac)ac.onclick=()=>{AFILT=new Set();ADATE="";renderAcomp();};
+  body.querySelectorAll(".fchip .x[data-fb]").forEach(b=>b.onclick=()=>{AFILT.delete(b.dataset.fb);renderAcomp();});
+  const fdx=body.querySelector(".fchip .x[data-fd]");if(fdx)fdx.onclick=()=>{ADATE="";renderAcomp();};
   body.querySelectorAll(".acb").forEach(c=>c.onchange=()=>toggleRem(c.dataset.id,c.checked,c,r));
   body.querySelectorAll(".aobs").forEach(i=>{i.onchange=()=>saveObs(i.dataset.id,i.value.trim(),i);});
 }
@@ -682,7 +711,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.que
 ["de","ate","dResp"].forEach(i=>$(i).onchange=renderDash);
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
 $("pBusca").oninput=renderPlan;
-$("aResp").onchange=()=>{lsSet("mp_aresp",$("aResp").value);renderAcomp();};
+$("aResp").onchange=()=>{AFILT=new Set();ADATE="";lsSet("mp_aresp",$("aResp").value);renderAcomp();};
 $("pExp").onclick=()=>{COLLAPSED.clear();renderPlan();};
 $("pRec").onclick=()=>{COLLAPSED=new Set(GKEYS);renderPlan();};
 $("quem").onchange=()=>{const s=$("quem");if(s.value==="__outro"){const nm=(prompt("Digite o seu nome:")||"").trim().toUpperCase();if(nm){let o=[...s.options].find(op=>op.value===nm);if(!o){o=document.createElement("option");o.value=nm;o.textContent=capN(nm);s.insertBefore(o,s.querySelector('option[value="__outro"]'));}s.value=nm;}else{s.value=lsGet("mp_quem");}}lsSet("mp_quem",who());};
