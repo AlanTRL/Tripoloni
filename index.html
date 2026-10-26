@@ -187,6 +187,29 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .appfoot{border-top:1px solid var(--grid);padding:18px 32px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:#fff}
 .appfoot b{color:var(--navy);font-weight:500}
 .progress{z-index:200}
+/* situação do dia */
+.diakpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.diak{border:1px solid var(--grid);border-radius:12px;padding:15px 16px;background:#fff;position:relative;overflow:hidden}
+.diak .bar{position:absolute;left:0;top:0;bottom:0;width:5px}
+.diak b{font-size:34px;font-weight:800;line-height:1;display:block;letter-spacing:-.02em}
+.diak span{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-top:9px}
+.difilt-lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.diagrp{background:#fff;border:1px solid var(--grid);border-radius:14px;padding:4px 2px;margin-top:14px;overflow:hidden}
+.diagrp-h{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.diagrp-h .nm{font-size:15.5px;font-weight:800;color:var(--navy)}
+.diagrp-h .cts{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--grey);display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+.diagrp-h .cts b{font-weight:700}
+.diarow{display:grid;grid-template-columns:26px 42px 1fr auto auto;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid var(--line)}
+.diarow:first-of-type{border-top:none}
+.diarow .n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.diarow .ac{font-size:13.5px;color:var(--ink2)}
+.diarow .ac .pac{font-size:10.5px;color:var(--muted);margin-left:7px}
+.diarow .dl{font-family:var(--mono);font-size:11px;color:var(--grey);white-space:nowrap}
+.diaempty{background:#fff;border:1px dashed var(--grid);border-radius:14px;padding:30px;text-align:center;color:var(--grey);margin-top:14px}
+.diaempty b{color:var(--prazo);font-size:16px;display:block;margin-bottom:4px}
+.pz{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:8px;white-space:nowrap}
+.pz.v{background:#FBEAEE;color:#B5304A}.pz.h{background:#FDF3DF;color:#9A6B00}.pz.s{background:#E9EEFA;color:#2B57A8}.pz.n{background:#F3F5F9;color:#68717D}
+@media(max-width:700px){.diakpis{grid-template-columns:1fr 1fr}.diarow{grid-template-columns:24px 1fr auto;gap:8px}.diarow .n,.diarow .dl{display:none}}
 @media (max-width:980px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px}.navlbl,.sidefoot,.brandtile .bsub{display:none}.brandtile{padding:9px 12px}.brandtile img{width:110px}.nav{flex-direction:row;flex-wrap:wrap}.sidewho{margin:0;padding:0;border:none;margin-left:auto}.sidewho label{display:none}#pane-dash.on{grid-template-columns:1fr}.pane,.topbar,.appfoot{padding-left:16px;padding-right:16px}}
 </style>
 </head><body>
@@ -196,6 +219,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
     <div class="navlbl">Navegação</div>
     <nav class="nav" id="tabs">
       <a href="#" data-t="pane-dash" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Painel<span class="dot"></span></a>
+      <a href="#" data-t="pane-dia"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 4-1.5 6-2.5 7h17C19.5 15 18 13 18 9a6 6 0 0 0-6-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Situação do dia<span class="dot"></span></a>
       <a href="#" data-t="pane-acomp"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>Acompanhamento<span class="dot"></span></a>
       <a href="#" data-t="pane-plan"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>Banco de dados<span class="dot"></span></a>
     </nav>
@@ -310,6 +334,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
     <div id="acompBody"></div>
   </div>
 
+  <!-- ===================== SITUAÇÃO DO DIA ===================== -->
+  <div class="pane" id="pane-dia">
+    <div class="sec">
+      <h2>Situação do dia</h2>
+      <div class="cap">O que precisa ser cobrado: restrições atrasadas, que vencem hoje e que vencem em breve, agrupadas por responsável. A ordem dá prioridade a quem tem mais pendência. Marque a caixa quando a pessoa resolver.</div>
+      <div class="diakpis" id="diaHead"></div>
+      <div style="margin-top:14px"><span class="difilt-lbl">Janela</span><div class="chips" id="diaChips" style="display:inline-flex;margin-left:8px;vertical-align:middle"></div></div>
+    </div>
+    <div id="diaBody"></div>
+  </div>
+
   <div class="notes" id="notes"></div>
   <div class="appfoot"><span><b>Tripoloni Construtora</b> · Via Araucária</span><span>Contrato VIAR-OBR-383-2025</span></div>
   </div>
@@ -357,7 +392,7 @@ function weekMonday(k){const [y,w]=k.split("-").map(Number);const simple=new Dat
 function weekRange(a,b){const out=[];let k=weekKey(a),end=weekKey(b);let m=weekMonday(k),guard=0;while(guard++<400){const kk=weekKey(isoT(m));out.push(kk);if(kk===end)break;m.setDate(m.getDate()+7);}return out;}
 
 /* estado */
-let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),PDATE="",COLLSET=null,AFILT=new Set(),ADATE="",KPIANIM=false,REVIO=null,ACOMP_ANIM=false;
+let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),PDATE="",COLLSET=null,AFILT=new Set(),ADATE="",KPIANIM=false,REVIO=null,ACOMP_ANIM=false,DIA_H=7;
 const ABKT=[["vencida","vencida","#B5304A"],["hoje","vence hoje","#E0A500"],["prox7","próximos 7 dias","#2B57A8"],["mais7","mais de 7 dias","#68717D"],["semdata","sem data","#D97B0A"],["concluida","concluída","#1F8F7A"]];
 function bkt(x){if(x.status==="removida")return "concluida";if(x.status==="cancelada")return "cancel";if(!x.data_limite)return "semdata";const n=diff(TODAY,x.data_limite);if(n<0)return "vencida";if(n===0)return "hoje";if(n<=7)return "prox7";return "mais7";}
 const STATOPT=[["andamento","Em andamento"],["atrasada","Atrasadas"],["semdata","Sem data"],["removida","Removidas"],["cancelada","Canceladas"]];
@@ -819,7 +854,37 @@ function rebuildLists(){
 }
 const isTyping=()=>{const a=document.activeElement;return a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT");};
 function schedule(){if(isTyping()||EDOPEN){PENDING=true;return;}render();}
-function render(){PENDING=false;renderDash();renderPlan();renderAcomp();}
+function render(){PENDING=false;renderDash();renderPlan();renderAcomp();renderDia();}
+function renderDia(){
+  const body=$("diaBody");if(!body)return;
+  const dH=isoT(new Date(T0.getTime()+DIA_H*864e5));
+  const open=ALL.filter(x=>x.status==="aberta");
+  const venc=open.filter(x=>x.data_limite&&x.data_limite<TODAY);
+  const hoje=open.filter(x=>x.data_limite&&x.data_limite===TODAY);
+  const breve=open.filter(x=>x.data_limite&&x.data_limite>TODAY&&x.data_limite<=dH);
+  const semd=open.filter(x=>!x.data_limite);
+  $("diaChips").innerHTML=[[3,"+3 dias"],[7,"+7 dias"],[14,"+14 dias"]].map(([d,l])=>`<button type="button" class="chip${DIA_H===d?" on":""}" data-h="${d}">${l}</button>`).join("");
+  $("diaChips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{DIA_H=+c.dataset.h;renderDia();});
+  const K=(v,lbl,c)=>`<div class="diak"><div class="bar" style="background:${c}"></div><b style="color:${c}">${v}</b><span>${lbl}</span></div>`;
+  $("diaHead").innerHTML=K(venc.length,"atrasadas","#B5304A")+K(hoje.length,"vencem hoje","#E0A500")+K(breve.length,"vencem em até "+DIA_H+" dias","#2B57A8")+K(venc.length+hoje.length,"a cobrar hoje","#001C54");
+  // conjunto a mostrar: atrasadas + hoje + breve + sem data
+  const rank=x=>{if(!x.data_limite)return 3;if(x.data_limite<TODAY)return 0;if(x.data_limite===TODAY)return 1;return 2;};
+  const show=open.filter(x=>rank(x)<=2||!x.data_limite).filter(x=>!x.data_limite?true:x.data_limite<=dH);
+  const groups=new Map();
+  show.forEach(x=>{const k=x.responsavel||"—";if(!groups.has(k))groups.set(k,[]);groups.get(k).push(x);});
+  const gv=k=>groups.get(k).filter(x=>x.data_limite&&x.data_limite<TODAY).length;
+  const gh=k=>groups.get(k).filter(x=>x.data_limite&&x.data_limite===TODAY).length;
+  const order=[...groups.keys()].sort((a,b)=>(gv(b)*2+gh(b))-(gv(a)*2+gh(a))||groups.get(b).length-groups.get(a).length||a.localeCompare(b));
+  if(!show.length){body.innerHTML=`<div class="diaempty"><b>Tudo em dia 🎉</b>Nenhuma restrição atrasada, vencendo hoje ou nos próximos ${DIA_H} dias.</div>`;return;}
+  const pz=x=>{if(!x.data_limite)return `<span class="pz n">sem data</span>`;const n=diff(TODAY,x.data_limite);if(n<0)return `<span class="pz v">atrasada ${-n}d</span>`;if(n===0)return `<span class="pz h">vence hoje</span>`;return `<span class="pz s">em ${n}d</span>`;};
+  body.innerHTML=order.map(k=>{
+    const g=groups.get(k).slice().sort((a,b)=>rank(a)-rank(b)||(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);
+    const v=gv(k),h=gh(k);
+    const rows=g.map(x=>`<div class="diarow"><span><input type="checkbox" class="acb" data-id="${esc(x.id)}" aria-label="Resolver ${x.n}"></span><span class="n">${x.n}</span><span class="ac">${esc(x.acao)}${x.pacote?`<span class="pac">${esc(x.pacote)}</span>`:""}</span><span class="dl">${x.data_limite?fd(x.data_limite):"—"}</span>${pz(x)}</div>`).join("");
+    return `<div class="diagrp reveal in"><div class="diagrp-h"><span class="nm">${k==="—"?"Sem responsável":esc(capN(k))}</span><span class="cts">${v?`<span><b style="color:#B5304A">${v}</b> atrasada${v>1?"s":""}</span>`:""}${h?`<span><b style="color:#9A6B00">${h}</b> hoje</span>`:""}<span><b>${g.length}</b> a cobrar</span></span></div>${rows}</div>`;
+  }).join("");
+  body.querySelectorAll(".acb").forEach(c=>c.onchange=()=>toggleRem(c.dataset.id,c.checked,c));
+}
 function animateKpis(){
   document.querySelectorAll("#kpis .kv").forEach(kv=>{
     const html=kv.innerHTML,m=html.match(/^(\d+(?:\.\d+)?)/);if(!m)return;
@@ -851,7 +916,7 @@ function setupColl(){
 }
 
 /* abas, filtros */
-const TABTITLE={"pane-dash":["Painel","Planejamento de médio prazo"],"pane-acomp":["Acompanhamento","Ações por responsável"],"pane-plan":["Banco de dados","Todas as restrições"]};
+const TABTITLE={"pane-dash":["Painel","Planejamento de médio prazo"],"pane-dia":["Situação do dia","O que cobrar hoje"],"pane-acomp":["Acompanhamento","Ações por responsável"],"pane-plan":["Banco de dados","Todas as restrições"]};
 document.querySelectorAll("#tabs [data-t]").forEach(b=>b.onclick=e=>{e.preventDefault();const t=b.dataset.t;document.querySelectorAll("#tabs [data-t]").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id===t));const tt=TABTITLE[t];if(tt){$("pgt").textContent=tt[0];$("pgk").textContent=tt[1];}hide();if(t==="pane-acomp"){ACOMP_ANIM=true;renderAcomp();}window.scrollTo({top:0,behavior:"smooth"});});
 ["de","ate","dResp"].forEach(i=>$(i).onchange=renderDash);
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
