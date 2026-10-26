@@ -822,7 +822,7 @@ async function add(){if(!SB){msg("Configure o Supabase antes de adicionar.",fals
   const maxN=ALL.reduce((m,x)=>Math.max(m,x.n||0),0);
   const rec={id,n:maxN+1,data_identificacao:$("fData").value||TODAY,acao:ac,responsavel:($("fResp").value.trim().toUpperCase()||null),
     pacote:$("fPac").value.trim()||null,setor:$("fSetor").value.trim()||null,categoria:$("fCat").value.trim()||null,
-    data_limite:$("fPrazo").value||null,local:$("fLocal").value.trim()||null,obs:$("fObs").value.trim()||null,status:"aberta"};
+    data_limite:$("fPrazo").value||null,local:$("fLocal").value.trim()||null,obs:$("fObs").value.trim()||null,status:"aberta",criado_por:who()||null};
   $("btAdd").disabled=true;
   try{const {data,error}=await SB.from("restricoes").insert(rec).select();if(error)throw error;
     if(data&&data[0]){ALL.push(data[0]);}else{ALL.push(rec);}
