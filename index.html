@@ -16,6 +16,14 @@ h1{font-size:28px;font-weight:700;line-height:1.12;margin-top:8px}
 h1 .thin{font-weight:300;display:block;font-size:19px}
 .conn{margin-top:12px;font-size:12px;color:#B9C6E6;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .conn i{width:8px;height:8px;border-radius:50%;background:#F2A93B;display:inline-block} .conn.live i{background:#3FD0A8}
+.whobar{margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.whobar label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#B9C6E6}
+.whobar select{font-family:inherit;font-size:13px;font-weight:600;padding:5px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+.whobar select option{color:#001C54}
+.grp{cursor:pointer;background:#EEF2F9} .grp:hover{background:#E4EAF5}
+.grp td{padding:9px 10px!important;font-size:13.5px;color:var(--navy);border-top:2px solid #D7DEEA}
+.grp .car{display:inline-block;width:14px;color:var(--andamento);font-weight:700}
+.grp .gc{font-weight:400;color:#68717D;font-size:12px;margin-left:4px}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
 .tabs button{border:none;background:rgba(255,255,255,.12);color:#C9D6F0;font-family:inherit;font-size:14px;font-weight:700;padding:12px 18px;border-radius:12px 12px 0 0;cursor:pointer}
 .tabs button:hover{background:rgba(255,255,255,.2);color:#fff} .tabs button.on{background:var(--canvas);color:var(--navy)}
@@ -74,7 +82,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .modal h3{font-size:18px;margin-bottom:12px}
 [hidden]{display:none!important}
 @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.form{grid-template-columns:1fr}.header,.pane,.notes{padding-left:16px;padding-right:16px}h1{font-size:23px}}
-@media print{body{background:#fff;padding:0}.card{box-shadow:none;border-radius:0;max-width:none}.tabs,.conn,.flt .btn,.addbtn,.edl,.cb{display:none!important}.pane{display:block!important}.box,.k,.tb tr{break-inside:avoid}}
+@media print{body{background:#fff;padding:0}.card{box-shadow:none;border-radius:0;max-width:none}.tabs,.conn,.whobar,.flt .btn,.addbtn,.edl,.cb{display:none!important}.pane{display:block!important}.box,.k,.tb tr{break-inside:avoid}}
 </style>
 </head><body>
 <div class="card">
@@ -82,6 +90,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
     <span class="eyebrow">BR-277 · Duplicação · Irati</span>
     <h1>Médio Prazo<span class="thin">Plano de ação e remoção de restrições</span></h1>
     <div class="conn" id="conn"><i></i><span id="connT">Conectando…</span></div>
+    <div class="whobar"><label for="quem">Quem está preenchendo:</label><select id="quem"><option value="">— selecione —</option></select></div>
     <div class="tabs" id="tabs">
       <button data-t="pane-dash" class="on">Painel</button>
       <button data-t="pane-plan">Plano de ação</button>
@@ -154,6 +163,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
         <div class="fld"><label for="pResp">Responsável</label><select id="pResp"><option value="">Todos</option></select></div>
         <div class="fld"><label for="pStatus">Situação</label><select id="pStatus"><option value="">Todas</option><option value="aberta">Em aberto</option><option value="atrasada">Atrasadas</option><option value="removida">Removidas</option><option value="cancelada">Canceladas</option></select></div>
         <div class="fld" style="flex:1;min-width:180px"><label for="pBusca">Buscar</label><input id="pBusca" placeholder="texto na ação, pacote, local…"></div>
+        <div class="fld"><label>Subgrupos</label><div style="display:flex;gap:8px"><button class="btn sec" id="pExp" type="button" style="padding:9px 12px">Expandir</button><button class="btn sec" id="pRec" type="button" style="padding:9px 12px">Recolher</button></div></div>
       </div>
       <div class="box tblw" style="padding:4px 10px"><table class="tb" id="tPlan"></table></div>
     </div>
@@ -204,7 +214,10 @@ function weekMonday(k){const [y,w]=k.split("-").map(Number);const simple=new Dat
 function weekRange(a,b){const out=[];let k=weekKey(a),end=weekKey(b);let m=weekMonday(k),guard=0;while(guard++<400){const kk=weekKey(isoT(m));out.push(kk);if(kk===end)break;m.setDate(m.getDate()+7);}return out;}
 
 /* estado */
-let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false;
+let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null;
+const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return""}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const who=()=>{const v=$("quem")?$("quem").value:"";return v&&v!=="__outro"?v:"";};
 const nf=n=>n.toLocaleString("pt-BR");
 function msg(t,ok){const m=$("notes");/* usa barra flutuante simples */const b=document.createElement("div");b.className="msg "+(ok?"ok":"err");b.innerHTML=t;b.style.position="fixed";b.style.left="50%";b.style.bottom="20px";b.style.transform="translateX(-50%)";b.style.zIndex=80;b.style.boxShadow="0 10px 30px -8px rgba(0,0,0,.3)";document.body.appendChild(b);setTimeout(()=>b.remove(),6000);}
 
@@ -310,26 +323,48 @@ function planSet(){const r=$("pResp").value,st=$("pStatus").value,q=($("pBusca")
     return true;}).sort((a,b)=>(a.data_limite||"9999").localeCompare(b.data_limite||"9999")||a.n-b.n);}
 function renderPlan(){
   const L=planSet();
+  const groups=new Map();
+  L.forEach(x=>{const key=x.responsavel||"—";if(!groups.has(key))groups.set(key,[]);groups.get(key).push(x);});
+  const sc=k=>groups.get(k).filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata"||s==="atrasada";}).length;
+  const order=[...groups.keys()].sort((a,b)=>sc(b)-sc(a)||a.localeCompare(b));
+  GKEYS=order;
+  const cell=x=>{const k=sit(x);return `<td class="ck"><input type="checkbox" class="cb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} aria-label="Marcar restrição ${x.n} como removida"></td><td class="n">${x.n}</td><td class="ac">${esc(x.acao)}${x.pacote?`<div style="font-size:11px;color:#98A2B3">${esc(x.pacote)}${x.local?" · "+esc(x.local):""}</div>`:""}</td><td>${esc(capN(x.responsavel))}</td><td class="dt">${fd(x.data_identificacao)}</td><td class="dt"><button class="edl" data-ed="prazo" data-id="${esc(x.id)}">${x.data_limite?fd(x.data_limite):"definir"}</button></td><td class="dt">${x.status==="removida"?`<button class="edl" data-ed="remocao" data-id="${esc(x.id)}">${x.data_remocao?fd(x.data_remocao):"definir"}</button>`+(x.removido_por?`<div style="font-size:10.5px;color:#98A2B3">${esc(capN(x.removido_por))}</div>`:""):'<span style="color:#C5CCD8">—</span>'}</td><td>${sitPill(k)}</td>`;};
   let h=`<thead><tr><th class="ck">Rem.</th><th>Nº</th><th>Ação / restrição</th><th>Responsável</th><th>Identif.</th><th>Limite</th><th>Remoção</th><th>Situação</th></tr></thead><tbody>`;
-  h+=L.map(x=>{const k=sit(x);return `<tr class="${x.status==="removida"?"rem":""}"><td class="ck"><input type="checkbox" class="cb" data-id="${esc(x.id)}" ${x.status==="removida"?"checked":""} aria-label="Marcar restrição ${x.n} como removida"></td><td class="n">${x.n}</td><td class="ac">${esc(x.acao)}${x.pacote?`<div style="font-size:11px;color:#98A2B3">${esc(x.pacote)}${x.local?" · "+esc(x.local):""}</div>`:""}</td><td>${esc(capN(x.responsavel))}</td><td class="dt">${fd(x.data_identificacao)}</td><td class="dt"><button class="edl" data-ed="prazo" data-id="${esc(x.id)}">${x.data_limite?fd(x.data_limite):"definir"}</button></td><td class="dt">${x.status==="removida"?`<button class="edl" data-ed="remocao" data-id="${esc(x.id)}">${x.data_remocao?fd(x.data_remocao):"definir"}</button>`:'<span style="color:#C5CCD8">—</span>'}</td><td>${sitPill(k)}</td></tr>`;}).join("")||`<tr><td colspan="8" style="color:#98A2B3;padding:14px">Nenhuma restrição com esse filtro.</td></tr>`;
-  $("tPlan").innerHTML=h+`</tbody><tfoot><tr><td colspan="8" style="color:#68717D;padding:10px 8px">${L.length} ${L.length===1?"restrição":"restrições"}</td></tr></tfoot>`;
+  if(!L.length)h+=`<tr><td colspan="8" style="color:#98A2B3;padding:14px">Nenhuma restrição com esse filtro.</td></tr>`;
+  order.forEach((key,gi)=>{
+    const g=groups.get(key),col=COLLAPSED.has(key);
+    const ab=g.filter(x=>{const s=sit(x);return s==="andamento"||s==="semdata";}).length;
+    const at=g.filter(x=>sit(x)==="atrasada").length,rm=g.filter(x=>x.status==="removida").length;
+    h+=`<tr class="grp" data-g="${gi}"><td colspan="8"><span class="car">${col?"▸":"▾"}</span> <b>${key==="—"?"Sem responsável":esc(capN(key))}</b> <span class="gc">${g.length} ${g.length===1?"item":"itens"}${at?` · <b style="color:#B5304A">${at} atrasada${at>1?"s":""}</b>`:""}${ab?` · ${ab} em aberto`:""}${rm?` · ${rm} removida${rm>1?"s":""}`:""}</span></td></tr>`;
+    if(!col)h+=g.map(x=>`<tr class="${x.status==="removida"?"rem":""}">${cell(x)}</tr>`).join("");
+  });
+  $("tPlan").innerHTML=h+`</tbody><tfoot><tr><td colspan="8" style="color:#68717D;padding:10px 8px">${L.length} ${L.length===1?"restrição":"restrições"} · ${order.length} ${order.length===1?"responsável":"responsáveis"}</td></tr></tfoot>`;
+  $("tPlan").querySelectorAll(".grp").forEach(tr=>tr.onclick=()=>{const k=GKEYS[+tr.dataset.g];if(k==null)return;if(COLLAPSED.has(k))COLLAPSED.delete(k);else COLLAPSED.add(k);renderPlan();});
   $("tPlan").querySelectorAll(".cb").forEach(c=>c.onchange=()=>toggleRem(c.dataset.id,c.checked,c));
   $("tPlan").querySelectorAll(".edl").forEach(b=>b.onclick=()=>editData(b.dataset.id,b.dataset.ed));
 }
 
 /* edições */
-function editData(id,campo){const x=ALL.find(y=>y.id===id);if(!x)return;EDOPEN=true;
+function editData(id,campo){const x=ALL.find(y=>y.id===id);if(!x)return;
+  if(campo==="remocao"&&!who()){msg('Escolha o seu nome em "Quem está preenchendo", no topo da página, antes de alterar a data de remoção.',false);$("quem").focus();return;}
+  EDOPEN=true;MODAL_CANCEL=null;
   const val=campo==="prazo"?(x.data_limite||""):(x.data_remocao||"");
-  $("modalIn").innerHTML=`<h3>${campo==="prazo"?"Data limite":"Data de remoção"}</h3><div class="fld"><label>Restrição ${x.n}</label><div style="font-size:13px;color:#33415C;margin-bottom:10px">${esc(x.acao)}</div></div><input type="date" id="mData" value="${val}" style="width:100%"><div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Salvar</button></div>`;
+  $("modalIn").innerHTML=`<h3>${campo==="prazo"?"Data limite":"Data de remoção"}</h3><div class="fld"><label>Restrição ${x.n}</label><div style="font-size:13px;color:#33415C;margin-bottom:10px">${esc(x.acao)}</div></div><input type="date" id="mData" value="${val}" style="width:100%">${campo==="remocao"?`<div style="font-size:12.5px;color:#68717D;margin-top:10px">Registrado por <b>${esc(capN(who()))}</b></div>`:""}<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Salvar</button></div>`;
   $("modal").classList.add("on");
-  $("mCanc").onclick=closeModal;$("mOk").onclick=async()=>{const v=$("mData").value||null;const upd=campo==="prazo"?{data_limite:v}:{data_remocao:v};await patch(id,upd);closeModal();};
+  $("mCanc").onclick=closeModal;$("mOk").onclick=async()=>{const v=$("mData").value||null;const upd=campo==="prazo"?{data_limite:v}:{data_remocao:v,removido_por:who()};MODAL_CANCEL=null;await patch(id,upd);closeModal();};
 }
-function closeModal(){$("modal").classList.remove("on");EDOPEN=false;schedule();}
+function closeModal(){$("modal").classList.remove("on");EDOPEN=false;if(MODAL_CANCEL){const f=MODAL_CANCEL;MODAL_CANCEL=null;f();}schedule();}
 $("modal").onclick=e=>{if(e.target===$("modal"))closeModal();};
 
 async function toggleRem(id,on,el){const x=ALL.find(y=>y.id===id);if(!x)return;
-  const upd=on?{status:"removida",data_remocao:x.data_remocao||TODAY}:{status:"aberta",data_remocao:null};
-  await patch(id,upd,()=>{el.checked=!on;});
+  if(!on){await patch(id,{status:"aberta",data_remocao:null,removido_por:null},()=>{el.checked=true;});return;}
+  if(!who()){el.checked=false;msg('Escolha o seu nome em "Quem está preenchendo", no topo da página, antes de marcar uma restrição como removida.',false);$("quem").focus();return;}
+  EDOPEN=true;MODAL_CANCEL=()=>{el.checked=false;};
+  const val=x.data_remocao||TODAY;
+  $("modalIn").innerHTML=`<h3>Remover restrição ${x.n}</h3><div class="fld"><label>Ação</label><div style="font-size:13px;color:#33415C;margin-bottom:10px">${esc(x.acao)}</div></div><div class="fld"><label for="mData">Data de remoção</label><input type="date" id="mData" value="${val}" style="width:100%"></div><div style="font-size:12.5px;color:#68717D;margin-top:10px">Registrado por <b>${esc(capN(who()))}</b></div><div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn sec" id="mCanc" type="button">Cancelar</button><button class="btn" id="mOk" type="button">Confirmar remoção</button></div>`;
+  $("modal").classList.add("on");
+  $("mCanc").onclick=closeModal;
+  $("mOk").onclick=async()=>{const v=$("mData").value||TODAY;MODAL_CANCEL=null;$("modal").classList.remove("on");EDOPEN=false;await patch(id,{status:"removida",data_remocao:v,removido_por:who()},()=>{el.checked=false;});schedule();};
 }
 async function patch(id,upd,onerr){const x=ALL.find(y=>y.id===id);if(!SB||!x)return;
   const prev=Object.assign({},x);Object.assign(x,upd);render();
@@ -366,6 +401,9 @@ function rebuildLists(){
   $("dResp").innerHTML=`<option value="">Todos</option>`+opts(RESP);$("dResp").value=keepR;
   $("pResp").innerHTML=`<option value="">Todos</option>`+opts(RESP);$("pResp").value=keepP;
   $("lResp").innerHTML=dl(RESP);$("lPac").innerHTML=dl(PAC);$("lSetor").innerHTML=dl(SETOR);$("lCat").innerHTML=dl(CAT);
+  const cur=who()||lsGet("mp_quem");
+  $("quem").innerHTML=`<option value="">— selecione —</option>`+opts(RESP)+`<option value="__outro">Outra pessoa…</option>`;
+  if(cur){if(!RESP.includes(cur)){const o=document.createElement("option");o.value=cur;o.textContent=capN(cur);$("quem").insertBefore(o,$("quem").lastChild);}$("quem").value=cur;}
 }
 const isTyping=()=>{const a=document.activeElement;return a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT");};
 function schedule(){if(isTyping()||EDOPEN){PENDING=true;return;}render();}
@@ -376,14 +414,17 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.que
 ["de","ate","dResp"].forEach(i=>$(i).onchange=renderDash);
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
 ["pResp","pStatus"].forEach(i=>$(i).onchange=renderPlan);$("pBusca").oninput=renderPlan;
+$("pExp").onclick=()=>{COLLAPSED.clear();renderPlan();};
+$("pRec").onclick=()=>{COLLAPSED=new Set(GKEYS);renderPlan();};
+$("quem").onchange=()=>{const s=$("quem");if(s.value==="__outro"){const nm=(prompt("Digite o seu nome:")||"").trim().toUpperCase();if(nm){let o=[...s.options].find(op=>op.value===nm);if(!o){o=document.createElement("option");o.value=nm;o.textContent=capN(nm);s.insertBefore(o,s.querySelector('option[value="__outro"]'));}s.value=nm;}else{s.value=lsGet("mp_quem");}}lsSet("mp_quem",who());};
 $("btAdd").onclick=add;$("fData").value=TODAY;
 document.addEventListener("focusout",()=>setTimeout(()=>{if(PENDING&&!isTyping()&&!EDOPEN)render();},80));
 
-$("notes").innerHTML=`<b>Como funciona:</b> as restrições ficam num banco online e aparecem para todos que abrem o link, atualizando ao vivo. O IRR é a parte das restrições que saiu no prazo (removida até a data limite). "Atrasada" não é marcada à mão: é toda restrição em aberto cuja data limite já passou. Marque a caixa quando a restrição for removida. Na reunião, use "Adicionar restrição" para lançar novas ações. Datas podem ser alteradas clicando nelas.`;
+$("notes").innerHTML=`<b>Como funciona:</b> as restrições ficam num banco online e aparecem para todos que abrem o link, atualizando ao vivo. O IRR é a parte das restrições que saiu no prazo (removida até a data limite). "Atrasada" não é marcada à mão: é toda restrição em aberto cuja data limite já passou. Antes de marcar qualquer remoção, escolha o seu nome em "Quem está preenchendo", no topo. Ao marcar a caixa, você confirma a data em que a restrição foi removida e fica registrado quem a removeu. No Plano de ação, as restrições ficam agrupadas por responsável, e cada grupo pode ser recolhido ou expandido. Na reunião, use "Adicionar restrição" para lançar novas ações. Datas podem ser alteradas clicando nelas.`;
 
 /* ===================== SUPABASE ===================== */
 function conn(ok,txt){$("conn").className="conn"+(ok?" live":"");$("connT").textContent=txt;}
-function ingest(rows){ALL=rows.map(r=>({id:r.id,n:r.n||0,data_identificacao:r.data_identificacao||"",pacote:r.pacote||"",acao:r.acao||"",setor:r.setor||"",responsavel:(r.responsavel||"").toUpperCase(),categoria:r.categoria||"",data_limite:r.data_limite||"",data_remocao:r.data_remocao||"",status:r.status||"aberta",local:r.local||"",obs:r.obs||""}));
+function ingest(rows){ALL=rows.map(r=>({id:r.id,n:r.n||0,data_identificacao:r.data_identificacao||"",pacote:r.pacote||"",acao:r.acao||"",setor:r.setor||"",responsavel:(r.responsavel||"").toUpperCase(),categoria:r.categoria||"",data_limite:r.data_limite||"",data_remocao:r.data_remocao||"",removido_por:r.removido_por||"",status:r.status||"aberta",local:r.local||"",obs:r.obs||""}));
   rebuildLists();conn(true,`Ligado · ${ALL.length} restrições · ${new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`);schedule();}
 let LOADING=false;
 async function load(){if(!SB){conn(false,/supabase\.co/.test(SUPABASE_URL)?"Supabase não carregou. Confira a internet.":"Falta configurar SUPABASE_URL e SUPABASE_KEY no início do arquivo.");render();return;}
