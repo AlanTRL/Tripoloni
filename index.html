@@ -9,7 +9,17 @@
 html,body{background:var(--ground)}
 body{font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;padding:24px 14px}
 .card{max-width:1280px;margin:0 auto;background:var(--canvas);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px -18px rgba(0,28,84,.35)}
-.header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:28px 34px 0;color:#fff;position:relative;overflow:hidden}
+.header{background:linear-gradient(135deg,#001233,var(--navy),var(--navy2));background-size:170% 170%;animation:gmove 20s ease infinite;padding:28px 34px 0;color:#fff;position:relative;overflow:hidden}
+@keyframes gmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.progress{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--orange),#FFD79A);z-index:200;box-shadow:0 0 10px rgba(242,169,59,.5)}
+.rev{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.rev.in{opacity:1;transform:none}
+.box{transition:box-shadow .3s ease,transform .3s ease}
+.swipe{clip-path:inset(0 100% 0 0)}
+.swipe.go{clip-path:inset(0 0 0 0);transition:clip-path 1.05s cubic-bezier(.2,.85,.2,1)}
+.k{transition:transform .3s ease,box-shadow .3s ease}
+.k:hover{transform:translateY(-4px);box-shadow:0 16px 34px -18px rgba(0,28,84,.3)}
+@media(prefers-reduced-motion:reduce){.header{animation:none}.rev{opacity:1;transform:none;transition:none}.swipe{clip-path:none}}
 .header::after{content:"";position:absolute;right:-80px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(127,168,255,.18),transparent 70%)}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.22em;color:var(--orange);text-transform:uppercase}
 h1{font-size:28px;font-weight:700;line-height:1.12;margin-top:8px}
@@ -121,6 +131,12 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .tip .r{display:flex;justify-content:space-between;gap:12px}
 .modal{position:fixed;inset:0;background:rgba(0,10,40,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
 .modal.on{display:flex} .modal .inner{background:#fff;border-radius:16px;padding:22px 24px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.modal .inner.rwide{max-width:1120px}
+.rtblw{overflow:auto;max-height:66vh;border:1px solid var(--grid);border-radius:10px;margin-top:4px}
+.rtb{border-collapse:collapse;font-size:11.5px;white-space:nowrap}
+.rtb th{position:sticky;top:0;background:var(--navy);color:#fff;font-weight:700;text-align:left;padding:7px 9px;font-size:10.5px}
+.rtb td{padding:6px 9px;border-bottom:1px solid #EEF1F6;max-width:360px;overflow:hidden;text-overflow:ellipsis}
+.rtb tr:nth-child(even) td{background:#F7F9FC}
 .modal h3{font-size:18px;margin-bottom:12px}
 [hidden]{display:none!important}
 @media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.form{grid-template-columns:1fr}.header,.pane,.notes{padding-left:16px;padding-right:16px}h1{font-size:23px}}
@@ -215,8 +231,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
       </div>
     </div>
     <div class="sec">
-      <h2>Plano de ação · banco de dados</h2>
-      <div class="cap">Todas as restrições, filtráveis por situação e por responsável (dá para escolher vários de cada). Ao filtrar por responsável, aparece um resumo por responsável; sem filtro, a lista vem corrida por data limite. Marque a caixa quando a restrição for removida. Clique nas datas ou em "editar" para alterar a ação enquanto ela estiver em aberto.</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><h2>Plano de ação · banco de dados</h2><button class="btn pri" id="btRel" type="button" style="white-space:nowrap">Gerar relatório</button></div>
+      <div class="cap">Todas as restrições, filtráveis por situação e por responsável (dá para escolher vários de cada). Ao filtrar por responsável, aparece um resumo por responsável; sem filtro, a lista vem corrida por data limite. Marque a caixa quando a restrição for removida. Clique nas datas ou em "editar" para alterar a ação enquanto ela estiver em aberto. O botão "Gerar relatório" exporta para Excel, no formato da aba Plano de Ação da planilha (respeita os filtros aplicados).</div>
       <div id="pActive" class="pactive"></div>
       <div class="pfilt">
         <div class="pfrow">
@@ -247,7 +263,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 </div>
 <div class="tip" id="tip"></div>
 <div class="modal" id="modal"><div class="inner" id="modalIn"></div></div>
+<div class="modal" id="rmodal"><div class="inner rwide" id="rmodalIn"></div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 /* ===== CONFIGURAÇÃO: cole os dados do seu projeto Supabase (Project Settings > API) ===== */
@@ -287,7 +305,7 @@ function weekMonday(k){const [y,w]=k.split("-").map(Number);const simple=new Dat
 function weekRange(a,b){const out=[];let k=weekKey(a),end=weekKey(b);let m=weekMonday(k),guard=0;while(guard++<400){const kk=weekKey(isoT(m));out.push(kk);if(kk===end)break;m.setDate(m.getDate()+7);}return out;}
 
 /* estado */
-let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),PDATE="",COLLSET=null,AFILT=new Set(),ADATE="";
+let SB=null,ALL=[],RESP=[],PAC=[],SETOR=[],CAT=[],LIVE=false,PENDING=false,EDOPEN=false,COLLAPSED=new Set(),GKEYS=[],MODAL_CANCEL=null,PSTAT=new Set(),PRESP=new Set(),PPAC=new Set(),PDATE="",COLLSET=null,AFILT=new Set(),ADATE="",KPIANIM=false;
 const ABKT=[["vencida","vencida","#B5304A"],["hoje","vence hoje","#E0A500"],["prox7","próximos 7 dias","#2B57A8"],["mais7","mais de 7 dias","#68717D"],["semdata","sem data","#D97B0A"],["concluida","concluída","#1F8F7A"]];
 function bkt(x){if(x.status==="removida")return "concluida";if(x.status==="cancelada")return "cancel";if(!x.data_limite)return "semdata";const n=diff(TODAY,x.data_limite);if(n<0)return "vencida";if(n===0)return "hoje";if(n<=7)return "prox7";return "mais7";}
 const STATOPT=[["andamento","Em andamento"],["atrasada","Atrasadas"],["semdata","Sem data"],["removida","Removidas"],["cancelada","Canceladas"]];
@@ -318,6 +336,7 @@ function renderDash(){
     kpi("TMD · tempo médio disponível",`${mtmd.toFixed(1)}<small>dias</small>`,`da identificação até o prazo (${tmd.length})`,"#1F8F7A")+
     kpi("TMR · tempo médio de remoção",`${mtmr.toFixed(1)}<small>dias</small>`,`da identificação até a remoção (${tmr.length})`,"#B5304A");
   sitBar($("gSit"),by,L.length);$("legSit").innerHTML=SORD.map(k=>`<div><span style="background:${SIT[k].c}"></span>${SIT[k].n}</div>`).join("");
+  if(!KPIANIM){KPIANIM=true;requestAnimationFrame(animateKpis);}
   const abL=L.filter(x=>x.status==="aberta");
   $("gTl").innerHTML=buildTimeline(abL,"");$("legTl").innerHTML=legTLitems;
   $("gTl").querySelectorAll(".tlc").forEach(c=>{c.onmousemove=e=>tip(e,`<b>${fd(c.dataset.dt)}</b><div>${c.dataset.c} ${c.dataset.c==="1"?"ação em aberto":"ações em aberto"}</div><div style="margin-top:3px;color:#F2A93B;font-size:11px">clique para ver no banco de dados</div>`);c.onmouseleave=hide;c.onclick=()=>goPlan({date:c.dataset.dt});});
@@ -444,6 +463,41 @@ function renderActive(){
   const dx=$("pActive").querySelector(".x[data-date]");if(dx)dx.onclick=()=>{PDATE="";renderChips();renderPlan();};
   $("pClear").onclick=()=>{PPAC=new Set();PRESP=new Set();PSTAT=new Set();PDATE="";$("pBusca").value="";renderChips();renderPlan();};
 }
+
+/* ===================== RELATÓRIO (igual à aba Plano de Ação) ===================== */
+const STLABEL={prazo:"Concluida no Prazo",atraso:"Concluida com Atraso",atrasada:"Atrasada",andamento:"Em andamento",semdata:"Sem Data Definida",cancel:"Cancelada"};
+const REPCOLS=["ID","Data Identificada","Pacote de Trabalho","Ação","Setor/Equipe","Responsável","Categoria","Data Limite","Data Remoção","Status","Local","Restrição/Comentários","Tempo_Disp","Tempo_Resolucao","Tempo Atraso"];
+function tdisp(x){return diff(x.data_identificacao,x.data_limite);}
+function tres(x){return x.data_remocao?diff(x.data_identificacao,x.data_remocao):null;}
+function tatraso(x){if(x.data_remocao&&x.data_limite&&x.data_remocao>x.data_limite)return diff(x.data_limite,x.data_remocao);if(x.status==="aberta"&&x.data_limite&&x.data_limite<TODAY)return diff(x.data_limite,TODAY);return null;}
+function reportRows(){
+  return planSet().slice().sort((a,b)=>a.n-b.n).map(x=>({
+    "ID":x.n,"Data Identificada":fd(x.data_identificacao),"Pacote de Trabalho":x.pacote||"","Ação":x.acao||"",
+    "Setor/Equipe":x.setor||"","Responsável":capN(x.responsavel),"Categoria":x.categoria||"",
+    "Data Limite":fd(x.data_limite),"Data Remoção":fd(x.data_remocao),"Status":STLABEL[sit(x)],
+    "Local":x.local||"","Restrição/Comentários":x.obs||"",
+    "Tempo_Disp":tdisp(x),"Tempo_Resolucao":tres(x),"Tempo Atraso":tatraso(x)}));
+}
+function baixarRelatorio(){
+  if(typeof XLSX==="undefined"){msg("A biblioteca de exportação não carregou (sem internet?). Tente novamente.",false);return;}
+  const data=reportRows();
+  const ws=XLSX.utils.json_to_sheet(data,{header:REPCOLS});
+  ws["!cols"]=[{wch:5},{wch:14},{wch:18},{wch:60},{wch:18},{wch:16},{wch:14},{wch:12},{wch:12},{wch:18},{wch:18},{wch:40},{wch:10},{wch:12},{wch:10}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Plano de Ação");
+  XLSX.writeFile(wb,"Plano_de_Acao_"+TODAY+".xlsx");
+}
+function abrirRelatorio(){
+  const data=reportRows();EDOPEN=true;MODAL_CANCEL=null;
+  const head=`<tr>${REPCOLS.map(c=>`<th>${esc(c)}</th>`).join("")}</tr>`;
+  const prev=data.slice(0,60).map(r=>`<tr>${REPCOLS.map(c=>`<td>${esc(r[c]==null?"":r[c])}</td>`).join("")}</tr>`).join("");
+  $("rmodalIn").innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h3 style="margin:0">Relatório · Plano de Ação</h3><div style="display:flex;gap:10px"><button class="btn sec" id="rCanc" type="button">Fechar</button><button class="btn pri" id="rDl" type="button">Baixar Excel (.xlsx)</button></div></div>
+    <div style="font-size:12.5px;color:#68717D;margin:8px 0 12px">${data.length} ${data.length===1?"restrição":"restrições"} no relatório${data.length>60?" · prévia das 60 primeiras; o arquivo traz todas":""}. Mesmas colunas da aba Plano de Ação da planilha.</div>
+    <div class="rtblw"><table class="rtb"><thead>${head}</thead><tbody>${prev||`<tr><td colspan="${REPCOLS.length}" style="color:#98A2B3;padding:12px">Nenhuma restrição com o filtro atual.</td></tr>`}</tbody></table></div>`;
+  $("rmodal").classList.add("on");
+  $("rCanc").onclick=()=>{$("rmodal").classList.remove("on");EDOPEN=false;schedule();};
+  $("rDl").onclick=baixarRelatorio;
+}
+$("rmodal").onclick=e=>{if(e.target===$("rmodal")){$("rmodal").classList.remove("on");EDOPEN=false;schedule();}};
 function renderChips(){
   $("pStatChips").innerHTML=STATOPT.map(([k,lbl])=>{const kk=k==="removida"?"prazo":(k==="cancelada"?"cancel":k);return `<button type="button" class="chip${PSTAT.has(k)?" on":""}" data-k="${k}"><span class="dot" style="background:${SIT[kk].c}"></span>${lbl}</button>`;}).join("");
   $("pRespChips").innerHTML=RESP.map(r=>`<button type="button" class="chip${PRESP.has(r)?" on":""}" data-r="${esc(r)}">${esc(capN(r))}</button>`).join("")||`<span style="font-size:12.5px;color:#98A2B3">—</span>`;
@@ -693,6 +747,23 @@ function rebuildLists(){
 const isTyping=()=>{const a=document.activeElement;return a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT");};
 function schedule(){if(isTyping()||EDOPEN){PENDING=true;return;}render();}
 function render(){PENDING=false;renderDash();renderPlan();renderAcomp();}
+function animateKpis(){
+  document.querySelectorAll("#kpis .kv").forEach(kv=>{
+    const html=kv.innerHTML,m=html.match(/^(\d+(?:\.\d+)?)/);if(!m)return;
+    const target=parseFloat(m[1]),dec=m[1].indexOf(".")>=0,rest=html.slice(m[1].length),t0=performance.now();
+    function step(now){let p=Math.min(1,(now-t0)/900);p=1-Math.pow(1-p,3);const v=target*p;kv.innerHTML=(dec?v.toFixed(1):Math.round(v))+rest;if(p<1)requestAnimationFrame(step);else kv.innerHTML=html;}
+    requestAnimationFrame(step);
+  });
+}
+function setupMotion(){
+  const prog=document.createElement("div");prog.className="progress";document.body.appendChild(prog);
+  const upd=()=>{const de=document.documentElement;prog.style.width=(de.scrollTop/((de.scrollHeight-de.clientHeight)||1)*100)+"%";};
+  addEventListener("scroll",upd,{passive:true});upd();
+  ["gSit","gPac","gResp","gTl"].map(id=>$(id)).filter(Boolean).forEach(sv=>sv.classList.add("swipe"));
+  const secs=[...document.querySelectorAll("#pane-dash > .sec")];secs.forEach(s=>s.classList.add("rev"));
+  const io1=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");e.target.querySelectorAll(".swipe").forEach(el=>el.classList.add("go"));io1.unobserve(e.target);}}),{threshold:.08,rootMargin:"0px 0px -24px 0px"});
+  secs.forEach(s=>io1.observe(s));
+}
 function setupColl(){
   if(COLLSET===null){const stored=lsGet("mp_coll");COLLSET=new Set(stored?stored.split("|").filter(Boolean):["irr","sem","tmd"]);}
   document.querySelectorAll("#pane-dash .csec").forEach(sec=>{
@@ -712,6 +783,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.que
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
 $("pBusca").oninput=renderPlan;
 $("aResp").onchange=()=>{AFILT=new Set();ADATE="";lsSet("mp_aresp",$("aResp").value);renderAcomp();};
+$("btRel").onclick=abrirRelatorio;
 $("pExp").onclick=()=>{COLLAPSED.clear();renderPlan();};
 $("pRec").onclick=()=>{COLLAPSED=new Set(GKEYS);renderPlan();};
 $("quem").onchange=()=>{const s=$("quem");if(s.value==="__outro"){const nm=(prompt("Digite o seu nome:")||"").trim().toUpperCase();if(nm){let o=[...s.options].find(op=>op.value===nm);if(!o){o=document.createElement("option");o.value=nm;o.textContent=capN(nm);s.insertBefore(o,s.querySelector('option[value="__outro"]'));}s.value=nm;}else{s.value=lsGet("mp_quem");}}lsSet("mp_quem",who());};
@@ -734,7 +806,7 @@ async function load(){if(!SB){conn(false,/supabase\.co/.test(SUPABASE_URL)?"Supa
 (function(){
   const CONFIG_OK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_KEY.length>20;
   SB=(CONFIG_OK&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}}):null;
-  setupColl();render();load();
+  setupColl();setupMotion();render();load();
   setInterval(()=>{if(!document.hidden&&!isTyping()&&!EDOPEN)load();},60000);
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
   if(SB){try{SB.channel("restr").on("postgres_changes",{event:"*",schema:"public",table:"restricoes"},()=>{clearTimeout(load.t);load.t=setTimeout(load,500);}).subscribe();}catch(e){}}
