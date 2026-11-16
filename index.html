@@ -306,6 +306,9 @@ body.g-med .sidewho,body.g-med #notes{display:none}
 .fin .gb{transform-box:fill-box;transform-origin:50% 100%}
 .fin .rev .gb{transform:scaleY(0)}
 .fin .rev.in .gb{animation:fgrow 1s cubic-bezier(.2,.8,.2,1) var(--d,0ms) both}
+.fin .gbn{transform-box:fill-box;transform-origin:50% 0}
+.fin .rev .gbn{transform:scaleY(0)}
+.fin .rev.in .gbn{animation:fgrow 1s cubic-bezier(.2,.8,.2,1) var(--d,0ms) both}
 @keyframes fgrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 .fin .rev .fd,.fin .rev .pp,.fin .rev .ds,.fin .rev .fa{opacity:0}
 .fin .rev.in .fd{animation:ffade .7s ease calc(var(--d,0ms) + 300ms) both}
@@ -543,26 +546,21 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <div class="kpis k5" id="f_kp" style="margin-top:14px"></div>
     </div>
     <div id="f_body">
-    <div class="sec">
-      <div class="two">
-        <div><h2>Composição do valor atualizado</h2><div class="cap">Participação de cada parcela no valor total do contrato.</div><div class="box"><svg id="f_don"></svg></div></div>
-        <div><h2>Quadro do contrato</h2><div class="cap">Do contrato original ao valor atualizado, o medido e o saldo.</div><div class="box tblw" style="padding:6px 10px"><table class="tbl" id="f_tc"></table></div></div>
-      </div>
-    </div>
     <div class="sec pb">
       <h2>Medições mensais</h2>
-      <div class="cap">Valor bruto de cada boletim de medição, separando medição, gatilho e reajuste, e ao lado a nota fiscal emitida. A linha tracejada marca a média mensal do valor bruto. O traço escuro marca o custo do mês, quando informado.</div>
-      <div class="box tblw"><svg id="f_col" style="min-width:760px"></svg><div class="leg" id="f_colleg"></div></div>
-    </div>
-    <div class="sec">
-      <h2>Curva acumulada</h2>
-      <div class="cap">Valor bruto medido acumulado ao fim de cada mês e o percentual sobre o valor atualizado do contrato. A linha roxa tracejada mostra, só para consulta, o acumulado das notas fiscais emitidas.</div>
-      <div class="box tblw"><svg id="f_cur" style="min-width:760px"></svg></div>
+      <div class="cap">Valor bruto de cada boletim, separando medição, gatilho e reajuste, com a nota fiscal emitida ao lado e o custo do mês marcado em escuro. Valores em milhões de reais.</div>
+      <div class="box tblw"><svg id="f_col" style="min-width:820px"></svg><div class="leg" id="f_colleg"></div></div>
     </div>
     <div class="sec pb">
-      <h2>Quadro das medições</h2>
-      <div class="cap">Percentuais calculados sobre o valor atualizado do contrato.</div>
-      <div class="box tblw" style="padding:6px 10px"><table class="tbl" id="f_tb" style="min-width:1000px"></table></div>
+      <h2>Curva acumulada</h2>
+      <div class="cap">Valor medido acumulado ao fim de cada mês, em milhões de reais, e o acumulado das notas fiscais emitidas, para comparação. A linha tracejada marca o valor atualizado do contrato.</div>
+      <div class="box tblw"><svg id="f_cur" style="min-width:820px"></svg><div class="leg" id="f_curleg"></div></div>
+    </div>
+    <div class="sec pb" id="f_resSec">
+      <h2>Resultado mês a mês</h2>
+      <div class="cap">Nota fiscal emitida menos o custo do mês. Acima da linha e verde quando a nota supera o custo; abaixo e vermelho quando o custo supera a nota. Só aparece nos meses com custo informado.</div>
+      <div class="fwarn" id="f_resempty" style="display:none">Informe o custo do mês na aba <b>Lançar medições</b> para ver o resultado. O resultado compara a nota fiscal emitida com o custo de cada mês.</div>
+      <div class="box tblw"><svg id="f_res" style="min-width:820px"></svg><div class="leg" id="f_resleg"></div></div>
     </div>
     <div class="fnotes" id="f_notes"></div>
     </div>
@@ -1260,7 +1258,7 @@ const mn=m=>MES[String(m).toUpperCase()]||m;
 const ML=b=>mn(b.m)+(MY?" de "+b.ano:"");
 const M3=b=>(MES[String(b.m).toUpperCase()]?MES[String(b.m).toUpperCase()].slice(0,3):b.m)+(MY?"/"+String(b.ano).slice(2):"");
 const kp=(t,big,sub,c,hi)=>`<div class="k${hi?" hi":""}"><div class="b" style="background:${c}"></div><div class="kt">${t}</div><div class="kv">${big}</div><div class="ks">${sub}</div></div>`;
-const CC={c:"#1F4E9A",gt:"#F2A93B",rj:"#C25A8A",cu:"#33415C",med:"#1F7FA6",sal:"#C5CCD8",nf:"#8A4FC4"},ADC=["#5E8FDB","#2BA57E","#3BA3B8","#9C7A4E","#C25A8A"];
+const CC={c:"#1F4E9A",gt:"#F2A93B",rj:"#C25A8A",cu:"#33415C",med:"#1F7FA6",sal:"#C5CCD8",nf:"#8A4FC4",pos:"#1F8F7A",neg:"#C0392B"},ADC=["#5E8FDB","#2BA57E","#3BA3B8","#9C7A4E","#C25A8A"];
 const ftip=(e,h)=>tip(e,'<div class="ft">'+h+'</div>');
 const parseBR=t=>{t=String(t==null?"":t).trim().replace(/\s|R\$/g,"");if(!t)return NaN;if(t.includes(","))t=t.replace(/\./g,"").replace(",",".");else if(/^-?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,"");return Number(t);};
 const dth=s=>{if(!s)return "";const d=new Date(s);if(isNaN(d))return "";return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).replace(",","");};
@@ -1286,6 +1284,7 @@ function render(){renderPanel();renderEd();}
 
 /* ---------- painel ---------- */
 let SIG="";
+const mi=v=>Number(v/1e6).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
 function renderPanel(force){
   const sig=JSON.stringify([D.bms,D.itens,ONLINE,OLD]);if(!force&&sig===SIG)return;SIG=sig;
   hide();
@@ -1299,7 +1298,7 @@ function renderPanel(force){
   if(!B.length||TOT<=0){$("f_body").style.display="none";$("f_kp").innerHTML="";$("f_sub").textContent='Ainda não há medições lançadas. Use "Lançar medições" para incluir a primeira.';return;}
   $("f_body").style.display="";
   let ac=0,anf=0;B.forEach(b=>{b.t=b.med+b.gt+b.rj;ac+=b.t;b.ac=ac;if(b.nf){anf+=b.nf;b.anf=anf;}});
-  const MED=ac,SAL=TOT-MED,N=B.length,avg=MED/N,last=B[N-1],BNF=B.filter(b=>b.nf),NFT=anf,big=B.reduce((a,b)=>b.t>a.t?b:a,B[0]);
+  const MED=ac,SAL=TOT-MED,N=B.length,last=B[N-1],BNF=B.filter(b=>b.nf),NFT=anf,big=B.reduce((a,b)=>b.t>a.t?b:a,B[0]);
   const hasRJ=B.some(b=>b.rj)||RJ>0,hasCU=B.some(b=>b.cu),CUT=sum(B.map(b=>b.cu||0));
   const partes="contrato, aditivos"+(hasRJ?", gatilho e reajuste":" e gatilho");
   RES=`BM ${last.n} · ${ML(last)} · ${P(MED/TOT)} medido`;
@@ -1307,77 +1306,101 @@ function renderPanel(force){
   $("f_kp").innerHTML=kp("Valor atualizado do contrato",`R$ ${f2(TOT/1e6)}<small>mi</small>`,`${R(TOT)}<br>${partes}`,"#F2A93B",1)+
     kp("Medido acumulado",`R$ ${f2(MED/1e6)}<small>mi</small>`,`<b>${P(MED/TOT)}</b> do valor atualizado em ${N} ${N>1?"medições":"medição"}`,CC.med)+
     kp("Saldo a medir",`R$ ${f2(SAL/1e6)}<small>mi</small>`,`<b>${P(SAL/TOT)}</b> do valor atualizado`,"#8A94A6")+
-    kp(`Última medição · BM ${last.n}`,`R$ ${f2(last.t/1e6)}<small>mi</small>`,`${ML(last)}${big===last&&N>1?", a maior até agora":""} · média mensal de ${M(avg)}`,"#173A8A");
+    kp(`Última medição · BM ${last.n}`,`R$ ${f2(last.t/1e6)}<small>mi</small>`,`${ML(last)}${big===last&&N>1?", a maior até agora":""}`,"#173A8A");
 
-  /* rosca */
-  (function(){
-    const parts=[["Contrato original",C0,CC.c],...AD.map(a=>[a.n,a.v,a.c]),["Gatilho",GT,CC.gt],["Reajuste",RJ,CC.rj]].filter(p=>p[1]>0);
-    const W=540,H=360,cx=170,cy=180,R1=140,R0=88,sp=Math.min(62,260/parts.length),y0=180-sp*parts.length/2+10;let a0=-Math.PI/2,s="";
-    parts.forEach(([n,v,c],k)=>{const a1=a0+Math.min(v/TOT,0.9999)*2*Math.PI,lg=a1-a0>Math.PI?1:0,p=(rr,a)=>`${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`;
-      s+=`<path class="hit ds" style="--d:${k*140}ms;transform-origin:${cx}px ${cy}px" data-k="${k}" d="M${p(R1,a0)}A${R1},${R1} 0 ${lg} 1 ${p(R1,a1)}L${p(R0,a1)}A${R0},${R0} 0 ${lg} 0 ${p(R0,a0)}Z" fill="${c}" stroke="#fff" stroke-width="2"/>`;a0=a1;});
-    s+=`<g class="fd" style="--d:500ms"><text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="22" font-weight="700">${M(TOT).replace(" mi","")}</text><text class="sm" x="${cx}" y="${cy+16}" text-anchor="middle">milhões de reais</text></g>`;
-    parts.forEach(([n,v,c],k)=>{const y=y0+k*sp;s+=`<g class="fd" style="--d:${200+k*140}ms"><rect x="345" y="${y}" width="12" height="12" rx="3" fill="${c}"/><text x="365" y="${y+11}" font-weight="700">${esc(n)}</text><text x="365" y="${y+28}" font-size="13" fill="#33415C">${M(v)} · ${P(v/TOT)}</text></g>`;});
-    const e=$("f_don");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    e.querySelectorAll(".hit").forEach(b=>{const [n,v]=parts[+b.dataset.k];b.onmousemove=ev=>ftip(ev,`<b>${esc(n)}</b><div>${R(v)}</div><div class="d">${P(v/TOT,2)} do valor atualizado</div>`);b.onmouseleave=hide;});
-  })();
+  const row=(c,n,v)=>`<div class="r"><span>${sw(c)}${n}</span><b>${v}</b></div>`;
 
-  /* colunas mensais */
+  /* ===== medições mensais ===== */
   (function(){
-    const W=1076,H=340,ml=56,mr=14,mt=30,mb=44,cw=(W-ml-mr)/N,bw=Math.min(70,cw*.5),nw=Math.min(14,cw*.14);
-    const mx=Math.max(...B.map(b=>Math.max(b.t,b.nf||0,b.cu||0))),step=mx>16e6?4e6:2e6,top=Math.ceil(mx*1.04/step)*step,ys=v=>mt+(H-mt-mb)*(1-v/top);
-    let s="";for(let g=0;g<=top;g+=step)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="${g?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(g)+4}" text-anchor="end">${g/1e6} mi</text>`;
-    B.forEach((b,k)=>{const x=ml+k*cw+(cw-bw-nw-4)/2,d=k*70;
-      if(b.nf)s+=`<rect class="hit gb" style="--d:${d+120}ms" data-k="${k}" x="${x+bw+4}" y="${ys(b.nf)}" width="${nw}" height="${ys(0)-ys(b.nf)}" rx="3" fill="${CC.nf}" opacity=".85"/>`;
-      else s+=`<text class="fd" style="--d:${d}ms" x="${x+bw+4+nw/2}" y="${ys(0)-6}" font-size="9.5" fill="${CC.nf}" font-weight="700" transform="rotate(-90 ${x+bw+4+nw/2} ${ys(0)-6})" dy="3">sem nota</text>`;
-      s+=`<g class="gb" style="--d:${d}ms"><rect class="hit" data-k="${k}" x="${x}" y="${ys(b.med)}" width="${bw}" height="${ys(0)-ys(b.med)}" rx="4" fill="${CC.med}"/>`;
-      if(b.gt)s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.med+b.gt)}" width="${bw}" height="${ys(b.med)-ys(b.med+b.gt)}" rx="2" fill="${CC.gt}"/>`;
-      if(b.rj)s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.t)}" width="${bw}" height="${ys(b.med+b.gt)-ys(b.t)}" rx="2" fill="${CC.rj}"/>`;
-      s+=`</g><text class="fd" style="--d:${d+250}ms" x="${x+bw/2}" y="${ys(b.t)-8}" text-anchor="middle" font-size="${N>12?10.5:12.5}" font-weight="700">${f2(b.t/1e6)}</text>`;
-      if(b.cu)s+=`<g class="fd hit" data-k="${k}" style="--d:${d+450}ms"><line x1="${x-5}" x2="${x+bw+5}" y1="${ys(b.cu)}" y2="${ys(b.cu)}" stroke="${CC.cu}" stroke-width="3" stroke-linecap="round"/><circle cx="${x-5}" cy="${ys(b.cu)}" r="3.5" fill="${CC.cu}"/></g>`;
-      s+=`<text x="${x+bw/2}" y="${H-mb+18}" text-anchor="middle" font-weight="700">${M3(b)}</text><text class="ax" x="${x+bw/2}" y="${H-mb+33}" text-anchor="middle">BM ${b.n}</text>`;});
-    s+=`<g class="fd" style="--d:${N*70+300}ms"><line x1="${ml}" x2="${W-mr}" y1="${ys(avg)}" y2="${ys(avg)}" stroke="#8A94A6" stroke-width="1.5" stroke-dasharray="6 4"/><text class="halo" x="${ml+4}" y="${ys(avg)-6}" font-size="11.5" font-weight="700" fill="#68717D">média ${M(avg)}</text></g>`;
+    const W=1076,H=366,ml=58,mr=16,mt=34,mb=46,cw=(W-ml-mr)/N;
+    const bw=Math.min(50,cw*.38),nw=Math.min(22,cw*.17),g=4,gw=bw+g+nw;
+    const mx=Math.max(...B.map(b=>Math.max(b.t,b.nf||0,b.cu||0))),step=mx>16e6?4e6:2e6,top=Math.ceil(mx*1.08/step)*step,ys=v=>mt+(H-mt-mb)*(1-v/top);
+    let s="";for(let q=0;q<=top;q+=step)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(q)}" y2="${ys(q)}" stroke="${q?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(q)+4}" text-anchor="end">${q/1e6} mi</text>`;
+    B.forEach((b,k)=>{const x0=ml+k*cw+(cw-gw)/2,nx=x0+bw+g,d=k*70;
+      /* barra bruta empilhada */
+      s+=`<g class="gb" style="--d:${d}ms"><rect class="hit" data-k="${k}" x="${x0}" y="${ys(b.med)}" width="${bw}" height="${ys(0)-ys(b.med)}" rx="4" fill="${CC.med}"/>`;
+      if(b.gt)s+=`<rect class="hit" data-k="${k}" x="${x0}" y="${ys(b.med+b.gt)}" width="${bw}" height="${ys(b.med)-ys(b.med+b.gt)}" rx="2" fill="${CC.gt}"/>`;
+      if(b.rj)s+=`<rect class="hit" data-k="${k}" x="${x0}" y="${ys(b.t)}" width="${bw}" height="${ys(b.med+b.gt)-ys(b.t)}" rx="2" fill="${CC.rj}"/>`;
+      s+=`</g>`;
+      /* barra NF */
+      if(b.nf)s+=`<rect class="hit gb" style="--d:${d+90}ms" data-k="${k}" x="${nx}" y="${ys(b.nf)}" width="${nw}" height="${ys(0)-ys(b.nf)}" rx="3" fill="${CC.nf}" opacity=".9"/>`;
+      else s+=`<text class="fd" style="--d:${d}ms" x="${nx+nw/2}" y="${ys(0)-5}" font-size="9" fill="${CC.nf}" font-weight="700" transform="rotate(-90 ${nx+nw/2} ${ys(0)-5})" dy="3">sem nota</text>`;
+      /* custo: marcador escuro */
+      if(b.cu)s+=`<g class="fd hit" data-k="${k}" style="--d:${d+380}ms"><line x1="${x0-3}" x2="${nx+nw+3}" y1="${ys(b.cu)}" y2="${ys(b.cu)}" stroke="${CC.cu}" stroke-width="2.5" stroke-linecap="round"/><circle cx="${x0-3}" cy="${ys(b.cu)}" r="3.4" fill="${CC.cu}"/></g>`;
+      /* valores */
+      s+=`<text class="fd halo" style="--d:${d+260}ms" x="${x0+bw/2}" y="${ys(b.t)-9}" text-anchor="middle" font-size="12" font-weight="700" fill="#001C54">${mi(b.t)}</text>`;
+      if(b.nf)s+=`<text class="fd halo" style="--d:${d+280}ms" x="${nx+nw/2}" y="${ys(b.nf)-6}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${CC.nf}">${mi(b.nf)}</text>`;
+      if(b.cu)s+=`<text class="fd halo" style="--d:${d+420}ms" x="${x0-7}" y="${ys(b.cu)+3.5}" text-anchor="end" font-size="9.5" font-weight="700" fill="${CC.cu}">${mi(b.cu)}</text>`;
+      /* eixo x */
+      s+=`<text x="${ml+k*cw+cw/2}" y="${H-mb+18}" text-anchor="middle" font-weight="700">${M3(b)}</text><text class="ax" x="${ml+k*cw+cw/2}" y="${H-mb+33}" text-anchor="middle">BM ${b.n}</text>`;});
+    s+=`<text class="ax" x="${ml-8}" y="${mt-14}" text-anchor="end" font-weight="700" fill="#68717D">R$ (milhões)</text>`;
     const e=$("f_col");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    $("f_colleg").innerHTML=`<div><span style="background:${CC.med}"></span>Medição</div><div><span style="background:${CC.gt}"></span>Gatilho</div>${hasRJ?`<div><span style="background:${CC.rj}"></span>Reajuste</div>`:""}<div><span class="ln" style="background:#8A94A6"></span>Média mensal</div><div><span style="background:${CC.nf}"></span>Nota fiscal emitida</div>${hasCU?`<div><span style="background:${CC.cu};height:4px;vertical-align:3px"></span>Custo do mês</div>`:""}`;
-    const row=(c,n,v)=>`<div class="r"><span>${sw(c)}${n}</span><b>${v}</b></div>`;
-    e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>BM ${b.n} · ${ML(b)}</b>${row(CC.med,"Medição",R(b.med))}${b.gt?row(CC.gt,"Gatilho",R(b.gt)):""}${b.rj?row(CC.rj,"Reajuste",R(b.rj)):""}<div class="d">Total bruto ${R(b.t)} · ${P(b.t/TOT,2)} do contrato</div><div style="margin-top:4px">${row(CC.nf,"Nota fiscal",b.nf?R(b.nf)+" · "+P(b.nf/b.t)+" do bruto":"não emitida")}${b.cu?row(CC.cu,"Custo do mês",R(b.cu)+" · "+P(b.cu/b.t)+" do bruto"):""}</div>`);h.onmouseleave=hide;});
+    $("f_colleg").innerHTML=`<div><span style="background:${CC.med}"></span>Medição</div><div><span style="background:${CC.gt}"></span>Gatilho</div>${hasRJ?`<div><span style="background:${CC.rj}"></span>Reajuste</div>`:""}<div><span style="background:${CC.nf}"></span>Nota fiscal emitida</div>${hasCU?`<div><span style="background:${CC.cu};height:4px;vertical-align:3px"></span>Custo do mês</div>`:""}`;
+    e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>BM ${b.n} · ${ML(b)}</b>${row(CC.med,"Medição",R(b.med))}${b.gt?row(CC.gt,"Gatilho",R(b.gt)):""}${b.rj?row(CC.rj,"Reajuste",R(b.rj)):""}<div class="d">Total bruto ${R(b.t)} · ${P(b.t/TOT,2)} do contrato</div><div style="margin-top:4px">${row(CC.nf,"Nota fiscal",b.nf?R(b.nf):"não emitida")}${b.cu?row(CC.cu,"Custo do mês",R(b.cu)):row("#C5CCD8","Custo do mês","não informado")}</div>`);h.onmouseleave=hide;});
   })();
 
-  /* curva acumulada */
+  /* ===== curva acumulada (R$) ===== */
   (function(){
-    const W=1076,H=330,ml=56,mr=120,mt=24,mb=40,xs=i=>ml+(W-ml-mr)*i/N;
+    const W=1076,H=340,ml=60,mr=132,mt=26,mb=40,xs=i=>ml+(W-ml-mr)*i/N;
     const top=Math.ceil(TOT/20e6)*20e6,ys=v=>mt+(H-mt-mb)*(1-v/top);
-    let s="";for(let g=0;g<=top;g+=20e6)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="${g?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(g)+4}" text-anchor="end">${g/1e6} mi</text>`;
+    let s="";for(let q=0;q<=top;q+=20e6)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(q)}" y2="${ys(q)}" stroke="${q?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(q)+4}" text-anchor="end">${q/1e6} mi</text>`;
     s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(TOT)}" y2="${ys(TOT)}" stroke="#001C54" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W-mr+6}" y="${ys(TOT)+4}" font-size="11.5" font-weight="700">${M(TOT)}</text><text class="ax" x="${W-mr+6}" y="${ys(TOT)+18}">valor atualizado</text>`;
     const pts=[[0,0],...B.map((b,k)=>[k+1,b.ac])];
-    s+=`<path class="fa" d="M${xs(0)},${ys(0)} ${pts.map(([i,v])=>`L${xs(i)},${ys(v)}`).join(" ")} L${xs(N)},${ys(0)} Z" fill="${CC.med}" fill-opacity=".14"/>`;
-    s+=`<path class="dl" pathLength="1" d="${pts.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.med}" stroke-width="3"/>`;
+    s+=`<path class="fa" d="M${xs(0)},${ys(0)} ${pts.map(([i,v])=>`L${xs(i)},${ys(v)}`).join(" ")} L${xs(N)},${ys(0)} Z" fill="${CC.med}" fill-opacity=".12"/>`;
+    /* linha NF acumulada */
     const pn=[[0,0],...B.map((b,k)=>b.anf?[k+1,b.anf]:null).filter(Boolean)];
-    if(pn.length>1){s+=`<g class="fd" style="--d:1300ms"><path d="${pn.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.nf}" stroke-width="2" stroke-dasharray="5 4"/>`;
-      const [li,lv]=pn[pn.length-1];s+=`<circle cx="${xs(li)}" cy="${ys(lv)}" r="4" fill="${CC.nf}"/><text x="${xs(li)+8}" y="${ys(lv)+16}" font-size="11" font-weight="700" fill="${CC.nf}">NF ${M(lv)}</text></g>`;}
+    if(pn.length>1){s+=`<g class="fd" style="--d:1200ms"><path d="${pn.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.nf}" stroke-width="2.4" stroke-dasharray="6 4"/></g>`;}
+    s+=`<path class="dl" pathLength="1" d="${pts.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.med}" stroke-width="3"/>`;
     s+=`<g class="fd" style="--d:1500ms"><rect x="${xs(N)-3}" y="${ys(TOT)}" width="6" height="${ys(MED)-ys(TOT)}" fill="${CC.sal}" rx="2"/><text x="${xs(N)-10}" y="${(ys(TOT)+ys(MED))/2+4}" text-anchor="end" font-size="12" font-weight="700" fill="#68717D">saldo ${M(SAL)}</text></g>`;
     s+=`<text class="ax" x="${xs(0)}" y="${H-mb+18}" text-anchor="middle">início</text>`;
+    /* pontos medido: valor acima */
     B.forEach((b,k)=>{const x=xs(k+1),y=ys(b.ac),d=250+k*(1300/N);
       s+=`<circle class="hit pp" style="--d:${d}ms" data-k="${k}" cx="${x}" cy="${y}" r="5.5" fill="#fff" stroke="${CC.med}" stroke-width="3"/>`;
-      s+=`<text class="fd" style="--d:${d}ms" x="${x}" y="${y-12}" text-anchor="middle" font-size="11.5" font-weight="700">${P(b.ac/TOT)}</text>`;
+      s+=`<text class="fd halo" style="--d:${d}ms" x="${x}" y="${y-13}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#001C54">${mi(b.ac)}</text>`;
       s+=`<text x="${x}" y="${H-mb+18}" text-anchor="middle" font-weight="700" font-size="12">${M3(b)}</text>`;});
+    /* pontos NF: valor abaixo, para não bater com o medido */
+    if(pn.length>1)B.forEach((b,k)=>{if(!b.anf)return;const x=xs(k+1),y=ys(b.anf),d=1300+k*30;
+      s+=`<circle class="hit pp" style="--d:${d}ms" data-nf="${k}" cx="${x}" cy="${y}" r="4" fill="#fff" stroke="${CC.nf}" stroke-width="2.4"/>`;
+      s+=`<text class="fd halo" style="--d:${d}ms" x="${x}" y="${y+18}" text-anchor="middle" font-size="10" font-weight="700" fill="${CC.nf}">${mi(b.anf)}</text>`;});
+    const lnf=pn.length>1?pn[pn.length-1]:null;
+    if(lnf)s+=`<text class="fd" style="--d:1600ms" x="${xs(lnf[0])+8}" y="${ys(lnf[1])-8}" font-size="11" font-weight="700" fill="${CC.nf}">NF acumulada</text>`;
     const e=$("f_cur");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>Até o BM ${b.n} · ${ML(b)}</b><div>${R(b.ac)} medidos</div><div class="d">${P(b.ac/TOT,2)} do valor atualizado</div>${b.anf?`<div style="color:#C9B3EA;margin-top:3px">notas fiscais acumuladas: ${R(b.anf)}</div>`:""}`);h.onmouseleave=hide;});
+    e.querySelectorAll("[data-k]").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>Até o BM ${b.n} · ${ML(b)}</b><div>${R(b.ac)} medidos</div><div class="d">${P(b.ac/TOT,2)} do valor atualizado</div>${b.anf?`<div style="color:#C9B3EA;margin-top:3px">notas fiscais acumuladas: ${R(b.anf)}</div>`:""}`);h.onmouseleave=hide;});
+    e.querySelectorAll("[data-nf]").forEach(h=>{const b=B[+h.dataset.nf];h.onmousemove=ev=>ftip(ev,`<b>NF acumulada até o BM ${b.n}</b><div>${R(b.anf)} em notas fiscais</div>`);h.onmouseleave=hide;});
+    $("f_curleg").innerHTML=`<div><span class="ln" style="background:${CC.med}"></span>Medido acumulado</div><div><span class="ln" style="background:${CC.nf}"></span>Nota fiscal acumulada</div><div><span class="ln" style="background:#001C54"></span>Valor atualizado do contrato</div>`;
   })();
 
-  /* tabelas */
+  /* ===== resultado mês a mês (NF - custo) ===== */
   (function(){
-    const z=(v,c)=>`<td style="color:${v?c:"#B0B8C5"}">${v?R(v):"·"}</td>`;
-    let h=`<thead><tr><th>BM</th><th style="text-align:left">Mês</th><th>Medição</th><th>Gatilho</th><th>Reajuste</th><th>Total do mês</th><th>Acumulado</th><th>% do mês</th><th>% acumulado</th><th style="color:${CC.nf}">Nota fiscal</th><th style="color:${CC.nf}">NF / bruto</th><th>Custo do mês</th></tr></thead><tbody>`;
-    B.forEach(b=>h+=`<tr><td style="text-align:left">${b.n}</td><td style="text-align:left;font-weight:700">${ML(b)}</td><td>${R(b.med)}</td>${z(b.gt,"#B8650A")}${z(b.rj,"#A0346B")}<td style="font-weight:700">${R(b.t)}</td><td>${R(b.ac)}</td><td>${P(b.t/TOT,2)}</td><td style="font-weight:700">${P(b.ac/TOT,2)}</td><td style="color:${CC.nf}">${b.nf?R(b.nf):"não emitida"}</td><td style="color:${CC.nf}">${b.nf?P(b.nf/b.t):"·"}</td>${z(b.cu,"#33415C")}</tr>`);
-    $("f_tb").innerHTML=h+`</tbody><tfoot><tr><td colspan="2" style="text-align:left">Total</td><td>${R(sum(B.map(b=>b.med)))}</td><td>${R(sum(B.map(b=>b.gt)))}</td><td>${R(sum(B.map(b=>b.rj)))}</td><td>${R(MED)}</td><td></td><td></td><td>${P(MED/TOT,2)}</td><td style="color:${CC.nf}">${R(NFT)}</td><td></td><td>${CUT?R(CUT):"·"}</td></tr></tfoot>`;
-    const dot=c=>c?`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${c};margin-right:8px"></span>`:"";
-    const row=(n,v,b,c,pc=true,st="")=>`<tr${b?' class="tot"':""}><td style="text-align:left;${st}">${dot(c)}${n}</td><td style="font-weight:${b?700:400};${st}">${R(v)}</td><td style="${st}">${pc?P(v/TOT,2):"·"}</td></tr>`;
-    const lbn=BNF.length?BNF[BNF.length-1]:null;
-    $("f_tc").innerHTML=`<thead><tr><th>Descrição</th><th>Valor</th><th>% do valor atualizado</th></tr></thead><tbody>`+row("Contrato original",C0,0,CC.c)+AD.map(a=>row(esc(a.n),a.v,0,a.c)).join("")+row("Contrato + aditivos",CA,1)+row("Gatilho",GT,0,CC.gt)+(RJ>0?row("Reajuste",RJ,0,CC.rj):"")+row("Valor atualizado",TOT,1)+row("Medido acumulado (bruto)",MED,0,CC.med)+row("Saldo a medir",SAL,1)+
-      (lbn?row(`Notas fiscais emitidas <span style="font-weight:400;font-size:11.5px">(informativo, até o BM ${lbn.n})</span>`,NFT,0,CC.nf,false,`color:${CC.nf}`):"")+`</tbody>`;
+    const Rr=B.filter(b=>b.cu!=null&&b.nf!=null).map(b=>({b,nf:b.nf,cu:b.cu,res:b.nf-b.cu}));
+    const box=$("f_resSec"),pend=B.filter(b=>b.cu!=null&&b.nf==null);
+    if(!Rr.length){$("f_res").innerHTML="";$("f_resleg").innerHTML="";$("f_resempty").style.display="";
+      $("f_resempty").innerHTML=hasCU?"Os meses com custo informado ainda não têm nota fiscal emitida, então não há resultado para comparar.":"Informe o custo do mês na aba <b>Lançar medições</b> para ver o resultado. O resultado compara a nota fiscal emitida com o custo de cada mês.";
+      box.querySelector(".box").style.display="none";return;}
+    box.querySelector(".box").style.display="";$("f_resempty").style.display=pend.length?"":"none";
+    if(pend.length)$("f_resempty").innerHTML=`Sem resultado ainda, por falta de nota fiscal: ${pend.map(b=>"BM "+b.n+" ("+mn(b.m)+")").join(", ")}.`;
+    let acc=0;const accPts=[];Rr.forEach((r,k)=>{acc+=r.res;accPts.push(acc);});
+    const all=[0,...Rr.map(r=>r.res),...accPts];
+    let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo||1)*.16;lo-=pad;hi+=pad*1.3;
+    const W=1076,H=360,ml=62,mr=118,mt=30,mb=50,cw=(W-ml-mr)/Rr.length,bw=Math.min(58,cw*.44);
+    const ys=v=>mt+(H-mt-mb)*(hi-v)/(hi-lo);
+    const rng=hi-lo,st=rng>12e6?4e6:rng>6e6?2e6:rng>2.4e6?1e6:rng>1.2e6?5e5:2e5;
+    let s="";for(let q=Math.ceil(lo/st)*st;q<=hi;q+=st){const zero=Math.abs(q)<1,qq=zero?0:q;s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(q)}" y2="${ys(q)}" stroke="${zero?"#9AA6B8":"#F1F3F7"}" ${zero?'stroke-width="1.4"':""}/><text class="ax" x="${ml-8}" y="${ys(q)+4}" text-anchor="end">${qq>0?"+":""}${(qq/1e6).toLocaleString("pt-BR",{maximumFractionDigits:1})} mi</text>`;}
+    Rr.forEach((r,k)=>{const x=ml+k*cw+(cw-bw)/2,pos=r.res>=0,c=pos?CC.pos:CC.neg,d=k*85;
+      const yv=ys(r.res),h=Math.abs(ys(0)-yv);
+      s+=`<rect class="hit ${pos?"gb":"gbn"}" style="--d:${d}ms" data-k="${k}" x="${x}" y="${pos?yv:ys(0)}" width="${bw}" height="${Math.max(h,1.5)}" rx="4" fill="${c}"/>`;
+      s+=`<text class="fd halo" style="--d:${d+250}ms" x="${x+bw/2}" y="${pos?yv-8:yv+16}" text-anchor="middle" font-size="12" font-weight="700" fill="${c}">${r.res>=0?"+":"−"}${mi(Math.abs(r.res))}</text>`;
+      s+=`<text x="${x+bw/2}" y="${H-mb+18}" text-anchor="middle" font-weight="700">${M3(r.b)}</text><text class="ax" x="${x+bw/2}" y="${H-mb+33}" text-anchor="middle">BM ${r.b.n}</text>`;});
+    if(accPts.length>1){const px=k=>ml+k*cw+cw/2;
+      s+=`<path class="dl" pathLength="1" d="${accPts.map((v,k)=>(k?"L":"M")+px(k)+","+ys(v)).join(" ")}" fill="none" stroke="#5B6B8C" stroke-width="2.2" stroke-dasharray="5 4"/>`;
+      const lk=accPts.length-1;s+=`<g class="fd" style="--d:${Rr.length*85+200}ms"><circle cx="${px(lk)}" cy="${ys(acc)}" r="4" fill="#5B6B8C"/><text class="halo" x="${px(lk)+8}" y="${ys(acc)+4}" font-size="11" font-weight="700" fill="#5B6B8C">acum. ${acc>=0?"+":"−"}${M(Math.abs(acc))}</text></g>`;}
+    s+=`<text class="ax" x="${ml-8}" y="${mt-12}" text-anchor="end" font-weight="700" fill="#68717D">R$ (milhões)</text>`;
+    const e=$("f_res");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
+    $("f_resleg").innerHTML=`<div><span style="background:${CC.pos}"></span>Resultado positivo (nota acima do custo)</div><div><span style="background:${CC.neg}"></span>Resultado negativo (custo acima da nota)</div><div><span class="ln" style="background:#5B6B8C"></span>Resultado acumulado</div>`;
+    e.querySelectorAll(".hit").forEach(h=>{const r=Rr[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>BM ${r.b.n} · ${ML(r.b)}</b>${row(CC.nf,"Nota fiscal",R(r.nf))}${row(CC.cu,"Custo do mês",R(r.cu))}<div class="d" style="color:${r.res>=0?"#7FE3C4":"#FF9DB0"}">Resultado ${r.res>=0?"+":"−"}${R(Math.abs(r.res))} · ${P(r.res/r.nf)} da nota</div>`);h.onmouseleave=hide;});
   })();
 
-  $("f_notes").innerHTML=`<b>Notas:</b> valores lançados na aba Lançar medições, exibidos sem centavos. O valor atualizado é a soma do contrato original, dos termos aditivos (${AD.map(a=>esc(a.n)).join(", ")||"nenhum"}), do gatilho${RJ>0?" e do reajuste":""}. O total de cada mês soma a medição, o gatilho e o reajuste, e os percentuais são calculados sobre o valor atualizado. As notas fiscais e o custo do mês são informativos e não entram no medido nem no saldo.`;
+  $("f_notes").innerHTML=`<b>Notas:</b> valores lançados na aba Lançar medições, exibidos em milhões de reais. O total de cada mês soma a medição, o gatilho e o reajuste. A nota fiscal e o custo do mês são informativos. O resultado do mês é a nota fiscal emitida menos o custo do mês, e só aparece nos meses com custo informado.`;
   if(typeof updCapa==="function")updCapa();
 }
 
