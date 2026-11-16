@@ -222,14 +222,18 @@ input:focus,select:focus,textarea:focus{outline:2px solid #B9C6E6;border-color:#
 .ngrp{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--ink2);padding:11px 11px;border-radius:9px;cursor:pointer;text-align:left;text-transform:uppercase;margin-top:5px;transition:background .18s,color .18s}
 .ngrp:hover{background:var(--line)}
 .ngrp svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none;opacity:.75}
-.ngrp .chv{margin-left:auto;width:12px;height:12px;stroke-width:2.4;transition:transform .25s ease;opacity:.6}
+.ngrp .chv{margin-left:auto;width:12px;height:12px;stroke-width:2.4;transition:transform .6s cubic-bezier(.3,.7,.3,1);opacity:.6}
 .ngrp.open .chv{transform:rotate(90deg)}
 .ngrp.cur{color:var(--navy);background:#F1F5FB} .ngrp.cur svg:first-child{stroke:var(--orange);opacity:1}
-.nsub{display:none;flex-direction:column;gap:1px;margin:3px 0 6px 18px;padding-left:8px;border-left:2px solid var(--grid)}
-.nsub.open{display:flex;animation:appearUp .3s ease both}
-.nsub a{font-size:13px;padding:9px 10px}
+.nsub{display:grid;grid-template-rows:0fr;opacity:0;margin:0 0 0 18px;transition:grid-template-rows .75s cubic-bezier(.3,.7,.3,1),opacity .6s ease,margin .75s cubic-bezier(.3,.7,.3,1)}
+.nsub.open{grid-template-rows:1fr;opacity:1;margin:3px 0 6px 18px}
+.nsub>.nin{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:1px;padding-left:8px;border-left:2px solid var(--grid)}
+.nsub a{font-size:13px;padding:9px 10px;opacity:0;transform:translateX(-8px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1),background .18s,color .18s}
+.nsub.open a{opacity:1;transform:none}
+.nsub.open a:nth-child(1){transition-delay:.12s,.12s,0s,0s}.nsub.open a:nth-child(2){transition-delay:.2s,.2s,0s,0s}.nsub.open a:nth-child(3){transition-delay:.28s,.28s,0s,0s}.nsub.open a:nth-child(4){transition-delay:.36s,.36s,0s,0s}.nsub.open a:nth-child(5){transition-delay:.44s,.44s,0s,0s}
+.brandtile{cursor:pointer}
 body.g-med .sidewho,body.g-med #notes{display:none}
-@media (max-width:980px){.nav{flex-direction:column;width:100%}.nsub{margin-left:0;padding-left:0;border-left:0}.nsub.open{flex-direction:row;flex-wrap:wrap}.ngrp{margin-top:0}}
+@media (max-width:980px){.nav{flex-direction:column;width:100%}.nsub,.nsub.open{margin-left:0}.nsub>.nin{padding-left:0;border-left:0;flex-direction:row;flex-wrap:wrap}.ngrp{margin-top:0}}
 
 /* ===== acompanhamento de medições ===== */
 .fhead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
@@ -295,26 +299,100 @@ body.g-med .sidewho,body.g-med #notes{display:none}
  body.pfin .fhead .cap{max-width:none}
 }
 #f_body>.sec:first-child,#f_ed>.sec:first-child{margin-top:24px} #f_ed>.sec:first-child{margin-top:4px}
+
+/* ===== efeitos dos gráficos ===== */
+.pane.on{animation:paneIn .55s cubic-bezier(.2,.75,.2,1) both}
+@keyframes paneIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.fin .gb{transform-box:fill-box;transform-origin:50% 100%}
+.fin .rev .gb{transform:scaleY(0)}
+.fin .rev.in .gb{animation:fgrow 1s cubic-bezier(.2,.8,.2,1) var(--d,0ms) both}
+@keyframes fgrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.fin .rev .fd,.fin .rev .pp,.fin .rev .ds,.fin .rev .fa{opacity:0}
+.fin .rev.in .fd{animation:ffade .7s ease calc(var(--d,0ms) + 300ms) both}
+.fin .rev.in .fa{animation:ffade 1.2s ease 1s both}
+@keyframes ffade{from{opacity:0}to{opacity:1}}
+.fin .pp{transform-box:fill-box;transform-origin:center}
+.fin .rev.in .pp{animation:fpop .5s cubic-bezier(.3,1.5,.5,1) var(--d,0ms) both}
+@keyframes fpop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.fin .rev .dl{stroke-dasharray:1;stroke-dashoffset:1}
+.fin .rev.in .dl{animation:fdraw 1.7s cubic-bezier(.4,0,.2,1) .15s both}
+@keyframes fdraw{to{stroke-dashoffset:0}}
+.fin .rev.in .ds{animation:fseg .8s cubic-bezier(.2,.8,.2,1) var(--d,0ms) both}
+@keyframes fseg{from{opacity:0;transform:scale(.82) rotate(-18deg)}to{opacity:1;transform:none}}
+.fin .rev .k{opacity:0;transform:translateY(14px)}
+.fin .rev.in .k{animation:appearUp .6s cubic-bezier(.2,.75,.2,1) both}
+.fin .rev.in .k:nth-child(2){animation-delay:.09s}.fin .rev.in .k:nth-child(3){animation-delay:.18s}.fin .rev.in .k:nth-child(4){animation-delay:.27s}
+@media (prefers-reduced-motion:reduce){.fin .rev *,.pane.on,.nsub,.nsub a,#capa,#capa *{animation:none!important;transition:none!important}.fin .rev .gb{transform:none}.fin .rev .fd,.fin .rev .pp,.fin .rev .ds,.fin .rev .fa,.fin .rev .k,.nsub.open a{opacity:1;transform:none}.fin .rev .dl{stroke-dashoffset:0}}
+@media print{body.pfin .rev,body.pfin .rev *{animation:none!important;transition:none!important;opacity:1!important}body.pfin .rev,body.pfin .rev .gb,body.pfin .rev .k,body.pfin .rev .pp,body.pfin .rev .ds{transform:none!important}body.pfin .rev .dl{stroke-dashoffset:0!important}body.pfin .rev .fa{opacity:1!important}#capa{display:none!important}}
+
+/* ===== capa ===== */
+#capa{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:28px 20px;overflow:auto;color:#fff;background:radial-gradient(ellipse at 25% 15%,#0A2E7A 0%,#001C54 45%,#000B26 100%);transition:opacity .7s ease,transform .9s cubic-bezier(.3,.7,.2,1),visibility 0s linear .9s}
+#capa.out{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
+#capa .cw{position:absolute;left:-5%;right:-5%;bottom:-70px;height:190px;border-top:2px solid rgba(242,169,59,.75);border-radius:50%;pointer-events:none}
+#capa .cw.b{bottom:-110px;border-top-color:rgba(255,255,255,.14)}
+#capa .cin{position:relative;width:min(980px,100%);text-align:center}
+#capa .cin>*{animation:capaIn .9s cubic-bezier(.2,.75,.2,1) both}
+#capa .clogo{width:210px;max-width:60%;animation-delay:.05s}
+#capa .ck{margin-top:30px;font-size:16px;font-weight:700;color:var(--orange);animation-delay:.15s}
+#capa h1{font-size:38px;line-height:1.12;font-weight:700;margin-top:6px;animation-delay:.22s}
+#capa .cs{font-size:17px;color:#B8C6E3;margin-top:10px;animation-delay:.3s}
+#capa .cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:38px;animation-delay:.42s}
+@keyframes capaIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+#capa .cc{position:relative;text-align:left;font-family:inherit;color:#fff;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:26px 26px 22px;cursor:pointer;overflow:hidden;transition:transform .45s cubic-bezier(.2,.75,.2,1),background .35s,border-color .35s,box-shadow .45s,opacity .5s}
+#capa .cc:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--orange);transform:scaleY(0);transform-origin:bottom;transition:transform .45s cubic-bezier(.2,.75,.2,1)}
+#capa .cc:hover{transform:translateY(-6px);background:rgba(255,255,255,.11);border-color:rgba(242,169,59,.9);box-shadow:0 24px 50px -20px rgba(0,0,0,.6)}
+#capa .cc:hover:before{transform:scaleY(1)}
+#capa .cc .ci{width:54px;height:54px;border-radius:14px;background:rgba(242,169,59,.16);display:grid;place-items:center;transition:background .35s}
+#capa .cc:hover .ci{background:var(--orange)}
+#capa .cc .ci svg{width:26px;height:26px;stroke:var(--orange);fill:none;stroke-width:1.8;transition:stroke .35s}
+#capa .cc:hover .ci svg{stroke:var(--navy)}
+#capa .cc .ct{font-size:23px;font-weight:700;margin-top:18px;text-transform:uppercase}
+#capa .cc .cd{font-size:15px;line-height:1.45;color:#B8C6E3;margin-top:8px;min-height:44px}
+#capa .cc .cst{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;color:#DCE4F2;font-weight:700;min-height:36px}
+#capa .cc .cgo{position:absolute;right:22px;top:26px;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);display:grid;place-items:center;transition:transform .45s cubic-bezier(.2,.75,.2,1),background .35s,border-color .35s}
+#capa .cc .cgo svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2}
+#capa .cc:hover .cgo{transform:translateX(5px);background:var(--orange);border-color:var(--orange)}#capa .cc:hover .cgo svg{stroke:var(--navy)}
+#capa .cc.pick{transform:scale(1.04);background:rgba(242,169,59,.2);border-color:var(--orange)}
+#capa .cc.dim{opacity:0;transform:scale(.94)}
+#capa .cfoot{margin-top:30px;font-size:13px;color:#8FA2CC;animation-delay:.55s}
+@media (max-width:760px){#capa{align-items:flex-start}#capa .cards{grid-template-columns:1fr}#capa h1{font-size:28px}#capa .clogo{width:160px}}
 </style>
 </head><body>
+<div id="capa"><div class="cw b"></div><div class="cw"></div><div class="cin">
+  <img class="clogo" id="capaLogo" alt="Tripoloni Construtora">
+  <div class="ck">BR-277 · Duplicação · Irati</div>
+  <h1>ACOMPANHAMENTO DA OBRA</h1>
+  <div class="cs">Escolha o que você quer acompanhar</div>
+  <div class="cards">
+    <button type="button" class="cc" data-go="mp"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
+      <div class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/></svg></div>
+      <div class="ct">Médio prazo</div><div class="cd">Restrições do planejamento de médio prazo: painel, situação do dia, acompanhamento por responsável e banco de dados.</div>
+      <div class="cst" id="capaMp">Carregando…</div></button>
+    <button type="button" class="cc" data-go="med"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
+      <div class="ci"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+      <div class="ct">Acompanhamento de medições</div><div class="cd">Valor do contrato, medições mensais, gatilho, reajuste, notas fiscais e curva acumulada.</div>
+      <div class="cst" id="capaMed">Carregando…</div></button>
+  </div>
+  <div class="cfoot">Tripoloni Construtora · Contrato VIAR-OBR-383-2025</div>
+</div></div>
 <div class="app">
   <aside class="side">
     <div class="brandtile"><img src="data:image/png;base64,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" alt="Tripoloni Construtora"><div class="bsub">Médio Prazo · Medições</div></div>
     <div class="navlbl">Navegação</div>
     <nav class="nav" id="tabs">
       <button type="button" class="ngrp" data-g="mp"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Médio prazo<svg class="chv" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></button>
-      <div class="nsub" data-g="mp">
+      <div class="nsub" data-g="mp"><div class="nin">
       <a href="#" data-t="pane-dash" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Painel<span class="dot"></span></a>
       <a href="#" data-t="pane-dia"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 4-1.5 6-2.5 7h17C19.5 15 18 13 18 9a6 6 0 0 0-6-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Situação do dia<span class="dot"></span></a>
       <a href="#" data-t="pane-resumo"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/></svg>Resumo do dia<span class="dot"></span></a>
       <a href="#" data-t="pane-acomp"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>Acompanhamento<span class="dot"></span></a>
       <a href="#" data-t="pane-plan"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>Banco de dados<span class="dot"></span></a>
-      </div>
+      </div></div>
       <button type="button" class="ngrp" data-g="med"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Acompanhamento de medições<svg class="chv" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></button>
-      <div class="nsub" data-g="med">
+      <div class="nsub" data-g="med"><div class="nin">
       <a href="#" data-t="pane-fin"><svg viewBox="0 0 24 24"><path d="M3 20l6-8 4 4 8-11"/></svg>Painel financeiro<span class="dot"></span></a>
       <a href="#" data-t="pane-fined"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>Lançar medições<span class="dot"></span></a>
-      </div>
+      </div></div>
     </nav>
     <div class="sidewho"><label for="quem">Quem está preenchendo</label><select id="quem"><option value="">— selecione —</option></select></div>
     <div class="sidefoot"><b>VIAR-OBR-383-2025</b>BR-277 · Duplicação<br>Irati · Paraná</div>
@@ -466,27 +544,15 @@ body.g-med .sidewho,body.g-med #notes{display:none}
     </div>
     <div id="f_body">
     <div class="sec">
-      <h2>Quanto do contrato já foi medido</h2>
-      <div class="cap">Valor medido acumulado, incluindo o reajuste, e saldo a medir sobre o valor atualizado do contrato.</div>
-      <div class="box"><div class="fprog" id="f_prog"></div><div class="fpl" id="f_pl"></div></div>
-    </div>
-    <div class="sec" id="f_nfSec">
-      <h2>Notas fiscais emitidas <span style="font-weight:400;font-size:13px;color:#68717D">(informativo)</span></h2>
-      <div class="cap">Valor das notas fiscais emitidas para cada medição. Apenas para consulta: o medido, o saldo e os percentuais continuam calculados sobre o valor bruto.</div>
-      <div class="kpis k3" id="f_nfk" style="margin-top:11px"></div>
-    </div>
-    <div class="sec">
       <div class="two">
-        <div><h2>Como se forma o valor do contrato</h2><div class="cap">Do valor original ao valor atualizado, somando os termos aditivos e o reajuste.</div><div class="box"><svg id="f_wf"></svg></div></div>
-        <div><h2>Composição do valor atualizado</h2><div class="cap">Participação de cada parcela no valor total.</div><div class="box"><svg id="f_don"></svg></div></div>
+        <div><h2>Composição do valor atualizado</h2><div class="cap">Participação de cada parcela no valor total do contrato.</div><div class="box"><svg id="f_don"></svg></div></div>
+        <div><h2>Quadro do contrato</h2><div class="cap">Do contrato original ao valor atualizado, o medido e o saldo.</div><div class="box tblw" style="padding:6px 10px"><table class="tbl" id="f_tc"></table></div></div>
       </div>
     </div>
     <div class="sec pb">
       <h2>Medições mensais</h2>
-      <div class="cap">Valor bruto de cada boletim de medição, separando a medição e o reajuste (gatilho), e ao lado a nota fiscal emitida. A linha tracejada marca a média mensal do valor bruto.</div>
-      <div class="box tblw"><svg id="f_col" style="min-width:760px"></svg>
-        <div class="leg"><div><span style="background:#1F7FA6"></span>Medição</div><div><span style="background:#F2A93B"></span>Reajuste</div><div><span class="ln" style="background:#8A94A6"></span>Média mensal</div><div><span style="background:#8A4FC4"></span>Nota fiscal emitida</div></div>
-      </div>
+      <div class="cap">Valor bruto de cada boletim de medição, separando medição, gatilho e reajuste, e ao lado a nota fiscal emitida. A linha tracejada marca a média mensal do valor bruto. O traço escuro marca o custo do mês, quando informado.</div>
+      <div class="box tblw"><svg id="f_col" style="min-width:760px"></svg><div class="leg" id="f_colleg"></div></div>
     </div>
     <div class="sec">
       <h2>Curva acumulada</h2>
@@ -494,18 +560,9 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <div class="box tblw"><svg id="f_cur" style="min-width:760px"></svg></div>
     </div>
     <div class="sec pb">
-      <h2>Para onde vai o valor do contrato</h2>
-      <div class="cap">Da esquerda para a direita: as parcelas que formam o valor atualizado, o quanto já foi medido e o saldo, e a medição de cada mês. A largura das faixas é proporcional ao valor.</div>
-      <div class="box tblw"><svg id="f_sk" class="sk" style="min-width:760px"></svg></div>
-    </div>
-    <div class="sec">
       <h2>Quadro das medições</h2>
-      <div class="cap">Percentuais calculados sobre o valor atualizado do contrato (contrato, aditivos e reajuste).</div>
-      <div class="box tblw" style="padding:6px 10px"><table class="tbl" id="f_tb" style="min-width:860px"></table></div>
-    </div>
-    <div class="sec">
-      <h2>Quadro do contrato</h2>
-      <div class="box tblw" style="padding:6px 10px;max-width:680px"><table class="tbl" id="f_tc"></table></div>
+      <div class="cap">Percentuais calculados sobre o valor atualizado do contrato.</div>
+      <div class="box tblw" style="padding:6px 10px"><table class="tbl" id="f_tb" style="min-width:1000px"></table></div>
     </div>
     <div class="fnotes" id="f_notes"></div>
     </div>
@@ -1023,7 +1080,7 @@ function rebuildLists(){
 }
 const isTyping=()=>{const a=document.activeElement;return a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT");};
 function schedule(){if(isTyping()||EDOPEN){PENDING=true;return;}render();}
-function render(){PENDING=false;renderDash();renderPlan();renderAcomp();renderDia();renderResumo();}
+function render(){PENDING=false;updCapa();renderDash();renderPlan();renderAcomp();renderDia();renderResumo();}
 function miniBars(rows,W,H){ // rows: [{lbl, a, c}]  a=adicionadas, c=concluidas
   const ml=24,mr=8,mt=10,mb=22,bw=(W-ml-mr)/rows.length,gap=3;
   const mx=Math.max(1,...rows.map(r=>Math.max(r.a,r.c)));
@@ -1174,22 +1231,22 @@ const SEED={itens:[
  {id:null,ordem:1,descricao:"CONTRATO",tipo:"contrato",valor:157082787.91},
  {id:null,ordem:2,descricao:"TAC-01",tipo:"aditivo",valor:1756322.31},
  {id:null,ordem:3,descricao:"TAC-02",tipo:"aditivo",valor:17507044},
- {id:null,ordem:4,descricao:"REAJUSTE",tipo:"reajuste",valor:1000806.5}],
+ {id:null,ordem:4,descricao:"GATILHO",tipo:"gatilho",valor:1000806.5}],
  bms:[
- {id:null,n:1,mes:"JAN",ano:2026,medicao:3036763.1149152536,reajuste:0,nota_fiscal:2909933.21},
- {id:null,n:2,mes:"FEV",ano:2026,medicao:4117195.2492951946,reajuste:0,nota_fiscal:3801508.15},
- {id:null,n:3,mes:"MAR",ano:2026,medicao:5980711.043682337,reajuste:0,nota_fiscal:5217276.37},
- {id:null,n:4,mes:"ABR",ano:2026,medicao:5874021.850613262,reajuste:0,nota_fiscal:5455409.66},
- {id:null,n:5,mes:"MAI",ano:2026,medicao:7084958.897870449,reajuste:0,nota_fiscal:6254648.74},
- {id:null,n:6,mes:"JUN",ano:2026,medicao:9159709.3410887,reajuste:0,nota_fiscal:8628980.69},
- {id:null,n:7,mes:"JUL",ano:2026,medicao:8734150.075907685,reajuste:0,nota_fiscal:7871712.54},
- {id:null,n:8,mes:"AGO",ano:2026,medicao:6023384.10296911,reajuste:712763.67,nota_fiscal:6369303.78},
- {id:null,n:9,mes:"SET",ano:2026,medicao:11251600.54,reajuste:288042.56,nota_fiscal:null}]};
+ {id:null,n:1,mes:"JAN",ano:2026,medicao:3036763.1149152536,gatilho:0,reajuste:0,custo:null,nota_fiscal:2909933.21},
+ {id:null,n:2,mes:"FEV",ano:2026,medicao:4117195.2492951946,gatilho:0,reajuste:0,custo:null,nota_fiscal:3801508.15},
+ {id:null,n:3,mes:"MAR",ano:2026,medicao:5980711.043682337,gatilho:0,reajuste:0,custo:null,nota_fiscal:5217276.37},
+ {id:null,n:4,mes:"ABR",ano:2026,medicao:5874021.850613262,gatilho:0,reajuste:0,custo:null,nota_fiscal:5455409.66},
+ {id:null,n:5,mes:"MAI",ano:2026,medicao:7084958.897870449,gatilho:0,reajuste:0,custo:null,nota_fiscal:6254648.74},
+ {id:null,n:6,mes:"JUN",ano:2026,medicao:9159709.3410887,gatilho:0,reajuste:0,custo:null,nota_fiscal:8628980.69},
+ {id:null,n:7,mes:"JUL",ano:2026,medicao:8734150.075907685,gatilho:0,reajuste:0,custo:null,nota_fiscal:7871712.54},
+ {id:null,n:8,mes:"AGO",ano:2026,medicao:6023384.10296911,gatilho:712763.67,reajuste:0,custo:null,nota_fiscal:6369303.78},
+ {id:null,n:9,mes:"SET",ano:2026,medicao:11251600.54,gatilho:288042.56,reajuste:0,custo:null,nota_fiscal:null}]};
 const MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 const MES={JAN:"Janeiro",FEV:"Fevereiro",MAR:"Março",ABR:"Abril",MAI:"Maio",JUN:"Junho",JUL:"Julho",AGO:"Agosto",SET:"Setembro",OUT:"Outubro",NOV:"Novembro",DEZ:"Dezembro"};
-const TIPOS={contrato:"Contrato original",aditivo:"Termo aditivo",reajuste:"Reajuste"};
+const TIPOS={contrato:"Contrato original",aditivo:"Termo aditivo",gatilho:"Gatilho",reajuste:"Reajuste"};
 const clone=o=>JSON.parse(JSON.stringify(o));
-let D=Object.assign(clone(SEED),{log:[]}),ONLINE=false,ERR="",EDIT=false,DR=null,LOADING=false,MY=false,WHO="";
+let D=Object.assign(clone(SEED),{log:[]}),ONLINE=false,OLD=false,RES="",ERR="",EDIT=false,DR=null,LOADING=false,MY=false,WHO="";
 let AUTH=(function(){try{return sessionStorage.getItem("med_authed")==="1"}catch(e){return false}})();
 
 const n0=v=>Math.round(v).toLocaleString("pt-BR");
@@ -1203,11 +1260,11 @@ const mn=m=>MES[String(m).toUpperCase()]||m;
 const ML=b=>mn(b.m)+(MY?" de "+b.ano:"");
 const M3=b=>(MES[String(b.m).toUpperCase()]?MES[String(b.m).toUpperCase()].slice(0,3):b.m)+(MY?"/"+String(b.ano).slice(2):"");
 const kp=(t,big,sub,c,hi)=>`<div class="k${hi?" hi":""}"><div class="b" style="background:${c}"></div><div class="kt">${t}</div><div class="kv">${big}</div><div class="ks">${sub}</div></div>`;
-const CC={c:"#1F4E9A",rj:"#F2A93B",med:"#1F7FA6",sal:"#C5CCD8",nf:"#8A4FC4"},ADC=["#5E8FDB","#2BA57E","#3BA3B8","#9C7A4E","#C25A8A"];
+const CC={c:"#1F4E9A",gt:"#F2A93B",rj:"#C25A8A",cu:"#33415C",med:"#1F7FA6",sal:"#C5CCD8",nf:"#8A4FC4"},ADC=["#5E8FDB","#2BA57E","#3BA3B8","#9C7A4E","#C25A8A"];
 const ftip=(e,h)=>tip(e,'<div class="ft">'+h+'</div>');
 const parseBR=t=>{t=String(t==null?"":t).trim().replace(/\s|R\$/g,"");if(!t)return NaN;if(t.includes(","))t=t.replace(/\./g,"").replace(",",".");else if(/^-?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,"");return Number(t);};
 const dth=s=>{if(!s)return "";const d=new Date(s);if(isNaN(d))return "";return d.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).replace(",","");};
-const warnHtml=()=>ONLINE?"":`<div class="fwarn"><b>Edição ainda não liberada.</b> ${SB?"As tabelas de medições não foram encontradas no banco de dados"+(ERR?" ("+esc(ERR)+")":"")+".":"Não foi possível ligar ao banco de dados."} Os valores abaixo são os da planilha de origem. Para liberar a edição, rode o arquivo <b>medicoes.sql</b> no SQL Editor do Supabase.</div>`;
+const warnHtml=()=>ONLINE?(OLD?`<div class="fwarn"><b>Falta atualizar o banco de dados.</b> As colunas de gatilho, reajuste e custo ainda não existem. Rode o arquivo <b>medicoes_v2.sql</b> no SQL Editor do Supabase para liberar a edição. Até lá, o reajuste antigo aparece como gatilho.</div>`:""):`<div class="fwarn"><b>Edição ainda não liberada.</b> ${SB?"As tabelas de medições não foram encontradas no banco de dados"+(ERR?" ("+esc(ERR)+")":"")+".":"Não foi possível ligar ao banco de dados."} Os valores abaixo são os da planilha de origem. Para liberar a edição, rode o arquivo <b>medicoes.sql</b> no SQL Editor do Supabase.</div>`;
 
 /* ---------- leitura ---------- */
 async function load(){
@@ -1216,8 +1273,9 @@ async function load(){
   try{
     const [a,b,c]=await Promise.all([SB.from("medicoes").select("*").order("n"),SB.from("contrato_itens").select("*").order("ordem"),SB.from("medicoes_log").select("*").order("criado_em",{ascending:false}).limit(12)]);
     if(a.error)throw a.error;if(b.error)throw b.error;
-    D.bms=(a.data||[]).map(r=>({id:r.id,n:+r.n,mes:String(r.mes||"").toUpperCase(),ano:+r.ano,medicao:+r.medicao||0,reajuste:+r.reajuste||0,nota_fiscal:r.nota_fiscal==null?null:+r.nota_fiscal,por:r.atualizado_por||"",em:r.atualizado_em||""}));
-    D.itens=(b.data||[]).map(r=>({id:r.id,ordem:+r.ordem||0,descricao:r.descricao||"",tipo:r.tipo||"aditivo",valor:+r.valor||0,por:r.atualizado_por||"",em:r.atualizado_em||""}));
+    OLD=(a.data||[]).length>0&&!("gatilho" in a.data[0]);
+    D.bms=(a.data||[]).map(r=>({id:r.id,n:+r.n,mes:String(r.mes||"").toUpperCase(),ano:+r.ano,medicao:+r.medicao||0,gatilho:OLD?(+r.reajuste||0):(+r.gatilho||0),reajuste:OLD?0:(+r.reajuste||0),custo:r.custo==null?null:+r.custo,nota_fiscal:r.nota_fiscal==null?null:+r.nota_fiscal,por:r.atualizado_por||"",em:r.atualizado_em||""}));
+    D.itens=(b.data||[]).map(r=>({id:r.id,ordem:+r.ordem||0,descricao:r.descricao||"",tipo:OLD&&r.tipo==="reajuste"?"gatilho":(r.tipo||"aditivo"),valor:+r.valor||0,por:r.atualizado_por||"",em:r.atualizado_em||""}));
     D.log=c.error?[]:(c.data||[]);
     ONLINE=true;ERR="";
   }catch(e){ONLINE=false;ERR=e.message||String(e);}
@@ -1227,80 +1285,61 @@ async function load(){
 function render(){renderPanel();renderEd();}
 
 /* ---------- painel ---------- */
-function renderPanel(){
+let SIG="";
+function renderPanel(force){
+  const sig=JSON.stringify([D.bms,D.itens,ONLINE,OLD]);if(!force&&sig===SIG)return;SIG=sig;
   hide();
-  const C0=sum(D.itens.filter(i=>i.tipo==="contrato").map(i=>i.valor)),RJ=sum(D.itens.filter(i=>i.tipo==="reajuste").map(i=>i.valor));
+  const sumT=t=>sum(D.itens.filter(i=>i.tipo===t).map(i=>i.valor));
+  const C0=sumT("contrato"),GT=sumT("gatilho"),RJ=sumT("reajuste");
   const AD=D.itens.filter(i=>i.tipo==="aditivo").map((i,k)=>({n:i.descricao,v:i.valor,c:ADC[k%ADC.length]}));
-  const CA=C0+sum(AD.map(a=>a.v)),TOT=CA+RJ;
-  const B=[...D.bms].sort((a,b)=>a.n-b.n).map(b=>({n:b.n,m:b.mes,ano:b.ano,med:b.medicao,rj:b.reajuste,nf:b.nota_fiscal||null}));
+  const CA=C0+sum(AD.map(a=>a.v)),TOT=CA+GT+RJ;
+  const B=[...D.bms].sort((a,b)=>a.n-b.n).map(b=>({n:b.n,m:b.mes,ano:b.ano,med:b.medicao,gt:b.gatilho,rj:b.reajuste,nf:b.nota_fiscal||null,cu:b.custo||null}));
   MY=new Set(B.map(b=>b.ano)).size>1;
   $("f_warn").innerHTML=warnHtml();
   if(!B.length||TOT<=0){$("f_body").style.display="none";$("f_kp").innerHTML="";$("f_sub").textContent='Ainda não há medições lançadas. Use "Lançar medições" para incluir a primeira.';return;}
   $("f_body").style.display="";
-  let ac=0,anf=0;B.forEach(b=>{b.t=b.med+b.rj;ac+=b.t;b.ac=ac;if(b.nf){anf+=b.nf;b.anf=anf;}});
+  let ac=0,anf=0;B.forEach(b=>{b.t=b.med+b.gt+b.rj;ac+=b.t;b.ac=ac;if(b.nf){anf+=b.nf;b.anf=anf;}});
   const MED=ac,SAL=TOT-MED,N=B.length,avg=MED/N,last=B[N-1],BNF=B.filter(b=>b.nf),NFT=anf,big=B.reduce((a,b)=>b.t>a.t?b:a,B[0]);
-  $("f_sub").innerHTML=`Situação do contrato até o boletim de medição nº ${last.n} (${ML(last)}): valor contratual com os termos aditivos e o reajuste, o que já foi medido e o saldo a medir.`;
-  $("f_kp").innerHTML=kp("Valor atualizado do contrato",`R$ ${f2(TOT/1e6)}<small>mi</small>`,`${R(TOT)}<br>contrato, aditivos e reajuste`,"#F2A93B",1)+
-    kp("Medido acumulado",`R$ ${f2(MED/1e6)}<small>mi</small>`,`<b>${P(MED/TOT)}</b> do valor atualizado em ${N} medições`,CC.med)+
+  const hasRJ=B.some(b=>b.rj)||RJ>0,hasCU=B.some(b=>b.cu),CUT=sum(B.map(b=>b.cu||0));
+  const partes="contrato, aditivos"+(hasRJ?", gatilho e reajuste":" e gatilho");
+  RES=`BM ${last.n} · ${ML(last)} · ${P(MED/TOT)} medido`;
+  $("f_sub").innerHTML=`Situação do contrato até o boletim de medição nº ${last.n} (${ML(last)}): valor atualizado do contrato, o que já foi medido e o saldo a medir.`;
+  $("f_kp").innerHTML=kp("Valor atualizado do contrato",`R$ ${f2(TOT/1e6)}<small>mi</small>`,`${R(TOT)}<br>${partes}`,"#F2A93B",1)+
+    kp("Medido acumulado",`R$ ${f2(MED/1e6)}<small>mi</small>`,`<b>${P(MED/TOT)}</b> do valor atualizado em ${N} ${N>1?"medições":"medição"}`,CC.med)+
     kp("Saldo a medir",`R$ ${f2(SAL/1e6)}<small>mi</small>`,`<b>${P(SAL/TOT)}</b> do valor atualizado`,"#8A94A6")+
     kp(`Última medição · BM ${last.n}`,`R$ ${f2(last.t/1e6)}<small>mi</small>`,`${ML(last)}${big===last&&N>1?", a maior até agora":""} · média mensal de ${M(avg)}`,"#173A8A");
 
-  $("f_prog").innerHTML=`<div style="width:${MED/TOT*100}%;background:${CC.med}">Medido ${P(MED/TOT)}</div><div style="flex:1;background:${CC.sal};color:#33415C;justify-content:flex-end">Saldo ${P(SAL/TOT)}</div>`;
-  $("f_pl").innerHTML=`<span>medido: <b>${R(MED)}</b></span><span>saldo: <b>${R(SAL)}</b></span><span>valor atualizado: <b>${R(TOT)}</b></span>`;
-  $("f_prog").querySelectorAll("div").forEach((d,i)=>{d.onmousemove=e=>ftip(e,i?`<b>Saldo a medir</b><div>${R(SAL)}</div><div class="d">${P(SAL/TOT)} do valor atualizado</div>`:`<b>Medido acumulado</b><div>${R(MED)}</div><div class="d">${P(MED/TOT)} do valor atualizado</div>`);d.onmouseleave=hide;});
-
-  /* notas fiscais */
-  if(!BNF.length)$("f_nfSec").style.display="none";
-  else{$("f_nfSec").style.display="";const lb=BNF[BNF.length-1],brt=sum(BNF.map(b=>b.t)),pend=B.filter(b=>!b.nf);
-    $("f_nfk").innerHTML=kp("Notas fiscais emitidas",`R$ ${f2(NFT/1e6)}<small>mi</small>`,`${BNF.length} ${BNF.length>1?"notas":"nota"}, até o BM ${lb.n} (${ML(lb)})`,CC.nf)+
-      kp("Valor bruto dos mesmos BMs",`R$ ${f2(brt/1e6)}<small>mi</small>`,`as notas somam <b>${P(NFT/brt)}</b> do valor bruto desses BMs`,CC.med)+
-      kp("Sem nota emitida",`${pend.length}<small>${pend.length===1?"medição":"medições"}</small>`,pend.length?pend.map(b=>`BM ${b.n} (${ML(b)}): ${R(b.t)} bruto`).join("<br>"):"todas as medições com nota","#98A2B3");}
-
-  /* cascata */
-  (function(){
-    const st=[["Contrato original",C0,CC.c,0,0],...AD.map(a=>[a.n,a.v,a.c,1,0]),["Contrato + aditivos",CA,"#001C54",0,1],["Reajuste",RJ,CC.rj,1,0],["Valor atualizado",TOT,"#001C54",0,1]];
-    const W=540,H=360,ml=50,mr=6,mt=30,mb=60,cw=(W-ml-mr)/st.length,bw=cw*.62;
-    const lo=Math.floor(C0*.96/10e6)*10e6,hi=Math.ceil(TOT/10e6)*10e6+(TOT%10e6>7e6?10e6:0),ys=v=>mt+(H-mt-mb)*(1-(v-lo)/(hi-lo));
-    let s="";for(let g=lo;g<=hi;g+=10e6)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="#EEF1F5"/><text class="ax" x="${ml-6}" y="${ys(g)+4}" text-anchor="end">${g/1e6} mi</text>`;
-    s+=`<text class="ax" x="${ml}" y="${H-6}">eixo a partir de R$ ${lo/1e6} mi para mostrar os acréscimos</text>`;
-    let acc=0;
-    st.forEach(([n,v,c,inc,tot],k)=>{const x=ml+k*cw+(cw-bw)/2;let y0,y1;
-      if(inc){y0=acc;y1=acc+v;acc=y1;}else{y0=lo;y1=v;acc=v;}
-      s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(y1)}" width="${bw}" height="${Math.max(ys(y0)-ys(y1),2)}" rx="3" fill="${c}"/>`;
-      s+=`<text x="${x+bw/2}" y="${ys(y1)-7}" text-anchor="middle" font-size="${st.length>6?10.5:12}" font-weight="700">${inc?"+":""}${M(v)}</text>`;
-      const nm=n.split(" ");s+=`<text x="${x+bw/2}" y="${H-mb+18}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${tot?"#001C54":"#33415C"}">${nm.length>2?nm.slice(0,2).join(" "):n}</text>${nm.length>2?`<text x="${x+bw/2}" y="${H-mb+32}" text-anchor="middle" font-size="11.5" font-weight="700">${nm.slice(2).join(" ")}</text>`:""}`;
-      if(k<st.length-1){const nx=ml+(k+1)*cw+(cw-bw)/2;s+=`<line x1="${x+bw}" x2="${nx}" y1="${ys(acc)}" y2="${ys(acc)}" stroke="#A0A8B5" stroke-dasharray="3 3"/>`;}});
-    const e=$("f_wf");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    e.querySelectorAll(".hit").forEach(b=>{const [n,v]=st[+b.dataset.k];b.onmousemove=ev=>ftip(ev,`<b>${n}</b><div>${R(v)}</div><div class="d">${P(v/TOT,2)} do valor atualizado</div>`);b.onmouseleave=hide;});
-  })();
-
   /* rosca */
   (function(){
-    const parts=[["Contrato original",C0,CC.c],...AD.map(a=>[a.n,a.v,a.c]),["Reajuste",RJ,CC.rj]];
+    const parts=[["Contrato original",C0,CC.c],...AD.map(a=>[a.n,a.v,a.c]),["Gatilho",GT,CC.gt],["Reajuste",RJ,CC.rj]].filter(p=>p[1]>0);
     const W=540,H=360,cx=170,cy=180,R1=140,R0=88,sp=Math.min(62,260/parts.length),y0=180-sp*parts.length/2+10;let a0=-Math.PI/2,s="";
-    parts.forEach(([n,v,c],k)=>{if(v<=0)return;const a1=a0+v/TOT*2*Math.PI,lg=a1-a0>Math.PI?1:0,p=(rr,a)=>`${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`;
-      s+=`<path class="hit" data-k="${k}" d="M${p(R1,a0)}A${R1},${R1} 0 ${lg} 1 ${p(R1,a1)}L${p(R0,a1)}A${R0},${R0} 0 ${lg} 0 ${p(R0,a0)}Z" fill="${c}" stroke="#fff" stroke-width="2"/>`;a0=a1;});
-    s+=`<text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="22" font-weight="700">${M(TOT).replace(" mi","")}</text><text class="sm" x="${cx}" y="${cy+16}" text-anchor="middle">milhões de reais</text>`;
-    parts.forEach(([n,v,c],k)=>{const y=y0+k*sp;s+=`<rect x="345" y="${y}" width="12" height="12" rx="3" fill="${c}"/><text x="365" y="${y+11}" font-weight="700">${n}</text><text x="365" y="${y+28}" font-size="13" fill="#33415C">${M(v)} · ${P(v/TOT)}</text>`;});
+    parts.forEach(([n,v,c],k)=>{const a1=a0+Math.min(v/TOT,0.9999)*2*Math.PI,lg=a1-a0>Math.PI?1:0,p=(rr,a)=>`${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`;
+      s+=`<path class="hit ds" style="--d:${k*140}ms;transform-origin:${cx}px ${cy}px" data-k="${k}" d="M${p(R1,a0)}A${R1},${R1} 0 ${lg} 1 ${p(R1,a1)}L${p(R0,a1)}A${R0},${R0} 0 ${lg} 0 ${p(R0,a0)}Z" fill="${c}" stroke="#fff" stroke-width="2"/>`;a0=a1;});
+    s+=`<g class="fd" style="--d:500ms"><text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="22" font-weight="700">${M(TOT).replace(" mi","")}</text><text class="sm" x="${cx}" y="${cy+16}" text-anchor="middle">milhões de reais</text></g>`;
+    parts.forEach(([n,v,c],k)=>{const y=y0+k*sp;s+=`<g class="fd" style="--d:${200+k*140}ms"><rect x="345" y="${y}" width="12" height="12" rx="3" fill="${c}"/><text x="365" y="${y+11}" font-weight="700">${esc(n)}</text><text x="365" y="${y+28}" font-size="13" fill="#33415C">${M(v)} · ${P(v/TOT)}</text></g>`;});
     const e=$("f_don");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    e.querySelectorAll(".hit").forEach(b=>{const [n,v]=parts[+b.dataset.k];b.onmousemove=ev=>ftip(ev,`<b>${n}</b><div>${R(v)}</div><div class="d">${P(v/TOT,2)} do valor atualizado</div>`);b.onmouseleave=hide;});
+    e.querySelectorAll(".hit").forEach(b=>{const [n,v]=parts[+b.dataset.k];b.onmousemove=ev=>ftip(ev,`<b>${esc(n)}</b><div>${R(v)}</div><div class="d">${P(v/TOT,2)} do valor atualizado</div>`);b.onmouseleave=hide;});
   })();
 
   /* colunas mensais */
   (function(){
     const W=1076,H=340,ml=56,mr=14,mt=30,mb=44,cw=(W-ml-mr)/N,bw=Math.min(70,cw*.5),nw=Math.min(14,cw*.14);
-    const mx=Math.max(...B.map(b=>Math.max(b.t,b.nf||0))),step=mx>16e6?4e6:2e6,top=Math.ceil(mx/step)*step,ys=v=>mt+(H-mt-mb)*(1-v/top);
+    const mx=Math.max(...B.map(b=>Math.max(b.t,b.nf||0,b.cu||0))),step=mx>16e6?4e6:2e6,top=Math.ceil(mx*1.04/step)*step,ys=v=>mt+(H-mt-mb)*(1-v/top);
     let s="";for(let g=0;g<=top;g+=step)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="${g?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(g)+4}" text-anchor="end">${g/1e6} mi</text>`;
-    B.forEach((b,k)=>{const x=ml+k*cw+(cw-bw-nw-4)/2;
-      if(b.nf)s+=`<rect class="hit" data-k="${k}" x="${x+bw+4}" y="${ys(b.nf)}" width="${nw}" height="${ys(0)-ys(b.nf)}" rx="3" fill="${CC.nf}" opacity=".85"/>`;
-      else s+=`<text x="${x+bw+4+nw/2}" y="${ys(0)-6}" font-size="9.5" fill="${CC.nf}" font-weight="700" transform="rotate(-90 ${x+bw+4+nw/2} ${ys(0)-6})" dy="3">sem nota</text>`;
-      s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.med)}" width="${bw}" height="${ys(0)-ys(b.med)}" rx="4" fill="${CC.med}"/>`;
-      if(b.rj)s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.t)}" width="${bw}" height="${ys(b.med)-ys(b.t)}" rx="2" fill="${CC.rj}"/>`;
-      s+=`<text x="${x+bw/2}" y="${ys(b.t)-8}" text-anchor="middle" font-size="${N>12?10.5:12.5}" font-weight="700">${f2(b.t/1e6)}</text>`;
+    B.forEach((b,k)=>{const x=ml+k*cw+(cw-bw-nw-4)/2,d=k*70;
+      if(b.nf)s+=`<rect class="hit gb" style="--d:${d+120}ms" data-k="${k}" x="${x+bw+4}" y="${ys(b.nf)}" width="${nw}" height="${ys(0)-ys(b.nf)}" rx="3" fill="${CC.nf}" opacity=".85"/>`;
+      else s+=`<text class="fd" style="--d:${d}ms" x="${x+bw+4+nw/2}" y="${ys(0)-6}" font-size="9.5" fill="${CC.nf}" font-weight="700" transform="rotate(-90 ${x+bw+4+nw/2} ${ys(0)-6})" dy="3">sem nota</text>`;
+      s+=`<g class="gb" style="--d:${d}ms"><rect class="hit" data-k="${k}" x="${x}" y="${ys(b.med)}" width="${bw}" height="${ys(0)-ys(b.med)}" rx="4" fill="${CC.med}"/>`;
+      if(b.gt)s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.med+b.gt)}" width="${bw}" height="${ys(b.med)-ys(b.med+b.gt)}" rx="2" fill="${CC.gt}"/>`;
+      if(b.rj)s+=`<rect class="hit" data-k="${k}" x="${x}" y="${ys(b.t)}" width="${bw}" height="${ys(b.med+b.gt)-ys(b.t)}" rx="2" fill="${CC.rj}"/>`;
+      s+=`</g><text class="fd" style="--d:${d+250}ms" x="${x+bw/2}" y="${ys(b.t)-8}" text-anchor="middle" font-size="${N>12?10.5:12.5}" font-weight="700">${f2(b.t/1e6)}</text>`;
+      if(b.cu)s+=`<g class="fd hit" data-k="${k}" style="--d:${d+450}ms"><line x1="${x-5}" x2="${x+bw+5}" y1="${ys(b.cu)}" y2="${ys(b.cu)}" stroke="${CC.cu}" stroke-width="3" stroke-linecap="round"/><circle cx="${x-5}" cy="${ys(b.cu)}" r="3.5" fill="${CC.cu}"/></g>`;
       s+=`<text x="${x+bw/2}" y="${H-mb+18}" text-anchor="middle" font-weight="700">${M3(b)}</text><text class="ax" x="${x+bw/2}" y="${H-mb+33}" text-anchor="middle">BM ${b.n}</text>`;});
-    s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(avg)}" y2="${ys(avg)}" stroke="#8A94A6" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${ml+4}" y="${ys(avg)-6}" font-size="11.5" font-weight="700" fill="#68717D">média ${M(avg)}</text>`;
+    s+=`<g class="fd" style="--d:${N*70+300}ms"><line x1="${ml}" x2="${W-mr}" y1="${ys(avg)}" y2="${ys(avg)}" stroke="#8A94A6" stroke-width="1.5" stroke-dasharray="6 4"/><text class="halo" x="${ml+4}" y="${ys(avg)-6}" font-size="11.5" font-weight="700" fill="#68717D">média ${M(avg)}</text></g>`;
     const e=$("f_col");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
-    e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>BM ${b.n} · ${ML(b)}</b><div class="r"><span>${sw(CC.med)}Medição</span><b>${R(b.med)}</b></div>${b.rj?`<div class="r"><span>${sw(CC.rj)}Reajuste</span><b>${R(b.rj)}</b></div>`:""}<div class="d">Total bruto ${R(b.t)} · ${P(b.t/TOT,2)} do contrato</div><div class="r" style="margin-top:4px"><span>${sw(CC.nf)}Nota fiscal</span><b>${b.nf?R(b.nf)+" · "+P(b.nf/b.t)+" do bruto":"não emitida"}</b></div>`);h.onmouseleave=hide;});
+    $("f_colleg").innerHTML=`<div><span style="background:${CC.med}"></span>Medição</div><div><span style="background:${CC.gt}"></span>Gatilho</div>${hasRJ?`<div><span style="background:${CC.rj}"></span>Reajuste</div>`:""}<div><span class="ln" style="background:#8A94A6"></span>Média mensal</div><div><span style="background:${CC.nf}"></span>Nota fiscal emitida</div>${hasCU?`<div><span style="background:${CC.cu};height:4px;vertical-align:3px"></span>Custo do mês</div>`:""}`;
+    const row=(c,n,v)=>`<div class="r"><span>${sw(c)}${n}</span><b>${v}</b></div>`;
+    e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>BM ${b.n} · ${ML(b)}</b>${row(CC.med,"Medição",R(b.med))}${b.gt?row(CC.gt,"Gatilho",R(b.gt)):""}${b.rj?row(CC.rj,"Reajuste",R(b.rj)):""}<div class="d">Total bruto ${R(b.t)} · ${P(b.t/TOT,2)} do contrato</div><div style="margin-top:4px">${row(CC.nf,"Nota fiscal",b.nf?R(b.nf)+" · "+P(b.nf/b.t)+" do bruto":"não emitida")}${b.cu?row(CC.cu,"Custo do mês",R(b.cu)+" · "+P(b.cu/b.t)+" do bruto"):""}</div>`);h.onmouseleave=hide;});
   })();
 
   /* curva acumulada */
@@ -1310,94 +1349,44 @@ function renderPanel(){
     let s="";for(let g=0;g<=top;g+=20e6)s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(g)}" y2="${ys(g)}" stroke="${g?"#EEF1F5":"#C5CCD8"}"/><text class="ax" x="${ml-8}" y="${ys(g)+4}" text-anchor="end">${g/1e6} mi</text>`;
     s+=`<line x1="${ml}" x2="${W-mr}" y1="${ys(TOT)}" y2="${ys(TOT)}" stroke="#001C54" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W-mr+6}" y="${ys(TOT)+4}" font-size="11.5" font-weight="700">${M(TOT)}</text><text class="ax" x="${W-mr+6}" y="${ys(TOT)+18}">valor atualizado</text>`;
     const pts=[[0,0],...B.map((b,k)=>[k+1,b.ac])];
-    s+=`<path d="M${xs(0)},${ys(0)} ${pts.map(([i,v])=>`L${xs(i)},${ys(v)}`).join(" ")} L${xs(N)},${ys(0)} Z" fill="${CC.med}" opacity=".14"/>`;
-    s+=`<path d="${pts.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.med}" stroke-width="3"/>`;
+    s+=`<path class="fa" d="M${xs(0)},${ys(0)} ${pts.map(([i,v])=>`L${xs(i)},${ys(v)}`).join(" ")} L${xs(N)},${ys(0)} Z" fill="${CC.med}" fill-opacity=".14"/>`;
+    s+=`<path class="dl" pathLength="1" d="${pts.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.med}" stroke-width="3"/>`;
     const pn=[[0,0],...B.map((b,k)=>b.anf?[k+1,b.anf]:null).filter(Boolean)];
-    if(pn.length>1){s+=`<path d="${pn.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.nf}" stroke-width="2" stroke-dasharray="5 4"/>`;
-      const [li,lv]=pn[pn.length-1];s+=`<circle cx="${xs(li)}" cy="${ys(lv)}" r="4" fill="${CC.nf}"/><text x="${xs(li)+8}" y="${ys(lv)+16}" font-size="11" font-weight="700" fill="${CC.nf}">NF ${M(lv)}</text>`;}
-    s+=`<rect x="${xs(N)-3}" y="${ys(TOT)}" width="6" height="${ys(MED)-ys(TOT)}" fill="${CC.sal}" rx="2"/><text x="${xs(N)-10}" y="${(ys(TOT)+ys(MED))/2+4}" text-anchor="end" font-size="12" font-weight="700" fill="#68717D">saldo ${M(SAL)}</text>`;
+    if(pn.length>1){s+=`<g class="fd" style="--d:1300ms"><path d="${pn.map(([i,v],k)=>(k?"L":"M")+xs(i)+","+ys(v)).join(" ")}" fill="none" stroke="${CC.nf}" stroke-width="2" stroke-dasharray="5 4"/>`;
+      const [li,lv]=pn[pn.length-1];s+=`<circle cx="${xs(li)}" cy="${ys(lv)}" r="4" fill="${CC.nf}"/><text x="${xs(li)+8}" y="${ys(lv)+16}" font-size="11" font-weight="700" fill="${CC.nf}">NF ${M(lv)}</text></g>`;}
+    s+=`<g class="fd" style="--d:1500ms"><rect x="${xs(N)-3}" y="${ys(TOT)}" width="6" height="${ys(MED)-ys(TOT)}" fill="${CC.sal}" rx="2"/><text x="${xs(N)-10}" y="${(ys(TOT)+ys(MED))/2+4}" text-anchor="end" font-size="12" font-weight="700" fill="#68717D">saldo ${M(SAL)}</text></g>`;
     s+=`<text class="ax" x="${xs(0)}" y="${H-mb+18}" text-anchor="middle">início</text>`;
-    B.forEach((b,k)=>{const x=xs(k+1),y=ys(b.ac);
-      s+=`<circle class="hit" data-k="${k}" cx="${x}" cy="${y}" r="5.5" fill="#fff" stroke="${CC.med}" stroke-width="3"/>`;
-      s+=`<text x="${x}" y="${y-12}" text-anchor="middle" font-size="11.5" font-weight="700">${P(b.ac/TOT)}</text>`;
+    B.forEach((b,k)=>{const x=xs(k+1),y=ys(b.ac),d=250+k*(1300/N);
+      s+=`<circle class="hit pp" style="--d:${d}ms" data-k="${k}" cx="${x}" cy="${y}" r="5.5" fill="#fff" stroke="${CC.med}" stroke-width="3"/>`;
+      s+=`<text class="fd" style="--d:${d}ms" x="${x}" y="${y-12}" text-anchor="middle" font-size="11.5" font-weight="700">${P(b.ac/TOT)}</text>`;
       s+=`<text x="${x}" y="${H-mb+18}" text-anchor="middle" font-weight="700" font-size="12">${M3(b)}</text>`;});
     const e=$("f_cur");e.setAttribute("viewBox",`0 0 ${W} ${H}`);e.innerHTML=s;
     e.querySelectorAll(".hit").forEach(h=>{const b=B[+h.dataset.k];h.onmousemove=ev=>ftip(ev,`<b>Até o BM ${b.n} · ${ML(b)}</b><div>${R(b.ac)} medidos</div><div class="d">${P(b.ac/TOT,2)} do valor atualizado</div>${b.anf?`<div style="color:#C9B3EA;margin-top:3px">notas fiscais acumuladas: ${R(b.anf)}</div>`:""}`);h.onmouseleave=hide;});
   })();
 
-  /* sankey */
-  (function(){
-    const c0=[{id:"c",label:"Contrato original",c:CC.c},...AD.map((a,i)=>({id:"a"+i,label:a.n,c:a.c})),{id:"rj",label:"Reajuste",c:CC.rj}];
-    const c1=[{id:"T",label:"Valor atualizado",c:"#001C54"}],c2=[{id:"M",label:"Medido",c:CC.med},{id:"S",label:"Saldo a medir",c:"#98A2B3"}];
-    const c3=B.map(b=>({id:"b"+b.n,label:`BM ${b.n} · ${M3(b).toLowerCase()}`,c:CC.med}));
-    const links=[{s:"c",t:"T",v:C0,c:CC.c},...AD.map((a,i)=>({s:"a"+i,t:"T",v:a.v,c:a.c})),{s:"rj",t:"T",v:RJ,c:CC.rj},{s:"T",t:"M",v:MED,c:CC.med},{s:"T",t:"S",v:SAL,c:"#98A2B3"},...B.map(b=>({s:"M",t:"b"+b.n,v:b.t,c:CC.med,op:.35}))];
-    sankey($("f_sk"),[c0,c1,c2,c3],links,{W:1076,H:Math.max(560,N*30+240),gap:6,ml:200,mr:190,heads:["Parcelas","Valor","Situação","Medições"],fmt:M,
-      ltip:(l,a,b)=>`<b>${a.label} → ${b.label}</b><div>${R(l.v)}</div><div class="d">${P(l.v/TOT,2)} do valor atualizado</div>`,
-      ntip:n=>`<b>${n.label}</b><div>${R(n.v)}</div><div class="d">${P(n.v/TOT,2)} do valor atualizado</div>`});
-  })();
-
   /* tabelas */
   (function(){
-    let h=`<thead><tr><th>BM</th><th style="text-align:left">Mês</th><th>Medição</th><th>Reajuste</th><th>Total do mês</th><th>Acumulado</th><th>% do mês</th><th>% acumulado</th><th style="color:${CC.nf}">Nota fiscal</th><th style="color:${CC.nf}">NF / bruto</th></tr></thead><tbody>`;
-    B.forEach(b=>h+=`<tr><td style="text-align:left">${b.n}</td><td style="text-align:left;font-weight:700">${ML(b)}</td><td>${R(b.med)}</td><td style="color:${b.rj?"#B8650A":"#B0B8C5"}">${b.rj?R(b.rj):"·"}</td><td style="font-weight:700">${R(b.t)}</td><td>${R(b.ac)}</td><td>${P(b.t/TOT,2)}</td><td style="font-weight:700">${P(b.ac/TOT,2)}</td><td style="color:${CC.nf}">${b.nf?R(b.nf):"não emitida"}</td><td style="color:${CC.nf}">${b.nf?P(b.nf/b.t):"·"}</td></tr>`);
-    $("f_tb").innerHTML=h+`</tbody><tfoot><tr><td colspan="2" style="text-align:left">Total</td><td>${R(sum(B.map(b=>b.med)))}</td><td>${R(sum(B.map(b=>b.rj)))}</td><td>${R(MED)}</td><td></td><td></td><td>${P(MED/TOT,2)}</td><td style="color:${CC.nf}">${R(NFT)}</td><td></td></tr></tfoot>`;
+    const z=(v,c)=>`<td style="color:${v?c:"#B0B8C5"}">${v?R(v):"·"}</td>`;
+    let h=`<thead><tr><th>BM</th><th style="text-align:left">Mês</th><th>Medição</th><th>Gatilho</th><th>Reajuste</th><th>Total do mês</th><th>Acumulado</th><th>% do mês</th><th>% acumulado</th><th style="color:${CC.nf}">Nota fiscal</th><th style="color:${CC.nf}">NF / bruto</th><th>Custo do mês</th></tr></thead><tbody>`;
+    B.forEach(b=>h+=`<tr><td style="text-align:left">${b.n}</td><td style="text-align:left;font-weight:700">${ML(b)}</td><td>${R(b.med)}</td>${z(b.gt,"#B8650A")}${z(b.rj,"#A0346B")}<td style="font-weight:700">${R(b.t)}</td><td>${R(b.ac)}</td><td>${P(b.t/TOT,2)}</td><td style="font-weight:700">${P(b.ac/TOT,2)}</td><td style="color:${CC.nf}">${b.nf?R(b.nf):"não emitida"}</td><td style="color:${CC.nf}">${b.nf?P(b.nf/b.t):"·"}</td>${z(b.cu,"#33415C")}</tr>`);
+    $("f_tb").innerHTML=h+`</tbody><tfoot><tr><td colspan="2" style="text-align:left">Total</td><td>${R(sum(B.map(b=>b.med)))}</td><td>${R(sum(B.map(b=>b.gt)))}</td><td>${R(sum(B.map(b=>b.rj)))}</td><td>${R(MED)}</td><td></td><td></td><td>${P(MED/TOT,2)}</td><td style="color:${CC.nf}">${R(NFT)}</td><td></td><td>${CUT?R(CUT):"·"}</td></tr></tfoot>`;
     const dot=c=>c?`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${c};margin-right:8px"></span>`:"";
     const row=(n,v,b,c,pc=true,st="")=>`<tr${b?' class="tot"':""}><td style="text-align:left;${st}">${dot(c)}${n}</td><td style="font-weight:${b?700:400};${st}">${R(v)}</td><td style="${st}">${pc?P(v/TOT,2):"·"}</td></tr>`;
     const lbn=BNF.length?BNF[BNF.length-1]:null;
-    $("f_tc").innerHTML=`<thead><tr><th>Descrição</th><th>Valor</th><th>% do valor atualizado</th></tr></thead><tbody>`+row("Contrato original",C0,0,CC.c)+AD.map(a=>row(a.n,a.v,0,a.c)).join("")+row("Contrato + aditivos",CA,1)+row("Reajuste",RJ,0,CC.rj)+row("Valor atualizado",TOT,1)+row("Medido acumulado (bruto)",MED,0,CC.med)+row("Saldo a medir",SAL,1)+
+    $("f_tc").innerHTML=`<thead><tr><th>Descrição</th><th>Valor</th><th>% do valor atualizado</th></tr></thead><tbody>`+row("Contrato original",C0,0,CC.c)+AD.map(a=>row(esc(a.n),a.v,0,a.c)).join("")+row("Contrato + aditivos",CA,1)+row("Gatilho",GT,0,CC.gt)+(RJ>0?row("Reajuste",RJ,0,CC.rj):"")+row("Valor atualizado",TOT,1)+row("Medido acumulado (bruto)",MED,0,CC.med)+row("Saldo a medir",SAL,1)+
       (lbn?row(`Notas fiscais emitidas <span style="font-weight:400;font-size:11.5px">(informativo, até o BM ${lbn.n})</span>`,NFT,0,CC.nf,false,`color:${CC.nf}`):"")+`</tbody>`;
   })();
 
-  $("f_notes").innerHTML=`<b>Notas:</b> valores lançados na aba Lançar medições, exibidos sem centavos. O valor atualizado é a soma do contrato original, dos termos aditivos (${AD.map(a=>a.n).join(", ")||"nenhum"}) e do reajuste. O medido acumulado inclui o reajuste por gatilho pago nas medições. Os percentuais por medição foram calculados sobre o valor atualizado. As notas fiscais emitidas são apenas informativas: o medido, o saldo a medir e os percentuais continuam sobre o valor bruto.`;
-}
-
-function sankey(svg,cols,links,o){
-  const W=o.W||1100,H=o.H||520,nw=14,gap=o.gap||8,top=o.top||26,L=o.ml||190,Rm=o.mr||230;
-  const N={}; cols.forEach((c,ci)=>c.forEach(n=>{N[n.id]={...n,ci,inn:0,out:0,li:[],lo:[]};}));
-  links=links.filter(l=>l.v>0);
-  links.forEach(l=>{N[l.s].out+=l.v;N[l.t].inn+=l.v;N[l.s].lo.push(l);N[l.t].li.push(l);});
-  Object.values(N).forEach(n=>n.v=Math.max(n.inn,n.out));
-  const ch=H-top-6;
-  const k=Math.min(...cols.map(c=>{const nn=c.filter(n=>N[n.id].v>0);return (ch-gap*(nn.length-1+(nn.filter(n=>n.brk).length)*2))/sum(nn.map(n=>N[n.id].v));}));
-  const xs=cols.map((c,ci)=>L+(W-L-Rm-nw)*(cols.length===1?0:ci/(cols.length-1)));
-  cols.forEach((c,ci)=>{let y=top; c.forEach(n=>{const d=N[n.id]; if(!d.v){d.skip=1;return;} if(n.brk)y+=gap*2; d.x=xs[ci];d.y=y;d.h=d.v*k;y+=d.h+gap;});});
-  Object.values(N).forEach(n=>{let a=n.y; n.lo.sort((p,q)=>N[p.t].y-N[q.t].y).forEach(l=>{l.y0=a;a+=l.v*k;});
-    let b=n.y; n.li.sort((p,q)=>N[p.s].y-N[q.s].y).forEach(l=>{l.y1=b;b+=l.v*k;});});
-  let s="";
-  (o.heads||[]).forEach((h,ci)=>{const x=xs[ci]+(ci===0?nw:ci===cols.length-1?0:nw/2);
-    s+=`<text class="hd" x="${x}" y="12" text-anchor="${ci===0?"end":ci===cols.length-1?"start":"middle"}">${h}</text>`;});
-  links.forEach((l,i)=>{const a=N[l.s],b=N[l.t],x0=a.x+nw,x1=b.x,xm=(x0+x1)/2,w=l.v*k;
-    s+=`<path class="lk" data-i="${i}" d="M${x0},${l.y0}C${xm},${l.y0} ${xm},${l.y1} ${x1},${l.y1}L${x1},${l.y1+w}C${xm},${l.y1+w} ${xm},${l.y0+w} ${x0},${l.y0+w}Z" fill="${l.c}" opacity="${l.op||.42}"/>`;});
-  // labels with de-overlap per column
-  cols.forEach((c,ci)=>{
-    const nn=c.map(n=>N[n.id]).filter(n=>!n.skip);
-    const lab=nn.map(n=>({n,y:n.y+n.h/2}));
-    const sp=15; for(let i=1;i<lab.length;i++) if(lab[i].y<lab[i-1].y+sp) lab[i].y=lab[i-1].y+sp;
-    const mxY=H-6; if(lab.length&&lab[lab.length-1].y>mxY){lab[lab.length-1].y=mxY;for(let i=lab.length-2;i>=0;i--) if(lab[i].y>lab[i+1].y-sp) lab[i].y=lab[i+1].y-sp;}
-    lab.forEach(({n,y})=>{
-      s+=`<rect class="nd" data-id="${n.id}" x="${n.x}" y="${n.y}" width="${nw}" height="${Math.max(n.h,1.5)}" rx="2" fill="${n.c}"/>`;
-      const last=ci===cols.length-1, first=ci===0;
-      const tx=first?n.x-8:n.x+nw+8, an=first?"end":"start", cls=(!first&&!last)?"halo":"";
-      const vtxt=o.fmt(n.v);
-      const lead=Math.abs(y-(n.y+n.h/2))>2?`<path d="M${first?n.x-1:n.x+nw+1},${n.y+n.h/2}L${first?n.x-6:n.x+nw+6},${y}" stroke="#B9C2D0" fill="none"/>`:"";
-      s+=lead+`<text class="${cls} nd" data-id="${n.id}" x="${tx}" y="${y+4}" text-anchor="${an}">${first?`<tspan class="v" font-weight="700">${vtxt}</tspan>  ${n.label}`:`${n.label}  <tspan font-weight="700">${vtxt}</tspan>`}</text>`;});
-  });
-  svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.innerHTML=s;
-  const P=[...svg.querySelectorAll(".lk")];
-  P.forEach(p=>{const l=links[+p.dataset.i];
-    p.onmousemove=e=>{svg.classList.add("hov");P.forEach(q=>q.classList.toggle("on",q===p));ftip(e,o.ltip(l,N[l.s],N[l.t]));};
-    p.onmouseleave=()=>{svg.classList.remove("hov");P.forEach(q=>q.classList.remove("on"));hide();};});
-  svg.querySelectorAll(".nd").forEach(r=>{const n=N[r.dataset.id];
-    r.onmousemove=e=>{svg.classList.add("hov");P.forEach(q=>{const l=links[+q.dataset.i];q.classList.toggle("on",l.s===n.id||l.t===n.id);});ftip(e,o.ntip(n));};
-    r.onmouseleave=()=>{svg.classList.remove("hov");P.forEach(q=>q.classList.remove("on"));hide();};});
+  $("f_notes").innerHTML=`<b>Notas:</b> valores lançados na aba Lançar medições, exibidos sem centavos. O valor atualizado é a soma do contrato original, dos termos aditivos (${AD.map(a=>esc(a.n)).join(", ")||"nenhum"}), do gatilho${RJ>0?" e do reajuste":""}. O total de cada mês soma a medição, o gatilho e o reajuste, e os percentuais são calculados sobre o valor atualizado. As notas fiscais e o custo do mês são informativos e não entram no medido nem no saldo.`;
+  if(typeof updCapa==="function")updCapa();
 }
 
 /* ---------- lançamento ---------- */
 function calc(src){
-  const C0=sum(src.itens.filter(i=>i.tipo==="contrato").map(i=>+i.valor||0)),RJ=sum(src.itens.filter(i=>i.tipo==="reajuste").map(i=>+i.valor||0)),ADS=sum(src.itens.filter(i=>i.tipo==="aditivo").map(i=>+i.valor||0));
+  const C0=sum(src.itens.filter(i=>i.tipo==="contrato").map(i=>+i.valor||0)),GT=sum(src.itens.filter(i=>i.tipo==="gatilho").map(i=>+i.valor||0)),RJ=sum(src.itens.filter(i=>i.tipo==="reajuste").map(i=>+i.valor||0)),ADS=sum(src.itens.filter(i=>i.tipo==="aditivo").map(i=>+i.valor||0));
   const ord=src.bms.map((b,i)=>i).sort((x,y)=>(+src.bms[x].n||0)-(+src.bms[y].n||0));let ac=0;const rows={};
-  ord.forEach(i=>{const b=src.bms[i],t=(+b.medicao||0)+(+b.reajuste||0);ac+=t;rows[i]={t,ac};});
-  return {C0,RJ,ADS,CA:C0+ADS,TOT:C0+ADS+RJ,MED:ac,rows,ord,sm:sum(src.bms.map(b=>+b.medicao||0)),sr:sum(src.bms.map(b=>+b.reajuste||0)),snf:sum(src.bms.map(b=>+b.nota_fiscal||0))};
+  ord.forEach(i=>{const b=src.bms[i],t=(+b.medicao||0)+(+b.gatilho||0)+(+b.reajuste||0);ac+=t;rows[i]={t,ac};});
+  return {C0,GT,RJ,ADS,CA:C0+ADS,TOT:C0+ADS+GT+RJ,MED:ac,rows,ord,sm:sum(src.bms.map(b=>+b.medicao||0)),sg:sum(src.bms.map(b=>+b.gatilho||0)),sr:sum(src.bms.map(b=>+b.reajuste||0)),scu:sum(src.bms.map(b=>+b.custo||0)),snf:sum(src.bms.map(b=>+b.nota_fiscal||0))};
 }
 function lastChange(){let best=null;[...D.bms,...D.itens].forEach(r=>{if(r.em&&(!best||r.em>best.em))best=r;});return best&&best.por?`Última alteração: <b>${esc(capN(best.por))}</b>, ${dth(best.em)}`:"";}
 function renderEd(){
@@ -1407,34 +1396,36 @@ function renderEd(){
   h+=EDIT?`<button class="btn sec" id="f_cancel" type="button">Cancelar</button><button class="btn pri" id="f_save" type="button">Salvar alterações</button>`:`<span class="flast">${lastChange()}</span><button class="btn pri" id="f_edit" type="button"${ONLINE?"":" disabled style=\"opacity:.5;cursor:not-allowed\""}>Editar medições</button>`;
   h+=`</div></div>${warnHtml()}</div>`;
   /* medições */
-  h+=`<div class="sec"><h2>Medições</h2><div class="cap">Medição é o valor bruto do boletim sem o reajuste. O total do mês e o acumulado são calculados.</div><div class="box tblw" style="padding:6px 10px"><table class="tbl${EDIT?" ed":""}" id="f_tm" style="min-width:${EDIT?980:860}px"><thead><tr><th style="width:70px">Nº BM</th><th style="text-align:left">Mês</th><th style="width:80px">Ano</th><th>Medição</th><th>Reajuste (gatilho)</th><th>Total do mês</th><th>Acumulado</th><th>Nota fiscal</th>${EDIT?'<th style="width:40px"></th>':""}</tr></thead><tbody>`;
+  h+=`<div class="sec"><h2>Medições</h2><div class="cap">Medição é o valor bruto do boletim, sem gatilho e sem reajuste. O total do mês soma medição, gatilho e reajuste. O custo do mês é informativo e não entra no total.</div><div class="box tblw" style="padding:6px 10px"><table class="tbl${EDIT?" ed":""}" id="f_tm" style="min-width:${EDIT?1260:1040}px"><thead><tr><th style="width:70px">Nº BM</th><th style="text-align:left">Mês</th><th style="width:80px">Ano</th><th>Medição</th><th>Gatilho</th><th>Reajuste</th><th>Total do mês</th><th>Acumulado</th><th>Nota fiscal</th><th>Custo do mês</th>${EDIT?'<th style="width:40px"></th>':""}</tr></thead><tbody>`;
   K.ord.forEach(i=>{const b=src.bms[i],r=K.rows[i];
-    if(EDIT)h+=`<tr data-i="${i}"><td><input class="fi" data-t="bm" data-f="n" inputmode="numeric" value="${esc(b.n)}"></td><td style="text-align:left"><select class="fi" data-t="bm" data-f="mes">${MESES.map(m=>`<option value="${m}"${m===b.mes?" selected":""}>${MES[m]}</option>`).join("")}</select></td><td><input class="fi" data-t="bm" data-f="ano" inputmode="numeric" value="${esc(b.ano)}"></td><td><input class="fi" data-t="bm" data-f="medicao" data-m="1" inputmode="decimal" value="${f2(b.medicao||0)}"></td><td><input class="fi" data-t="bm" data-f="reajuste" data-m="1" inputmode="decimal" value="${f2(b.reajuste||0)}"></td><td class="calc" data-c="t">${R2(r.t)}</td><td class="calc" data-c="ac">${R2(r.ac)}</td><td><input class="fi" data-t="bm" data-f="nota_fiscal" data-m="1" data-opt="1" inputmode="decimal" placeholder="não emitida" value="${b.nota_fiscal==null||b.nota_fiscal===""?"":f2(b.nota_fiscal)}"></td><td><button class="fdel" type="button" data-delbm="${i}" title="Excluir esta medição">✕</button></td></tr>`;
-    else h+=`<tr><td>${b.n}</td><td style="text-align:left;font-weight:700">${mn(b.mes)}</td><td>${b.ano}</td><td>${R2(b.medicao)}</td><td style="color:${b.reajuste?"#B8650A":"#B0B8C5"}">${b.reajuste?R2(b.reajuste):"·"}</td><td style="font-weight:700">${R2(r.t)}</td><td>${R2(r.ac)}</td><td style="color:${CC.nf}">${b.nota_fiscal?R2(b.nota_fiscal):"não emitida"}</td></tr>`;});
-  if(!src.bms.length)h+=`<tr><td colspan="${EDIT?9:8}" style="text-align:left;font-weight:400;color:var(--grey)">Nenhuma medição lançada.</td></tr>`;
-  h+=`</tbody><tfoot><tr><td colspan="3" style="text-align:left">Total</td><td data-c="sm">${R2(K.sm)}</td><td data-c="sr">${R2(K.sr)}</td><td data-c="med">${R2(K.MED)}</td><td></td><td data-c="snf" style="color:${CC.nf}">${R2(K.snf)}</td>${EDIT?"<td></td>":""}</tr></tfoot></table></div>${EDIT?'<button class="btn sec fadd" id="f_addbm" type="button">+ Adicionar medição</button>':""}</div>`;
+    if(EDIT)h+=`<tr data-i="${i}"><td><input class="fi" data-t="bm" data-f="n" inputmode="numeric" value="${esc(b.n)}"></td><td style="text-align:left"><select class="fi" data-t="bm" data-f="mes">${MESES.map(m=>`<option value="${m}"${m===b.mes?" selected":""}>${MES[m]}</option>`).join("")}</select></td><td><input class="fi" data-t="bm" data-f="ano" inputmode="numeric" value="${esc(b.ano)}"></td><td><input class="fi" data-t="bm" data-f="medicao" data-m="1" inputmode="decimal" value="${f2(b.medicao||0)}"></td><td><input class="fi" data-t="bm" data-f="gatilho" data-m="1" inputmode="decimal" value="${f2(b.gatilho||0)}"></td><td><input class="fi" data-t="bm" data-f="reajuste" data-m="1" inputmode="decimal" value="${f2(b.reajuste||0)}"></td><td class="calc" data-c="t">${R2(r.t)}</td><td class="calc" data-c="ac">${R2(r.ac)}</td><td><input class="fi" data-t="bm" data-f="nota_fiscal" data-m="1" data-opt="1" inputmode="decimal" placeholder="não emitida" value="${b.nota_fiscal==null||b.nota_fiscal===""?"":f2(b.nota_fiscal)}"></td><td><input class="fi" data-t="bm" data-f="custo" data-m="1" data-opt="1" inputmode="decimal" placeholder="sem custo" value="${b.custo==null||b.custo===""?"":f2(b.custo)}"></td><td><button class="fdel" type="button" data-delbm="${i}" title="Excluir esta medição">✕</button></td></tr>`;
+    else h+=`<tr><td>${b.n}</td><td style="text-align:left;font-weight:700">${mn(b.mes)}</td><td>${b.ano}</td><td>${R2(b.medicao)}</td><td style="color:${b.gatilho?"#B8650A":"#B0B8C5"}">${b.gatilho?R2(b.gatilho):"·"}</td><td style="color:${b.reajuste?"#A0346B":"#B0B8C5"}">${b.reajuste?R2(b.reajuste):"·"}</td><td style="font-weight:700">${R2(r.t)}</td><td>${R2(r.ac)}</td><td style="color:${CC.nf}">${b.nota_fiscal?R2(b.nota_fiscal):"não emitida"}</td><td style="color:${b.custo?"#33415C":"#B0B8C5"}">${b.custo?R2(b.custo):"·"}</td></tr>`;});
+  if(!src.bms.length)h+=`<tr><td colspan="${EDIT?11:10}" style="text-align:left;font-weight:400;color:var(--grey)">Nenhuma medição lançada.</td></tr>`;
+  h+=`</tbody><tfoot><tr><td colspan="3" style="text-align:left">Total</td><td data-c="sm">${R2(K.sm)}</td><td data-c="sg">${R2(K.sg)}</td><td data-c="sr">${R2(K.sr)}</td><td data-c="med">${R2(K.MED)}</td><td></td><td data-c="snf" style="color:${CC.nf}">${R2(K.snf)}</td><td data-c="scu">${R2(K.scu)}</td>${EDIT?"<td></td>":""}</tr></tfoot></table></div>${EDIT?'<button class="btn sec fadd" id="f_addbm" type="button">+ Adicionar medição</button>':""}</div>`;
   /* contrato */
-  h+=`<div class="sec"><h2>Valores do contrato</h2><div class="cap">Contrato original, termos aditivos e reajuste. A soma forma o valor atualizado, que é a base dos percentuais.</div><div class="box tblw" style="padding:6px 10px;max-width:820px"><table class="tbl${EDIT?" ed":""}" id="f_ti"><thead><tr><th style="text-align:left">Descrição</th><th style="text-align:left;width:190px">Tipo</th><th style="width:210px">Valor</th>${EDIT?'<th style="width:40px"></th>':""}</tr></thead><tbody>`;
+  h+=`<div class="sec"><h2>Valores do contrato</h2><div class="cap">Contrato original, termos aditivos, gatilho e reajuste. A soma forma o valor atualizado, que é a base dos percentuais.</div><div class="box tblw" style="padding:6px 10px;max-width:820px"><table class="tbl${EDIT?" ed":""}" id="f_ti"><thead><tr><th style="text-align:left">Descrição</th><th style="text-align:left;width:190px">Tipo</th><th style="width:210px">Valor</th>${EDIT?'<th style="width:40px"></th>':""}</tr></thead><tbody>`;
   src.itens.forEach((it,i)=>{
     if(EDIT)h+=`<tr data-i="${i}"><td><input class="fi l" data-t="it" data-f="descricao" value="${esc(it.descricao)}"></td><td style="text-align:left"><select class="fi" data-t="it" data-f="tipo">${Object.keys(TIPOS).map(t=>`<option value="${t}"${t===it.tipo?" selected":""}>${TIPOS[t]}</option>`).join("")}</select></td><td><input class="fi" data-t="it" data-f="valor" data-m="1" inputmode="decimal" value="${f2(it.valor||0)}"></td><td><button class="fdel" type="button" data-delit="${i}" title="Excluir este item">✕</button></td></tr>`;
     else h+=`<tr><td>${esc(it.descricao)}</td><td style="text-align:left">${TIPOS[it.tipo]||it.tipo}</td><td>${R2(it.valor)}</td></tr>`;});
   const cs=EDIT?4:3,cr=(n,k,v)=>`<tr class="tot"><td colspan="2" style="text-align:left">${n}</td><td data-c="${k}">${R2(v)}</td>${EDIT?"<td></td>":""}</tr>`;
-  h+=cr("Contrato + aditivos","ca",K.CA)+cr("Valor atualizado (contrato + aditivos + reajuste)","tot",K.TOT)+cr("Medido acumulado","med",K.MED)+cr("Saldo a medir","sal",K.TOT-K.MED);
-  h+=`</tbody></table></div>${EDIT?'<button class="btn sec fadd" id="f_addit" type="button">+ Adicionar termo aditivo</button>':""}<div class="fhint" id="f_rjh"></div></div>`;
+  h+=cr("Contrato + aditivos","ca",K.CA)+cr("Valor atualizado (contrato + aditivos + gatilho + reajuste)","tot",K.TOT)+cr("Medido acumulado","med",K.MED)+cr("Saldo a medir","sal",K.TOT-K.MED);
+  h+=`</tbody></table></div>${EDIT?'<button class="btn sec fadd" id="f_addit" type="button">+ Adicionar item do contrato</button>':""}<div class="fhint" id="f_rjh"></div></div>`;
   /* histórico */
   if(!EDIT)h+=`<div class="sec"><h2>Últimas alterações</h2><div class="cap">Quem alterou as medições e quando.</div><div class="box">${D.log&&D.log.length?`<ul class="flog">${D.log.map(l=>`<li><time>${dth(l.criado_em)}</time><span><b>${esc(capN(l.quem||""))}</b> ${esc(l.descricao||"")}</span></li>`).join("")}</ul>`:'<div style="font-size:13px;color:var(--grey)">Nenhuma alteração registrada ainda.</div>'}</div></div>`;
   el.innerHTML=h;rjHint(K);
   const on=(id,f)=>{const b=$(id);if(b)b.onclick=f;};
   on("f_edit",startEdit);on("f_cancel",()=>{EDIT=false;DR=null;render();});on("f_save",save);
   on("f_addbm",()=>{const s=[...DR.bms].sort((a,b)=>(+b.n||0)-(+a.n||0))[0];let mi=s?MESES.indexOf(s.mes)+1:new Date().getMonth(),an=s?+s.ano||new Date().getFullYear():new Date().getFullYear();if(mi>11){mi=0;an++;}
-    DR.bms.push({id:null,n:s?(+s.n||0)+1:1,mes:MESES[mi],ano:an,medicao:0,reajuste:0,nota_fiscal:null});renderEd();const rows=$("f_tm").querySelectorAll("tbody tr");const inp=rows[rows.length-1].querySelector('[data-f="medicao"]');if(inp){inp.focus();inp.select();}});
+    DR.bms.push({id:null,n:s?(+s.n||0)+1:1,mes:MESES[mi],ano:an,medicao:0,gatilho:0,reajuste:0,custo:null,nota_fiscal:null});renderEd();const rows=$("f_tm").querySelectorAll("tbody tr");const inp=rows[rows.length-1].querySelector('[data-f="medicao"]');if(inp){inp.focus();inp.select();}});
   on("f_addit",()=>{const na=DR.itens.filter(i=>i.tipo==="aditivo").length+1;DR.itens.push({id:null,ordem:Math.max(0,...DR.itens.map(i=>+i.ordem||0))+1,descricao:"TAC-"+String(na).padStart(2,"0"),tipo:"aditivo",valor:0});renderEd();});
 }
-function rjHint(K){const e=$("f_rjh");if(!e)return;const d=K.RJ-K.sr;e.innerHTML=Math.abs(d)>=0.005?`O reajuste informado nos valores do contrato (${R2(K.RJ)}) é diferente da soma dos reajustes das medições (${R2(K.sr)}). Diferença de ${R2(Math.abs(d))}.`:"";}
+function rjHint(K){const e=$("f_rjh");if(!e)return;const out=[];
+  const cmp=(nome,ct,sm)=>{const d=ct-sm;if(Math.abs(d)>=0.005)out.push(`O ${nome} nos valores do contrato (${R2(ct)}) é diferente da soma do ${nome} das medições (${R2(sm)}). Diferença de ${R2(Math.abs(d))}.`);};
+  cmp("gatilho",K.GT,K.sg);cmp("reajuste",K.RJ,K.sr);e.innerHTML=out.join("<br>");}
 function refreshCalc(){const K=calc(DR),tm=$("f_tm"),ti=$("f_ti");
   tm.querySelectorAll("tbody tr[data-i]").forEach(tr=>{const r=K.rows[+tr.dataset.i];if(!r)return;tr.querySelector('[data-c="t"]').textContent=R2(r.t);tr.querySelector('[data-c="ac"]').textContent=R2(r.ac);});
   const set=(root,k,v)=>{const c=root.querySelector(`[data-c="${k}"]`);if(c)c.textContent=R2(v);};
-  set(tm.tFoot,"sm",K.sm);set(tm.tFoot,"sr",K.sr);set(tm.tFoot,"med",K.MED);set(tm.tFoot,"snf",K.snf);
+  set(tm.tFoot,"sm",K.sm);set(tm.tFoot,"sg",K.sg);set(tm.tFoot,"sr",K.sr);set(tm.tFoot,"scu",K.scu);set(tm.tFoot,"med",K.MED);set(tm.tFoot,"snf",K.snf);
   set(ti,"ca",K.CA);set(ti,"tot",K.TOT);set(ti,"med",K.MED);set(ti,"sal",K.TOT-K.MED);rjHint(K);}
 function wireEd(){const el=$("f_ed");
   el.addEventListener("input",e=>{const t=e.target;if(!EDIT||!t.dataset||!t.dataset.f)return;const tr=t.closest("tr[data-i]");if(!tr)return;
@@ -1468,6 +1459,7 @@ function askAuth(){return new Promise(res=>{
 });}
 async function startEdit(){
   if(!ONLINE){msg("A edição só fica disponível depois de criar as tabelas de medições no Supabase.",false);return;}
+  if(OLD){msg("Antes de editar, rode o arquivo medicoes_v2.sql no SQL Editor do Supabase.",false);return;}
   if(!(await askAuth()))return;
   DR={bms:clone([...D.bms].sort((a,b)=>a.n-b.n)),itens:clone([...D.itens].sort((a,b)=>a.ordem-b.ordem))};EDIT=true;renderEd();
 }
@@ -1481,18 +1473,18 @@ async function save(){
   for(const b of DR.bms){if(!Number.isInteger(+b.n)||+b.n<1){msg("O número do BM precisa ser um inteiro maior que zero.",false);return;}
     if(ns.has(+b.n)){msg(`O BM ${b.n} está repetido. Cada medição precisa de um número diferente.`,false);return;}ns.add(+b.n);
     if(!MESES.includes(b.mes)||!(+b.ano>=2000&&+b.ano<=2100)){msg(`Confira o mês e o ano do BM ${b.n}.`,false);return;}
-    if(!isFinite(+b.medicao)||!isFinite(+b.reajuste)){msg(`Confira os valores do BM ${b.n}.`,false);return;}}
+    if(!isFinite(+b.medicao)||!isFinite(+b.gatilho)||!isFinite(+b.reajuste)){msg(`Confira os valores do BM ${b.n}.`,false);return;}}
   for(const it of DR.itens){if(!String(it.descricao||"").trim()){msg("Todo item do contrato precisa de uma descrição.",false);return;}if(!isFinite(+it.valor)){msg(`Confira o valor de "${it.descricao}".`,false);return;}}
   if(!DR.itens.some(i=>i.tipo==="contrato")){msg("É preciso manter pelo menos um item do tipo Contrato original.",false);return;}
   const now=new Date().toISOString(),stamp={atualizado_por:WHO,atualizado_em:now},parts=[],ops=[];
-  const bmRec=b=>Object.assign({n:+b.n,mes:b.mes,ano:+b.ano,medicao:+b.medicao||0,reajuste:+b.reajuste||0,nota_fiscal:b.nota_fiscal==null||b.nota_fiscal===""||!(+b.nota_fiscal)?null:+b.nota_fiscal},stamp);
+  const bmRec=b=>Object.assign({n:+b.n,mes:b.mes,ano:+b.ano,medicao:+b.medicao||0,gatilho:+b.gatilho||0,reajuste:+b.reajuste||0,nota_fiscal:b.nota_fiscal==null||b.nota_fiscal===""||!(+b.nota_fiscal)?null:+b.nota_fiscal,custo:b.custo==null||b.custo===""||!(+b.custo)?null:+b.custo},stamp);
   const itRec=(i,k)=>Object.assign({ordem:k+1,descricao:String(i.descricao).trim(),tipo:i.tipo,valor:+i.valor||0},stamp);
   D.bms.filter(o=>!DR.bms.some(b=>b.id===o.id)).forEach(o=>{ops.push(()=>SB.from("medicoes").delete().eq("id",o.id));parts.push("excluiu a medição "+bmTxt(o));});
   const upd=[],ins=[];
   DR.bms.forEach(b=>{if(b.id==null){ins.push(b);return;}const o=D.bms.find(x=>x.id===b.id);
-    if(!o||+o.n!==+b.n||o.mes!==b.mes||+o.ano!==+b.ano||!eqN(o.medicao,b.medicao)||!eqN(o.reajuste,b.reajuste)||!eqN(o.nota_fiscal,b.nota_fiscal))upd.push(b);});
+    if(!o||+o.n!==+b.n||o.mes!==b.mes||+o.ano!==+b.ano||!eqN(o.medicao,b.medicao)||!eqN(o.gatilho,b.gatilho)||!eqN(o.reajuste,b.reajuste)||!eqN(o.nota_fiscal,b.nota_fiscal)||!eqN(o.custo,b.custo))upd.push(b);});
   upd.forEach(b=>{ops.push(()=>SB.from("medicoes").update(bmRec(b)).eq("id",b.id).select());parts.push("atualizou a medição "+bmTxt(b));});
-  ins.forEach(b=>{ops.push(()=>SB.from("medicoes").insert(bmRec(b)).select());parts.push(`adicionou a medição ${bmTxt(b)}, total de ${R2((+b.medicao||0)+(+b.reajuste||0))}`);});
+  ins.forEach(b=>{ops.push(()=>SB.from("medicoes").insert(bmRec(b)).select());parts.push(`adicionou a medição ${bmTxt(b)}, total de ${R2((+b.medicao||0)+(+b.gatilho||0)+(+b.reajuste||0))}`);});
   let itCh=false;
   D.itens.filter(o=>!DR.itens.some(i=>i.id===o.id)).forEach(o=>{ops.push(()=>SB.from("contrato_itens").delete().eq("id",o.id));itCh=true;});
   DR.itens.forEach((i,k)=>{const rec=itRec(i,k);if(i.id==null){ops.push(()=>SB.from("contrato_itens").insert(rec).select());itCh=true;return;}
@@ -1514,19 +1506,33 @@ function init(){
   $("f_goed").onclick=()=>openTab("pane-fined");
   $("f_print").onclick=()=>{hide();document.body.classList.add("pfin");window.print();};
   addEventListener("afterprint",()=>document.body.classList.remove("pfin"));
+  document.querySelectorAll("#pane-fin .sec").forEach(s=>{s.classList.add("rev");if(typeof REVIO!=="undefined"&&REVIO)REVIO.observe(s);});
   render();load();
   setInterval(()=>{if(!document.hidden&&!EDIT&&document.body.classList.contains("g-med"))load();},60000);
   if(SB){try{let t;const go=()=>{clearTimeout(t);t=setTimeout(load,500);};
     SB.channel("med").on("postgres_changes",{event:"*",schema:"public",table:"medicoes"},go).on("postgres_changes",{event:"*",schema:"public",table:"contrato_itens"},go).on("postgres_changes",{event:"INSERT",schema:"public",table:"medicoes_log"},go).subscribe();}catch(e){}}
 }
-return {init,load,render,get editing(){return EDIT;}};
+return {init,load,render,get editing(){return EDIT;},get resumo(){return RES;}};
 })();
+
+/* ===================== CAPA ===================== */
+function updCapa(){try{
+  const ab=ALL.filter(x=>x.status==="aberta"),at=ab.filter(x=>sit(x)==="atrasada").length;
+  if($("capaMp"))$("capaMp").textContent=ALL.length?`${ab.length} ${ab.length===1?"restrição em aberto":"restrições em aberto"} · ${at} ${at===1?"atrasada":"atrasadas"}`:"Restrições do médio prazo";
+  if($("capaMed"))$("capaMed").textContent=(typeof FIN!=="undefined"&&FIN.resumo)||"Medições do contrato";}catch(e){}}
+function capaShow(){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.remove("pick","dim"));c.classList.remove("out");document.body.style.overflow="hidden";updCapa();}
+function capaGo(g){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.add(x.dataset.go===g?"pick":"dim"));
+  setTimeout(()=>{openTab(GLAST[g],true);window.scrollTo({top:0});c.classList.add("out");document.body.style.overflow="";},430);}
+(function(){const lg=document.querySelector(".brandtile img");if(lg)$("capaLogo").src=lg.src;
+  document.querySelectorAll("#capa .cc").forEach(b=>b.onclick=()=>capaGo(b.dataset.go));
+  const bt=document.querySelector(".brandtile");if(bt){bt.title="Voltar para a capa";bt.onclick=capaShow;}})();
 
 (function(){
   const CONFIG_OK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_KEY.length>20;
   SB=(CONFIG_OK&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}}):null;
   setupColl();setupMotion();render();load();
-  openTab(lsGet("mp_tab")||"pane-dash",true);FIN.init();
+  openTab("pane-dash",true);FIN.init();
+  const hg=location.hash==="#medicoes"?"med":location.hash==="#medio-prazo"?"mp":"";if(hg){openTab(GLAST[hg],true);$("capa").classList.add("out");}else capaShow();
   setInterval(()=>{if(!document.hidden&&!isTyping()&&!EDOPEN)load();},60000);
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
   if(SB){try{SB.channel("restr").on("postgres_changes",{event:"*",schema:"public",table:"restricoes"},()=>{clearTimeout(load.t);load.t=setTimeout(load,500);}).subscribe();}catch(e){}}
