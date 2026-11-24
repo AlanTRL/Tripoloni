@@ -332,39 +332,8 @@ body.g-med .sidewho,body.g-med #notes{display:none}
 .fin .rev.in .k:nth-child(2){animation-delay:.09s}.fin .rev.in .k:nth-child(3){animation-delay:.18s}.fin .rev.in .k:nth-child(4){animation-delay:.27s}
 @media (prefers-reduced-motion:reduce){.fin .rev *,.pane.on,.nsub,.nsub a,#capa,#capa *{animation:none!important;transition:none!important}.fin .rev .gb{transform:none}.fin .rev .fd,.fin .rev .pp,.fin .rev .ds,.fin .rev .fa,.fin .rev .k,.nsub.open a{opacity:1;transform:none}.fin .rev .dl{stroke-dashoffset:0}}
 @media print{body.pfin .rev,body.pfin .rev *{animation:none!important;transition:none!important;opacity:1!important}body.pfin .rev,body.pfin .rev .gb,body.pfin .rev .k,body.pfin .rev .pp,body.pfin .rev .ds{transform:none!important}body.pfin .rev .dl{stroke-dashoffset:0!important}body.pfin .rev .fa{opacity:1!important}#capa{display:none!important}}
-
-/* ===== capa ===== */
-#capa{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:28px 20px;overflow:auto;color:#fff;background:radial-gradient(ellipse at 25% 15%,#0A2E7A 0%,#001C54 45%,#000B26 100%);transition:opacity .7s ease,transform .9s cubic-bezier(.3,.7,.2,1),visibility 0s linear .9s}
-#capa.out{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
-#capa .cw{position:absolute;left:-5%;right:-5%;bottom:-70px;height:190px;border-top:2px solid rgba(242,169,59,.75);border-radius:50%;pointer-events:none}
-#capa .cw.b{bottom:-110px;border-top-color:rgba(255,255,255,.14)}
-#capa .cin{position:relative;width:min(1160px,100%);text-align:center}
-#capa .cin>*{animation:capaIn .9s cubic-bezier(.2,.75,.2,1) both}
-#capa .clogo{width:210px;max-width:60%;animation-delay:.05s}
-#capa .ck{margin-top:30px;font-size:16px;font-weight:700;color:var(--orange);animation-delay:.15s}
-#capa h1{font-size:38px;line-height:1.12;font-weight:700;margin-top:6px;animation-delay:.22s}
-#capa .cs{font-size:17px;color:#B8C6E3;margin-top:10px;animation-delay:.3s}
-#capa .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px;animation-delay:.42s;max-width:980px;margin-left:auto;margin-right:auto}
-@media (max-width:1060px){#capa .cards{grid-template-columns:1fr 1fr}}
-@keyframes capaIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-#capa .cc{position:relative;text-align:left;font-family:inherit;color:#fff;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:26px 26px 22px;cursor:pointer;overflow:hidden;transition:transform .45s cubic-bezier(.2,.75,.2,1),background .35s,border-color .35s,box-shadow .45s,opacity .5s}
-#capa .cc:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--orange);transform:scaleY(0);transform-origin:bottom;transition:transform .45s cubic-bezier(.2,.75,.2,1)}
-#capa .cc:hover{transform:translateY(-6px);background:rgba(255,255,255,.11);border-color:rgba(242,169,59,.9);box-shadow:0 24px 50px -20px rgba(0,0,0,.6)}
-#capa .cc:hover:before{transform:scaleY(1)}
-#capa .cc .ci{width:54px;height:54px;border-radius:14px;background:rgba(242,169,59,.16);display:grid;place-items:center;transition:background .35s}
-#capa .cc:hover .ci{background:var(--orange)}
-#capa .cc .ci svg{width:26px;height:26px;stroke:var(--orange);fill:none;stroke-width:1.8;transition:stroke .35s}
-#capa .cc:hover .ci svg{stroke:var(--navy)}
-#capa .cc .ct{font-size:23px;font-weight:700;margin-top:18px;text-transform:uppercase}
-#capa .cc .cd{font-size:15px;line-height:1.45;color:#B8C6E3;margin-top:8px;min-height:44px}
-#capa .cc .cst{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;color:#DCE4F2;font-weight:700;min-height:36px}
-#capa .cc .cgo{position:absolute;right:22px;top:26px;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);display:grid;place-items:center;transition:transform .45s cubic-bezier(.2,.75,.2,1),background .35s,border-color .35s}
-#capa .cc .cgo svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2}
-#capa .cc:hover .cgo{transform:translateX(5px);background:var(--orange);border-color:var(--orange)}#capa .cc:hover .cgo svg{stroke:var(--navy)}
-#capa .cc.pick{transform:scale(1.04);background:rgba(242,169,59,.2);border-color:var(--orange)}
-#capa .cc.dim{opacity:0;transform:scale(.94)}
-#capa .cfoot{margin-top:30px;font-size:13px;color:#8FA2CC;animation-delay:.55s}
-@media (max-width:760px){#capa{align-items:flex-start}#capa .cards{grid-template-columns:1fr}#capa h1{font-size:28px}#capa .clogo{width:160px}}
+@media (max-width:1060px){}
+@media (max-width:760px){}
 
 /* botão grande: página inicial */
 .homebtn{display:flex;align-items:center;gap:11px;width:100%;box-sizing:border-box;margin:14px 0 4px;padding:13px 14px;border:0;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#F2A93B,#E8902A);color:#001C54;font-family:inherit;font-size:13.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;box-shadow:0 8px 20px -8px rgba(232,144,42,.85),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,filter .2s}
@@ -375,32 +344,229 @@ body.g-med .sidewho,body.g-med #notes{display:none}
 .homebtn .hl{flex:1;text-align:left}
 @media print{.homebtn{display:none!important}}
 @media (max-width:980px){.homebtn{width:auto;margin:0}}
+
+/* páginas embutidas (Custo da pedra e Saldo) */
+.pane.xpane{padding:0;position:relative}
+.xpane iframe{display:block;width:100%;height:100vh;border:0;background:var(--canvas)}
+body.g-x .topbar,body.g-x .sidewho,body.g-x #notes{display:none}
+.xload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700;color:var(--navy);pointer-events:none;transition:opacity .3s}
+.xload span{width:20px;height:20px;border:3px solid var(--orange);border-right-color:transparent;border-radius:50%;animation:xgira .8s linear infinite}
+@keyframes xgira{to{transform:rotate(360deg)}}
+.xpane.ok .xload{opacity:0}
+@media (max-width:980px){.xpane iframe{height:calc(100vh - 60px)}}
+
+/* ===== capa (índice ilustrado com mapa do trecho) ===== */
+#capa{--bg:#00102F;--or:#F2A93B;--blue:#2A8FBD;--mut:#9FB0D3;--line:rgba(255,255,255,.13);--navy:#001C54;
+  position:fixed;inset:0;z-index:300;overflow:auto;color:#fff;background:var(--bg);font-family:Calibri,Carlito,'Segoe UI',Arial,sans-serif;
+  transition:opacity .7s ease,transform .9s cubic-bezier(.3,.7,.2,1),visibility 0s linear .9s}
+#capa.out{opacity:0;transform:scale(1.04);visibility:hidden;pointer-events:none}
+#capa a{color:inherit;text-decoration:none}
+#capa .up{opacity:0;transform:translateY(24px);animation:cp_up .9s cubic-bezier(.2,.75,.2,1) forwards}
+@keyframes cp_up{to{opacity:1;transform:none}}
+#capa .aw{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#capa button.row{display:block;width:100%;padding:0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+#capa .row.pick:before{transform:scaleX(1)}
+#capa .row.dim{opacity:.25;transition:opacity .35s}
+#capa .clogo{height:44px;width:auto}
+#capa .ill{width:100%;height:100%;overflow:visible}
+#capa .ill *{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#capa .ill .dr,#capa .ill .ck,#capa .ill .cv{stroke-dasharray:1;stroke-dashoffset:0}
+#capa .ill .ck,#capa .ill .cv,#capa .ill .dot{stroke:var(--or)}
+#capa .ill .dot{fill:var(--or);transform-box:fill-box;transform-origin:center}
+#capa .ill .hl{stroke:rgba(255,255,255,.35);stroke-dasharray:3 3}
+#capa .ill .br{fill:rgba(242,169,59,.18);stroke:var(--or);transform-box:fill-box;transform-origin:bottom}
+#capa .ill .cp_rl{fill:var(--bg)}
+#capa .ill .cp_belt{stroke:var(--or);stroke-dasharray:3 4;stroke-width:1.6}
+#capa .ill .st{fill:var(--or);stroke:none}
+#capa .ill .ly{stroke:none}
+#capa .ill .l1{fill:#2A8FBD}
+#capa .ill .l2{fill:#5BB0D8}
+#capa .ill .l3{fill:var(--or)}
+#capa .ill .mv{stroke:var(--or);stroke-dasharray:2 2}
+#capa .ill .pipe{stroke:rgba(255,255,255,.55)}
+#capa .hv:hover .ill .dr{animation:cp_draw .9s cubic-bezier(.6,.1,.2,1) both}
+#capa .hv:hover .ill .ck{animation:cp_draw .45s ease both}
+#capa .hv:hover .ill .c1{animation-delay:.15s}
+#capa .hv:hover .ill .c2{animation-delay:.35s}
+#capa .hv:hover .ill .c3{animation-delay:.55s}
+#capa .hv:hover .ill .hl{animation:cp_blink 1s .7s ease infinite}
+#capa .hv:hover .ill .br{animation:cp_grow .6s cubic-bezier(.2,.8,.2,1) both}
+#capa .hv:hover .ill .b2{animation-delay:.1s}
+#capa .hv:hover .ill .b3{animation-delay:.2s}
+#capa .hv:hover .ill .cv{animation:cp_draw .8s .25s ease both}
+#capa .hv:hover .ill .dot{animation:cp_pop .4s .95s both}
+#capa .hv:hover .ill .cp_belt{animation:cp_belt .6s linear infinite}
+#capa .hv:hover .ill .st{animation:cp_fall 1.1s cubic-bezier(.5,0,.75,.4) infinite}
+#capa .hv:hover .ill .s2{animation-delay:.35s}
+#capa .hv:hover .ill .s3{animation-delay:.7s}
+#capa .hv:hover .ill .ly{animation:cp_lay .5s cubic-bezier(.2,.8,.2,1) both}
+#capa .hv:hover .ill .l2{animation-delay:.15s}
+#capa .hv:hover .ill .l3{animation-delay:.3s}
+#capa .hv:hover .ill .mv{animation:cp_bob 1s ease-in-out infinite}
+@keyframes cp_draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cp_grow{from{transform:scaleY(.08)}to{transform:none}}
+@keyframes cp_pop{0%{transform:scale(0)}70%{transform:scale(1.6)}100%{transform:none}}
+@keyframes cp_belt{to{stroke-dashoffset:-7}}
+@keyframes cp_fall{0%{transform:translate(0,0);opacity:1}100%{transform:translate(-6px,30px);opacity:0}}
+@keyframes cp_lay{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@keyframes cp_bob{50%{transform:translateY(-3px)}}
+@keyframes cp_blink{50%{opacity:.2}}
+#capa .wrap{max-width:1240px;margin:0 auto;padding:40px 40px 46px}
+#capa .top{display:flex;justify-content:space-between;align-items:center}
+#capa .top img{height:44px}
+#capa .top .ref{color:var(--mut);font-size:14px;text-align:right;line-height:1.45}
+#capa .top .ref b{color:#fff}
+#capa .hero{display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:40px;margin-top:40px;min-height:300px}
+#capa .kick{color:var(--or);font-weight:700;font-size:16px}
+#capa h1{font-size:clamp(30px,5.4vw,78px);line-height:.92;letter-spacing:-.02em;margin-top:12px;text-transform:uppercase}
+#capa h1 span{display:block;color:transparent;-webkit-text-stroke:1.6px rgba(255,255,255,.85)}
+#capa .rule{height:2px;background:linear-gradient(90deg,var(--or),transparent);margin-top:30px;transform-origin:left;animation:cp_rl 1.4s .4s cubic-bezier(.2,.75,.2,1) both}
+@keyframes cp_rl{from{transform:scaleX(0)}}
+#capa .row{position:relative;display:block;border-bottom:1px solid var(--line);overflow:hidden}
+#capa .row:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(242,169,59,.13),rgba(255,255,255,.02));transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.2,.75,.2,1)}
+#capa .row:hover:before,#capa .row.on:before{transform:scaleX(1)}
+#capa .rh{position:relative;display:grid;grid-template-columns:44px 64px 1fr 260px 46px;align-items:center;gap:22px;padding:18px 12px}
+#capa .n{color:var(--or);font-weight:700;font-size:17px}
+#capa .ic{width:52px;height:52px;color:#fff;transition:transform .6s cubic-bezier(.2,.75,.2,1)}
+#capa .row:hover .ic,#capa .row.on .ic{transform:scale(1.18) rotate(-3deg)}
+#capa .tt{font-size:clamp(24px,2.6vw,36px);font-weight:700;letter-spacing:-.01em;transition:transform .5s cubic-bezier(.2,.75,.2,1)}
+#capa .row:hover .tt,#capa .row.on .tt{transform:translateX(10px)}
+#capa .st{font-weight:700;font-size:14.5px;text-align:right;color:#C9D6EE}
+#capa .go{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;transition:background .3s,border-color .3s,transform .45s,color .3s}
+#capa .row:hover .go,#capa .row.on .go{background:var(--or);border-color:var(--or);color:var(--bg);transform:rotate(-45deg)}
+#capa .rb{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.2,.75,.2,1)}
+#capa .row:hover .rb,#capa .row.on .rb{grid-template-rows:1fr}
+#capa .rb>div{overflow:hidden}
+#capa .rb p{margin:0 0 0 150px;max-width:620px;padding:0 12px 22px;color:var(--mut);font-size:16px;line-height:1.5;opacity:0;transform:translateY(-8px);transition:opacity .35s,transform .5s cubic-bezier(.2,.75,.2,1)}
+#capa .row:hover .rb p,#capa .row.on .rb p{opacity:1;transform:none;transition-delay:.12s}
+#capa .foot{margin-top:24px;color:var(--mut);font-size:13.5px;display:flex;justify-content:space-between}
+@media(hover:none){#capa .rb{grid-template-rows:1fr}
+#capa .rb p{opacity:1;transform:none}}
+@media(max-width:1000px){#capa .top .ref{display:none}
+#capa h1{font-size:clamp(30px,9vw,60px)}
+#capa .hero{grid-template-columns:1fr}
+#capa .rh{grid-template-columns:52px 1fr 46px}
+#capa .n,#capa .st{display:none}
+#capa .rb p{margin-left:74px}}
+#capa .map{width:100%;height:auto;overflow:visible}
+#capa .map .topo path{fill:none;stroke:rgba(255,255,255,.06);stroke-width:1}
+#capa .map .road{fill:none;stroke:#0E2A63;stroke-width:16;stroke-linecap:round}
+#capa .map .edge{fill:none;stroke:rgba(255,255,255,.75);stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;animation:cp_draw 2s .3s cubic-bezier(.6,.1,.2,1) forwards}
+#capa .map .ctr{fill:none;stroke:var(--or);stroke-width:2;stroke-dasharray:7 7;opacity:.85;animation:cp_dash 1.2s linear infinite}
+#capa .map .prog{fill:none;stroke:url(#cgl);stroke-width:6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.75,.2,1),opacity .3s}
+#capa .map.k-med .prog{opacity:1}
+#capa .map.k-saldo .prog{opacity:1;stroke-dashoffset:0;stroke:rgba(91,176,216,.8)}
+#capa .map .tk line{stroke:rgba(255,255,255,.4);stroke-width:1.2}
+#capa .map .tk text{fill:var(--mut);font-size:11px;text-anchor:middle;font-family:inherit}
+#capa .map .oae circle{fill:var(--bg);stroke:var(--or);stroke-width:2}
+#capa .map .oae path{fill:none;stroke:var(--or);stroke-width:1.6}
+#capa .map .oae text{fill:#C9D6EE;font-size:11px;text-anchor:middle;font-family:inherit}
+#capa .map .oae .pl{fill:none;stroke:var(--or);stroke-width:2;opacity:0}
+#capa .map.k-saldo .oae .pl,#capa .map.k-mp .oae .pl{animation:cp_pulse 1.6s ease-out infinite}
+#capa .map .cg{fill:rgba(242,169,59,.25)}
+#capa .map .cc{fill:var(--or)}
+#capa .map .tipg{opacity:0;transition:opacity .3s}
+#capa .map .tipg rect{fill:#fff}
+#capa .map .tipg text{fill:var(--bg);font-size:13px;font-weight:700;font-family:inherit}
+#capa .map.k-mp .tipg,#capa .map.k-med .tipg,#capa .map.k-pedra .tipg,#capa .map.k-saldo .tipg{opacity:1}
+@keyframes cp_pulse{0%{opacity:.9;r:9}100%{opacity:0;r:22}}
+@keyframes cp_dash{to{stroke-dashoffset:-14}}
+@media (prefers-reduced-motion:reduce){#capa .up{opacity:1;transform:none}}
+
+/* transição entre páginas */
+#wipe{position:fixed;inset:0;z-index:400;pointer-events:none;background:#00102F;transform:translateY(100%);display:flex;align-items:center;justify-content:center;visibility:hidden}
+#wipe:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,#F2A93B,#2A8FBD)}
+#wipe img{height:50px;opacity:0}
+#wipe.go{visibility:visible;animation:wp_cur .95s cubic-bezier(.7,0,.25,1) both}
+#wipe.go img{animation:wp_logo .95s ease both}
+@keyframes wp_cur{0%{transform:translateY(100%)}40%,60%{transform:none}100%{transform:translateY(-100%)}}
+@keyframes wp_logo{0%,28%{opacity:0;transform:translateY(14px)}44%,58%{opacity:1;transform:none}74%,100%{opacity:0;transform:translateY(-14px)}}
+@media (prefers-reduced-motion:reduce){#wipe{display:none!important}}
+@media print{#wipe{display:none!important}}
+</style>
+<style>
+#updBar{position:fixed;left:50%;bottom:22px;z-index:600;transform:translate(-50%,140%);display:flex;align-items:center;gap:14px;max-width:calc(100% - 24px);
+  background:#001C54;color:#fff;border:1px solid rgba(242,169,59,.65);border-radius:16px;padding:11px 12px 11px 16px;box-shadow:0 18px 44px rgba(0,16,47,.45);
+  font-family:Calibri,Carlito,'Segoe UI',Arial,sans-serif;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+#updBar.on{transform:translate(-50%,0)}
+#updBar .ui{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:rgba(242,169,59,.16);display:grid;place-items:center}
+#updBar .ui:after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(242,169,59,.55);animation:updPulse 1.8s ease-out infinite}
+#updBar .ui svg{width:20px;height:20px;fill:none;stroke:#F2A93B;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;animation:updSpin 3s linear infinite}
+#updBar .tx{display:flex;flex-direction:column;line-height:1.25}
+#updBar .tx b{font-size:15px}#updBar .tx small{font-size:12.5px;color:#B8C6E3}
+#updBar button{flex:none;border:0;border-radius:11px;background:#F2A93B;color:#001C54;font:800 14px Calibri,Carlito,Arial,sans-serif;padding:11px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:filter .2s,transform .2s}
+#updBar button:hover{filter:brightness(1.06);transform:translateY(-1px)}
+#updBar button svg{width:16px;height:16px;fill:none;stroke:#001C54;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#updBar.busy button svg{animation:updSpin .8s linear infinite}
+@keyframes updSpin{to{transform:rotate(360deg)}}
+@keyframes updPulse{0%{opacity:.9;transform:scale(.85)}100%{opacity:0;transform:scale(1.35)}}
+@media (max-width:560px){#updBar .tx small{display:none}#updBar{bottom:14px}}
+@media (prefers-reduced-motion:reduce){#updBar .ui svg,#updBar .ui:after{animation:none}}
+@media print{#updBar{display:none!important}}
 </style>
 </head><body>
-<div id="capa"><div class="cw b"></div><div class="cw"></div><div class="cin">
-  <img class="clogo" id="capaLogo" alt="Tripoloni Construtora">
-  <div class="ck">BR-277 · Duplicação · Irati</div>
-  <h1>ACOMPANHAMENTO DA OBRA</h1>
-  <div class="cs">Escolha o que você quer acompanhar</div>
-  <div class="cards">
-    <button type="button" class="cc" data-go="mp"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
-      <div class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M9 15l2 2 4-4"/></svg></div>
-      <div class="ct">Médio prazo</div><div class="cd">Restrições do planejamento de médio prazo: painel, situação do dia, acompanhamento por responsável e banco de dados.</div>
-      <div class="cst" id="capaMp">Carregando…</div></button>
-    <button type="button" class="cc" data-go="med"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
-      <div class="ci"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
-      <div class="ct">Acompanhamento de medições</div><div class="cd">Valor do contrato, medições mensais, gatilho, reajuste, notas fiscais e curva acumulada.</div>
-      <div class="cst" id="capaMed">Carregando…</div></button>
-    <button type="button" class="cc" data-go="pedra"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
-      <div class="ci"><svg viewBox="0 0 24 24"><path d="M2 20h20L15 8l-3.5 5L9 10z"/><circle cx="17.5" cy="5" r="1.6"/><circle cx="6" cy="16.5" r="1"/></svg></div>
-      <div class="ct">Custo da pedra</div><div class="cd">Unidade industrial: composição mensal do preço da pedra (R$/t e R$/m³), equipamentos, mão de obra e histórico.</div>
-      <div class="cst" id="capaPedra">Carregando…</div></button>
-    <button type="button" class="cc" data-go="saldo"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
-      <div class="ci"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg></div>
-      <div class="ct">Saldo da obra</div><div class="cd">Saldos de terraplenagem, pavimento, bueiros, OAEs e contenções, corte longitudinal e retigráficos.</div>
-      <div class="cst" id="capaSaldo">Carregando…</div></button>
+<div id="wipe" aria-hidden="true"><img id="wipeLogo" alt=""></div>
+<div id="capa"><div class="wrap">
+  <div class="top up"><img class="clogo" id="capaLogo" alt="Tripoloni Construtora"><div class="ref"><b>Obra 429</b> · Duplicação da BR-277<br>Irati/PR · VIAR-OBR-383-2025</div></div>
+  <div class="hero">
+    <div><div class="kick up" style="animation-delay:.2s">BR-277 · Duplicação · Irati</div>
+      <h1 class="up" style="animation-delay:.32s">Acompanhamento <span>da obra</span></h1></div>
+    <div class="up hr" style="animation-delay:.32s"><svg class="map" viewBox="0 0 560 300" id="cmap">
+  <defs><linearGradient id="cgl" x1="0" x2="1"><stop offset="0" stop-color="#F2A93B"/><stop offset="1" stop-color="#2A8FBD"/></linearGradient></defs>
+  <g class="topo"><path d="M-20 40C120 10 220 90 340 50S520 20 600 70"/><path d="M-20 78C120 48 220 128 340 88S520 58 600 108"/><path d="M-20 116C120 86 220 166 340 126S520 96 600 146"/><path d="M-20 154C120 124 220 204 340 164S520 134 600 184"/><path d="M-20 192C120 162 220 242 340 202S520 172 600 222"/><path d="M-20 230C120 200 220 280 340 240S520 210 600 260"/><path d="M-20 268C120 238 220 318 340 278S520 248 600 298"/><path d="M-20 306C120 276 220 356 340 316S520 286 600 336"/></g>
+  <path id="crt" class="road" d="M24 236C110 226 140 150 230 150S330 238 420 196 520 86 540 60"/>
+  <path class="edge dw" pathLength="1" d="M24 236C110 226 140 150 230 150S330 238 420 196 520 86 540 60"/>
+  <path class="ctr" d="M24 236C110 226 140 150 230 150S330 238 420 196 520 86 540 60"/>
+  <path class="prog" pathLength="1" d="M24 236C110 226 140 150 230 150S330 238 420 196 520 86 540 60"/>
+  <g id="cticks"></g><g id="coaes"></g>
+  <g id="ccar"><circle r="7" class="cg"/><circle r="4" class="cc"/></g>
+  <g id="ctip" class="tipg"><rect rx="8" height="28"/><text y="19"></text></g>
+</svg></div>
   </div>
-  <div class="cfoot">Tripoloni Construtora · Contrato VIAR-OBR-383-2025</div>
+  <div class="rule"></div>
+  <nav class="list">
+    <button type="button" class="cc row hv up" data-go="mp" style="animation-delay:0.55s">
+      <div class="rh"><span class="n">01</span><span class="ic"><svg class="ill" viewBox="0 0 64 64">
+   <rect class="dr" pathLength="1" x="8" y="12" width="48" height="44" rx="7"/>
+   <path class="dr" pathLength="1" d="M8 25h48M21 6v11M43 6v11"/>
+   <path class="ck c1" pathLength="1" d="M15 37l4 4 7-8"/>
+   <path class="ck c2" pathLength="1" d="M34 37l4 4 7-8"/>
+   <path class="ck c3" pathLength="1" d="M15 49l4 4 7-8"/>
+   <rect class="hl" x="35" y="45" width="10" height="8" rx="2"/></svg></span><span class="tt">Médio prazo</span><span class="st" id="capaMp">Carregando…</span><span class="go"><svg class="aw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      <div class="rb"><div><p>Restrições do planejamento de médio prazo: painel, situação do dia, acompanhamento por responsável e banco de dados.</p></div></div>
+    </button>
+    <button type="button" class="cc row hv up" data-go="med" style="animation-delay:0.67s">
+      <div class="rh"><span class="n">02</span><span class="ic"><svg class="ill" viewBox="0 0 64 64">
+   <path class="dr" pathLength="1" d="M8 8v48h50"/>
+   <rect class="br b1" x="15" y="38" width="8" height="18" rx="1.5"/>
+   <rect class="br b2" x="29" y="30" width="8" height="26" rx="1.5"/>
+   <rect class="br b3" x="43" y="20" width="8" height="36" rx="1.5"/>
+   <path class="cv" pathLength="1" d="M12 44C24 40 32 28 56 12"/>
+   <circle class="dot" cx="56" cy="12" r="3"/></svg></span><span class="tt">Medições</span><span class="st" id="capaMed">Carregando…</span><span class="go"><svg class="aw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      <div class="rb"><div><p>Valor do contrato, medições mensais, gatilho, reajuste, notas fiscais e curva acumulada.</p></div></div>
+    </button>
+    <button type="button" class="cc row hv up" data-go="pedra" style="animation-delay:0.79s">
+      <div class="rh"><span class="n">03</span><span class="ic"><svg class="ill" viewBox="0 0 64 64">
+   <path class="dr" pathLength="1" d="M4 58h56M8 58l14-20 7 7 9-13 18 26"/>
+   <path class="dr" pathLength="1" d="M26 26L56 12"/>
+   <circle class="rl" cx="26" cy="26" r="3"/><circle class="rl" cx="56" cy="12" r="3"/>
+   <path class="belt" d="M26 23L56 9"/>
+   <circle class="st s1" cx="54" cy="16" r="2.6"/><circle class="st s2" cx="57" cy="17" r="2"/><circle class="st s3" cx="51" cy="18" r="2.2"/></svg></span><span class="tt">Custo da pedra</span><span class="st" id="capaPedra">Carregando…</span><span class="go"><svg class="aw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      <div class="rb"><div><p>Unidade industrial: composição mensal do preço da pedra (R$/t e R$/m³), equipamentos, mão de obra e histórico.</p></div></div>
+    </button>
+    <button type="button" class="cc row hv up" data-go="saldo" style="animation-delay:0.91s">
+      <div class="rh"><span class="n">04</span><span class="ic"><svg class="ill" viewBox="0 0 64 64">
+   <path class="dr" pathLength="1" d="M2 46C14 50 16 38 22 34M42 34C48 30 52 18 62 14"/>
+   <path class="dr" pathLength="1" d="M22 34l-12 14M42 34l10-16"/>
+   <rect class="ly l1" x="20" y="38" width="24" height="4" rx="1"/>
+   <rect class="ly l2" x="21" y="34" width="22" height="4" rx="1"/>
+   <rect class="ly l3" x="22" y="30" width="20" height="4" rx="1"/>
+   <path class="mv" d="M32 24v4"/>
+   <circle class="pipe" cx="32" cy="50" r="4"/></svg></span><span class="tt">Saldo</span><span class="st" id="capaSaldo">Carregando…</span><span class="go"><svg class="aw" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      <div class="rb"><div><p>Saldos de terraplenagem, pavimento, bueiros, OAEs e contenções, corte longitudinal e retigráficos.</p></div></div>
+    </button>
+  </nav>
+  <div class="foot up" style="animation-delay:1.1s"><span>Tripoloni Construtora · Contrato VIAR-OBR-383-2025</span><span>km 248+700 ao 266+100</span></div>
 </div></div>
 <div class="app">
   <aside class="side">
@@ -422,8 +588,25 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <a href="#" data-t="pane-fin"><svg viewBox="0 0 24 24"><path d="M3 20l6-8 4 4 8-11"/></svg>Painel financeiro<span class="dot"></span></a>
       <a href="#" data-t="pane-fined"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>Lançar medições<span class="dot"></span></a>
       </div></div>
-      <a class="nlink" href="custo-pedra.html"><svg viewBox="0 0 24 24"><path d="M2 20h20L15 8l-3.5 5L9 10z"/><circle cx="17.5" cy="5" r="1.6"/></svg>Custo da pedra<svg class="ext" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></a>
-      <a class="nlink" href="saldo.html"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg>Saldo da obra<svg class="ext" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></a>
+      <button type="button" class="ngrp" data-g="pedra"><svg viewBox="0 0 24 24"><path d="M2 20h20L15 8l-3.5 5L9 10z"/><circle cx="17.5" cy="5" r="1.6"/></svg>Custo da pedra<svg class="chv" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></button>
+      <div class="nsub" data-g="pedra"><div class="nin">
+      <a href="#" data-t="pane-pedra" data-x="resumo"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Resumo e gráficos<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="prem"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/></svg>Premissas<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="eq"><svg viewBox="0 0 24 24"><path d="M3 7h13v10H3zM16 10h4l1 3v4h-5"/></svg>Equipamentos<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="mo"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0M4 21a8 8 0 0 1 16 0"/></svg>Mão de obra<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="outros"><svg viewBox="0 0 24 24"><path d="M3 5h18v15H3zM3 10h18M8 15h3"/></svg>Outros custos<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="transf"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Transferência de custo<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="hist"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></svg>Histórico<span class="dot"></span></a>
+      <a href="#" data-t="pane-pedra" data-x="bd"><svg viewBox="0 0 24 24"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Banco de dados<span class="dot"></span></a>
+      </div></div>
+      <button type="button" class="ngrp" data-g="saldo"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg>Saldo da obra<svg class="chv" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></button>
+      <div class="nsub" data-g="saldo"><div class="nin">
+      <a href="#" data-t="pane-saldo" data-x="s-saldos"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Saldos<span class="dot"></span></a>
+      <a href="#" data-t="pane-saldo" data-x="s-long"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 10h18M3 13h18M3 17h18"/></svg>Corte longitudinal<span class="dot"></span></a>
+      <a href="#" data-t="pane-saldo" data-x="s-terra"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg>Terraplenagem<span class="dot"></span></a>
+      <a href="#" data-t="pane-saldo" data-x="s-pav"><svg viewBox="0 0 24 24"><path d="M3 8h18M3 12h18M3 16h18M3 20h18"/></svg>Pavimento<span class="dot"></span></a>
+      <a href="#" data-t="pane-saldo" data-x="s-oae"><svg viewBox="0 0 24 24"><path d="M2 16h20M4 16V9h16v7M7 9V6M17 9V6M2 20h20"/></svg>OAEs e contenções<span class="dot"></span></a>
+      </div></div>
     </nav>
     <div class="sidewho"><label for="quem">Quem está preenchendo</label><select id="quem"><option value="">— selecione —</option></select></div>
     <div class="sidefoot"><b>VIAR-OBR-383-2025</b>BR-277 · Duplicação<br>Irati · Paraná</div>
@@ -433,6 +616,9 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <div><div class="pgk" id="pgk">Planejamento de médio prazo</div><div class="pgt" id="pgt">Painel</div></div>
       <div class="conn" id="conn"><i></i><span id="connT">Conectando…</span></div>
     </div>
+
+  <div class="pane xpane" id="pane-pedra"><div class="xload"><span></span>Carregando…</div><iframe title="Custo da pedra" data-src="custo-pedra.html?embed=1&v=2026-11-24-1050"></iframe></div>
+  <div class="pane xpane" id="pane-saldo"><div class="xload"><span></span>Carregando…</div><iframe title="Saldo da obra" data-src="saldo.html?embed=1&v=2026-11-24-1050"></iframe></div>
 
   <!-- ===================== PAINEL ===================== -->
   <div class="pane on" id="pane-dash">
@@ -1203,21 +1389,31 @@ function setupColl(){
 }
 
 /* abas, filtros */
-const TABTITLE={"pane-dash":["Painel","Planejamento de médio prazo"],"pane-dia":["Situação do dia","O que cobrar hoje"],"pane-resumo":["Resumo do dia","Adicionadas e concluídas no dia"],"pane-acomp":["Acompanhamento","Ações por responsável"],"pane-plan":["Banco de dados","Todas as restrições"],"pane-fin":["Painel financeiro","Acompanhamento de medições"],"pane-fined":["Lançar medições","Acompanhamento de medições"]};
-const GROUPS={mp:["pane-dash","pane-dia","pane-resumo","pane-acomp","pane-plan"],med:["pane-fin","pane-fined"]};
-const GLAST={mp:"pane-dash",med:"pane-fin"};
-const grpOf=t=>GROUPS.med.includes(t)?"med":"mp";
+const TABTITLE={"pane-pedra":["Custo da pedra","Unidade industrial"],"pane-saldo":["Saldo da obra","Obra 429"],"pane-dash":["Painel","Planejamento de médio prazo"],"pane-dia":["Situação do dia","O que cobrar hoje"],"pane-resumo":["Resumo do dia","Adicionadas e concluídas no dia"],"pane-acomp":["Acompanhamento","Ações por responsável"],"pane-plan":["Banco de dados","Todas as restrições"],"pane-fin":["Painel financeiro","Acompanhamento de medições"],"pane-fined":["Lançar medições","Acompanhamento de medições"]};
+const GROUPS={mp:["pane-dash","pane-dia","pane-resumo","pane-acomp","pane-plan"],med:["pane-fin","pane-fined"],pedra:["pane-pedra"],saldo:["pane-saldo"]};
+let CURG=null;
+const GLAST={mp:"pane-dash",med:"pane-fin",pedra:"pane-pedra",saldo:"pane-saldo"};
+const grpOf=t=>Object.keys(GROUPS).find(g=>GROUPS[g].includes(t))||"mp";
+const XSEL={pedra:"resumo",saldo:"s-saldos"};
+function xOpen(t){const p=$(t),isx=!!(p&&p.classList.contains("xpane"));document.body.classList.toggle("g-x",isx);
+  if(!isx)return;const g=grpOf(t),fr=p.querySelector("iframe");
+  document.querySelectorAll("#tabs [data-x]").forEach(x=>x.classList.toggle("on",x.dataset.t===t&&x.dataset.x===XSEL[g]));
+  const vai=()=>{try{fr.contentWindow.postMessage({trip:"go",sec:XSEL[g]},"*");}catch(e){}};
+  if(!fr.getAttribute("src")){fr.addEventListener("load",()=>{p.classList.add("ok");setTimeout(vai,250);},{once:true});fr.src=fr.dataset.src;}else vai();}
+window.addEventListener("message",e=>{const d=e.data||{};if(d.trip!=="sec"||!XSEL[d.page])return;const pn=$("pane-"+d.page);if(!pn||!pn.classList.contains("on"))return;XSEL[d.page]=d.sec;
+  document.querySelectorAll("#tabs [data-x]").forEach(x=>{if(x.dataset.t==="pane-"+d.page)x.classList.toggle("on",x.dataset.x===d.sec);});});
 function setGroup(g,open){document.querySelectorAll("#tabs .ngrp").forEach(b=>b.classList.toggle("open",b.dataset.g===g&&open));document.querySelectorAll("#tabs .nsub").forEach(d=>d.classList.toggle("open",d.dataset.g===g&&open));}
-function openTab(t,noScroll){if(!$(t))t="pane-dash";const g=grpOf(t);GLAST[g]=t;setGroup(g,true);
+function openTab(t,noScroll){if(!$(t))t="pane-dash";const g=grpOf(t);GLAST[g]=t;CURG=g;setGroup(g,true);
   document.querySelectorAll("#tabs .ngrp").forEach(b=>b.classList.toggle("cur",b.dataset.g===g));
   document.querySelectorAll("#tabs [data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
   document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id===t));
   const tt=TABTITLE[t];if(tt){$("pgt").textContent=tt[0];$("pgk").textContent=tt[1];}hide();
   document.body.classList.toggle("g-med",g==="med");lsSet("mp_tab",t);
   if(t==="pane-acomp"){ACOMP_ANIM=true;renderAcomp();}
+  xOpen(t);
   if(!noScroll)window.scrollTo({top:0,behavior:"smooth"});}
-document.querySelectorAll("#tabs [data-t]").forEach(b=>b.onclick=e=>{e.preventDefault();openTab(b.dataset.t);});
-document.querySelectorAll("#tabs .ngrp").forEach(b=>b.onclick=()=>{const g=b.dataset.g;if(b.classList.contains("open")){setGroup(g,false);return;}openTab(GLAST[g]);});
+document.querySelectorAll("#tabs [data-t]").forEach(b=>b.onclick=e=>{e.preventDefault();if(b.dataset.x)XSEL[grpOf(b.dataset.t)]=b.dataset.x;const t=b.dataset.t,fn=()=>openTab(t);grpOf(t)!==CURG?wipe(fn):fn();});
+document.querySelectorAll("#tabs .ngrp").forEach(b=>b.onclick=()=>{const g=b.dataset.g;if(b.classList.contains("open")){setGroup(g,false);return;}const fn=()=>openTab(GLAST[g]);g!==CURG?wipe(fn):fn();});
 ["de","ate","dResp"].forEach(i=>$(i).onchange=renderDash);
 $("btTudo").onclick=()=>{$("de").value="";$("ate").value="";$("dResp").value="";renderDash();};
 $("pBusca").oninput=renderPlan;
@@ -1272,7 +1468,7 @@ const MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","
 const MES={JAN:"Janeiro",FEV:"Fevereiro",MAR:"Março",ABR:"Abril",MAI:"Maio",JUN:"Junho",JUL:"Julho",AGO:"Agosto",SET:"Setembro",OUT:"Outubro",NOV:"Novembro",DEZ:"Dezembro"};
 const TIPOS={contrato:"Contrato original",aditivo:"Termo aditivo",gatilho:"Gatilho",reajuste:"Reajuste"};
 const clone=o=>JSON.parse(JSON.stringify(o));
-let D=Object.assign(clone(SEED),{log:[]}),ONLINE=false,OLD=false,RES="",ERR="",EDIT=false,DR=null,LOADING=false,MY=false,WHO="";
+let PCT=null,BMN=null;let D=Object.assign(clone(SEED),{log:[]}),ONLINE=false,OLD=false,RES="",ERR="",EDIT=false,DR=null,LOADING=false,MY=false,WHO="";
 let AUTH=(function(){try{return sessionStorage.getItem("med_authed")==="1"}catch(e){return false}})();
 
 const n0=v=>Math.round(v).toLocaleString("pt-BR");
@@ -1329,7 +1525,7 @@ function renderPanel(force){
   const MED=ac,SAL=TOT-MED,N=B.length,last=B[N-1],BNF=B.filter(b=>b.nf),NFT=anf,big=B.reduce((a,b)=>b.t>a.t?b:a,B[0]);
   const hasRJ=B.some(b=>b.rj)||RJ>0,hasCU=B.some(b=>b.cu),CUT=sum(B.map(b=>b.cu||0));
   const partes="contrato, aditivos"+(hasRJ?", gatilho e reajuste":" e gatilho");
-  RES=`BM ${last.n} · ${ML(last)} · ${P(MED/TOT)} medido`;
+  RES=`BM ${last.n} · ${ML(last)} · ${P(MED/TOT)} medido`;PCT=MED/TOT;BMN=last.n;
   $("f_sub").innerHTML=`Situação do contrato até o boletim de medição nº ${last.n} (${ML(last)}): valor atualizado do contrato, o que já foi medido e o saldo a medir.`;
   $("f_kp").innerHTML=kp("Valor atualizado do contrato",`R$ ${f2(TOT/1e6)}<small>mi</small>`,`${R(TOT)}<br>${partes}`,"#F2A93B",1)+
     kp("Medido acumulado",`R$ ${f2(MED/1e6)}<small>mi</small>`,`<b>${P(MED/TOT)}</b> do valor atualizado em ${N} ${N>1?"medições":"medição"}`,CC.med)+
@@ -1563,9 +1759,32 @@ function init(){
   if(SB){try{let t;const go=()=>{clearTimeout(t);t=setTimeout(load,500);};
     SB.channel("med").on("postgres_changes",{event:"*",schema:"public",table:"medicoes"},go).on("postgres_changes",{event:"*",schema:"public",table:"contrato_itens"},go).on("postgres_changes",{event:"INSERT",schema:"public",table:"medicoes_log"},go).subscribe();}catch(e){}}
 }
-return {init,load,render,get editing(){return EDIT;},get resumo(){return RES;}};
+return {init,load,render,get editing(){return EDIT;},get resumo(){return RES;},get pct(){return PCT;},get bm(){return BMN;}};
 })();
 
+
+/* mapa do trecho na capa */
+(function(){const P=$("crt");if(!P)return;const L=P.getTotalLength(),NS="http://www.w3.org/2000/svg",M=$("cmap");
+const at=f=>P.getPointAtLength(Math.max(0,Math.min(1,f))*L),km=k=>at((k-248.7)/(266.1-248.7));
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e;};
+const tk=$("cticks");for(let k=250;k<=266;k+=2){const p=km(k);const g=el("g",{class:"tk"},tk);el("line",{x1:p.x,y1:p.y+11,x2:p.x,y2:p.y+18},g);el("text",{x:p.x,y:p.y+31},g).textContent=k;}
+const oa=$("coaes");[[249.75,"OAE 249"],[255,"OAE 255"],[257,"OAE 257"],[261,"OAE 261"]].forEach(([k,n])=>{const p=km(k);const g=el("g",{class:"oae",transform:`translate(${p.x},${p.y-26})`},oa);
+  el("line",{x1:0,y1:8,x2:0,y2:20,stroke:"rgba(242,169,59,.6)"},g);el("circle",{class:"pl",r:9},g);el("circle",{r:9},g);el("path",{d:"M-5 2h10M-5 2v-3h10v3M-2 2v-3M2 2v-3"},g);el("text",{y:-15},g).textContent=n;});
+const car=$("ccar"),RM=matchMedia("(prefers-reduced-motion: reduce)").matches;let t0=null;
+function mv(ts){if(t0==null)t0=ts;const f=((ts-t0)/14000)%1,u=f<.5?f*2:2-f*2,p=at(u);car.setAttribute("transform",`translate(${p.x},${p.y})`);if(!RM&&!$("capa").classList.contains("out"))requestAnimationFrame(mv);else mv.stop=1;}
+requestAnimationFrame(mv);
+const prog=M.querySelector(".prog"),tip=$("ctip"),tr=tip.querySelector("rect"),tx=tip.querySelector("text");
+const txt=id=>($(id)&&$(id).textContent)||"";
+function pct(){if(typeof FIN!=="undefined"&&FIN.pct!=null)return FIN.pct;const m=txt("capaMed").match(/([\d,]+)% medido/);return m?parseFloat(m[1].replace(",","."))/100:null;}
+function show(k){M.setAttribute("class","map"+(k?" k-"+k:""));prog.style.strokeDashoffset="";if(!k)return;let t="",f=.48;
+  if(k==="mp")t=txt("capaMp").split(" · ")[0];
+  if(k==="med"){const p=pct();t=p!=null?(p*100).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"% medido"+(FIN.bm?" · BM "+FIN.bm:""):"Medições do contrato";if(p!=null){f=p;prog.style.strokeDashoffset=1-p;}}
+  if(k==="pedra")t=txt("capaPedra");
+  if(k==="saldo")t=txt("capaSaldo");
+  tx.textContent=t;const w=tx.getComputedTextLength()+22;tr.setAttribute("width",w);tx.setAttribute("x",11);
+  const p=at(k==="med"?f:.48);tip.setAttribute("transform",`translate(${Math.min(560-w,Math.max(0,p.x-w/2))},${p.y-104})`);}
+document.querySelectorAll("#capa .row").forEach(r=>{r.addEventListener("mouseenter",()=>show(r.dataset.go));r.addEventListener("mouseleave",()=>show(""));});
+window.capaMapa={restart(){if(mv.stop){mv.stop=0;t0=null;requestAnimationFrame(mv);}}};})();
 /* ===================== CAPA ===================== */
 function updCapa(){try{
   const ab=ALL.filter(x=>x.status==="aberta"),at=ab.filter(x=>sit(x)==="atrasada").length;
@@ -1573,10 +1792,10 @@ function updCapa(){try{
   if($("capaMed"))$("capaMed").textContent=(typeof FIN!=="undefined"&&FIN.resumo)||"Medições do contrato";updCapaPedra();updCapaSaldo();}catch(e){}}
 let CAPA_SALDO=null;
 function updCapaSaldo(){const el=$("capaSaldo");if(!el)return;if(CAPA_SALDO){el.textContent=CAPA_SALDO;return;}
-  const base="Base de 23/11/2026";if(!SB){el.textContent=base;return;}
+  const base="Atualizado em 23/11/2026";if(!SB){el.textContent=base;return;}
   SB.from("saldo_obra").select("chave,atualizado_em,dados").eq("chave","saldos").then(({data,error})=>{
     if(error||!data||!data.length||!data[0].dados||!data[0].dados.over){el.textContent=base;return;}
-    const d=new Date(data[0].atualizado_em);CAPA_SALDO="Atualizado "+d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+(data[0].dados.motivo?" · "+data[0].dados.motivo:"");
+    const d=new Date(data[0].atualizado_em);CAPA_SALDO="Atualizado em "+d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
     el.textContent=CAPA_SALDO;}).catch(()=>{el.textContent=base;});}
 let CAPA_PEDRA=null;
 function updCapaPedra(){const el=$("capaPedra");if(!el)return;if(CAPA_PEDRA){el.textContent=CAPA_PEDRA;return;}
@@ -1587,12 +1806,16 @@ function updCapaPedra(){const el=$("capaPedra");if(!el)return;if(CAPA_PEDRA){el.
     const NM=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"],lb=id=>NM[+id.slice(5,7)-1]+"/"+id.slice(2,4);
     CAPA_PEDRA=ms.length?`${ms.length} ${ms.length===1?"mês":"meses"} · último: ${lb(ms[ms.length-1])}${u?" · atualizado "+new Date(u).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}):""}`:"Preço da pedra da britagem";
     el.textContent=CAPA_PEDRA;}).catch(()=>{el.textContent="Preço da pedra da britagem";});}
-function capaShow(){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.remove("pick","dim"));c.classList.remove("out");document.body.style.overflow="hidden";updCapa();}
+const WRM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function wipe(cb){const w=$("wipe");if(!w||WRM){cb();return;}w.classList.remove("go");void w.offsetWidth;w.classList.add("go");setTimeout(cb,400);setTimeout(()=>w.classList.remove("go"),1000);}
+function capaSnap(c,fn){c.style.transition="none";fn();void c.offsetWidth;setTimeout(()=>{c.style.transition="";},60);}
+function capaShow(e){const c=$("capa");
+  const real=()=>{c.querySelectorAll(".cc").forEach(x=>x.classList.remove("pick","dim"));c.classList.remove("out");document.body.style.overflow="hidden";updCapa();
+    c.querySelectorAll(".up").forEach(x=>{x.style.animation="none";void x.offsetWidth;x.style.animation="";});if(window.capaMapa)capaMapa.restart();};
+  if(e&&!WRM&&c.classList.contains("out")){wipe(()=>capaSnap(c,real));return;}real();}
 function capaGo(g){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.add(x.dataset.go===g?"pick":"dim"));
-  if(g==="pedra"){setTimeout(()=>{location.href="custo-pedra.html";},430);return;}
-  if(g==="saldo"){setTimeout(()=>{location.href="saldo.html";},430);return;}
-  setTimeout(()=>{openTab(GLAST[g],true);window.scrollTo({top:0});c.classList.add("out");document.body.style.overflow="";},430);}
-(function(){const lg=document.querySelector(".brandtile img");if(lg)$("capaLogo").src=lg.src;
+  setTimeout(()=>wipe(()=>{openTab(GLAST[g],true);window.scrollTo({top:0});capaSnap(c,()=>c.classList.add("out"));document.body.style.overflow="";}),150);}
+(function(){const lg=document.querySelector(".brandtile img");if(lg){$("capaLogo").src=lg.src;$("wipeLogo").src=lg.src;}
   document.querySelectorAll("#capa .cc").forEach(b=>b.onclick=()=>capaGo(b.dataset.go));
   const bt=document.querySelector(".brandtile");if(bt){bt.title="Voltar para a capa";bt.onclick=capaShow;}const hb=$("btnHome");if(hb)hb.onclick=capaShow;})();
 
@@ -1601,10 +1824,40 @@ function capaGo(g){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.clas
   SB=(CONFIG_OK&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}}):null;
   setupColl();setupMotion();render();load();
   openTab("pane-dash",true);FIN.init();
-  const hg=location.hash==="#medicoes"?"med":location.hash==="#medio-prazo"?"mp":"";if(hg){openTab(GLAST[hg],true);$("capa").classList.add("out");}else capaShow();
+  const hg={"#medicoes":"med","#medio-prazo":"mp","#custo-pedra":"pedra","#saldo":"saldo"}[location.hash]||"";if(hg){openTab(GLAST[hg],true);$("capa").classList.add("out");}else capaShow();
   setInterval(()=>{if(!document.hidden&&!isTyping()&&!EDOPEN)load();},60000);
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
   if(SB){try{SB.channel("restr").on("postgres_changes",{event:"*",schema:"public",table:"restricoes"},()=>{clearTimeout(load.t);load.t=setTimeout(load,500);}).subscribe();}catch(e){}}
+})();
+</script>
+<script>
+/* o index também confere as páginas que abre por dentro (Custo da pedra e Saldo) */
+window.siteVerExtra=function(ar){var velho=false;
+  document.querySelectorAll('.xpane iframe').forEach(function(fr){var base=fr.dataset.src.split('&v=')[0],file=base.split('?')[0],pub=ar[file];if(!pub)return;
+    var src=fr.getAttribute('src');
+    if(!src){fr.dataset.src=base+'&v='+encodeURIComponent(pub);return;}
+    var m=src.match(/[?&]v=([^&]*)/),car=m?decodeURIComponent(m[1]):'';if(car!==pub)velho=true;});
+  return velho;};
+</script>
+<script>
+/* ===== aviso de atualização do site (versao.json) ===== */
+(function(){var FILE="index.html",MYV="2026-11-24-1050";
+  if(/[?&]embed=1/.test(location.search))return; /* aberto dentro do index: quem avisa é o index */
+  window.SITE_VER={file:FILE,v:MYV,pub:null};var bar=null;
+  function mostra(){if(bar)return;bar=document.createElement('div');bar.id='updBar';bar.setAttribute('role','status');
+    bar.innerHTML='<span class="ui"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-3.5M4 5v4h4M4 13a8 8 0 0 0 14.9 3.5M20 19v-4h-4"/></svg></span><span class="tx"><b>Nova atualização do site</b><small>Clique para carregar a versão mais recente.</small></span><button type="button"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-3.5M4 5v4h4M4 13a8 8 0 0 0 14.9 3.5M20 19v-4h-4"/></svg>Atualizar</button>';
+    document.body.appendChild(bar);requestAnimationFrame(function(){requestAnimationFrame(function(){bar.classList.add('on');});});
+    bar.querySelector('button').onclick=atualiza;}
+  function atualiza(){if(bar)bar.classList.add('busy');
+    var fs=['index.html','custo-pedra.html','saldo.html','versao.json'].map(function(f){return fetch(f,{cache:'reload'}).catch(function(){});});
+    var fim=function(){var u=new URL(location.href);u.searchParams.set('v',Date.now().toString(36));location.replace(u.toString());};
+    Promise.all(fs).then(fim,fim);setTimeout(fim,8000);}
+  function checa(){fetch('versao.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+      if(!j||!j.arquivos)return;SITE_VER.pub=j.arquivos;var velho=!!(j.arquivos[FILE]&&j.arquivos[FILE]!==MYV);
+      if(window.siteVerExtra)velho=siteVerExtra(j.arquivos)||velho;if(velho)mostra();}).catch(function(){});}
+  window.siteAtualizar=atualiza;
+  setTimeout(checa,2500);setInterval(checa,60000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)checa();});addEventListener('focus',checa);
 })();
 </script>
 </body></html>
