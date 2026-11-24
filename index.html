@@ -344,7 +344,7 @@ body.g-med .sidewho,body.g-med #notes{display:none}
 #capa .ck{margin-top:30px;font-size:16px;font-weight:700;color:var(--orange);animation-delay:.15s}
 #capa h1{font-size:38px;line-height:1.12;font-weight:700;margin-top:6px;animation-delay:.22s}
 #capa .cs{font-size:17px;color:#B8C6E3;margin-top:10px;animation-delay:.3s}
-#capa .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px;animation-delay:.42s}
+#capa .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px;animation-delay:.42s;max-width:980px;margin-left:auto;margin-right:auto}
 @media (max-width:1060px){#capa .cards{grid-template-columns:1fr 1fr}}
 @keyframes capaIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 #capa .cc{position:relative;text-align:left;font-family:inherit;color:#fff;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:26px 26px 22px;cursor:pointer;overflow:hidden;transition:transform .45s cubic-bezier(.2,.75,.2,1),background .35s,border-color .35s,box-shadow .45s,opacity .5s}
@@ -395,6 +395,10 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <div class="ci"><svg viewBox="0 0 24 24"><path d="M2 20h20L15 8l-3.5 5L9 10z"/><circle cx="17.5" cy="5" r="1.6"/><circle cx="6" cy="16.5" r="1"/></svg></div>
       <div class="ct">Custo da pedra</div><div class="cd">Unidade industrial: composição mensal do preço da pedra (R$/t e R$/m³), equipamentos, mão de obra e histórico.</div>
       <div class="cst" id="capaPedra">Carregando…</div></button>
+    <button type="button" class="cc" data-go="saldo"><span class="cgo"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></span>
+      <div class="ci"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg></div>
+      <div class="ct">Saldo da obra</div><div class="cd">Saldos de terraplenagem, pavimento, bueiros, OAEs e contenções, corte longitudinal e retigráficos.</div>
+      <div class="cst" id="capaSaldo">Carregando…</div></button>
   </div>
   <div class="cfoot">Tripoloni Construtora · Contrato VIAR-OBR-383-2025</div>
 </div></div>
@@ -419,6 +423,7 @@ body.g-med .sidewho,body.g-med #notes{display:none}
       <a href="#" data-t="pane-fined"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>Lançar medições<span class="dot"></span></a>
       </div></div>
       <a class="nlink" href="custo-pedra.html"><svg viewBox="0 0 24 24"><path d="M2 20h20L15 8l-3.5 5L9 10z"/><circle cx="17.5" cy="5" r="1.6"/></svg>Custo da pedra<svg class="ext" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></a>
+      <a class="nlink" href="saldo.html"><svg viewBox="0 0 24 24"><path d="M2 19h20"/><path d="M3 19l5-8 4 5 3-4 6 7"/></svg>Saldo da obra<svg class="ext" viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></a>
     </nav>
     <div class="sidewho"><label for="quem">Quem está preenchendo</label><select id="quem"><option value="">— selecione —</option></select></div>
     <div class="sidefoot"><b>VIAR-OBR-383-2025</b>BR-277 · Duplicação<br>Irati · Paraná</div>
@@ -1565,7 +1570,14 @@ return {init,load,render,get editing(){return EDIT;},get resumo(){return RES;}};
 function updCapa(){try{
   const ab=ALL.filter(x=>x.status==="aberta"),at=ab.filter(x=>sit(x)==="atrasada").length;
   if($("capaMp"))$("capaMp").textContent=ALL.length?`${ab.length} ${ab.length===1?"restrição em aberto":"restrições em aberto"} · ${at} ${at===1?"atrasada":"atrasadas"}`:"Restrições do médio prazo";
-  if($("capaMed"))$("capaMed").textContent=(typeof FIN!=="undefined"&&FIN.resumo)||"Medições do contrato";updCapaPedra();}catch(e){}}
+  if($("capaMed"))$("capaMed").textContent=(typeof FIN!=="undefined"&&FIN.resumo)||"Medições do contrato";updCapaPedra();updCapaSaldo();}catch(e){}}
+let CAPA_SALDO=null;
+function updCapaSaldo(){const el=$("capaSaldo");if(!el)return;if(CAPA_SALDO){el.textContent=CAPA_SALDO;return;}
+  const base="Base de 23/11/2026";if(!SB){el.textContent=base;return;}
+  SB.from("saldo_obra").select("chave,atualizado_em,dados").eq("chave","saldos").then(({data,error})=>{
+    if(error||!data||!data.length||!data[0].dados||!data[0].dados.over){el.textContent=base;return;}
+    const d=new Date(data[0].atualizado_em);CAPA_SALDO="Atualizado "+d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+(data[0].dados.motivo?" · "+data[0].dados.motivo:"");
+    el.textContent=CAPA_SALDO;}).catch(()=>{el.textContent=base;});}
 let CAPA_PEDRA=null;
 function updCapaPedra(){const el=$("capaPedra");if(!el)return;if(CAPA_PEDRA){el.textContent=CAPA_PEDRA;return;}
   if(!SB){el.textContent="Preço da pedra da britagem";return;}
@@ -1578,6 +1590,7 @@ function updCapaPedra(){const el=$("capaPedra");if(!el)return;if(CAPA_PEDRA){el.
 function capaShow(){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.remove("pick","dim"));c.classList.remove("out");document.body.style.overflow="hidden";updCapa();}
 function capaGo(g){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.classList.add(x.dataset.go===g?"pick":"dim"));
   if(g==="pedra"){setTimeout(()=>{location.href="custo-pedra.html";},430);return;}
+  if(g==="saldo"){setTimeout(()=>{location.href="saldo.html";},430);return;}
   setTimeout(()=>{openTab(GLAST[g],true);window.scrollTo({top:0});c.classList.add("out");document.body.style.overflow="";},430);}
 (function(){const lg=document.querySelector(".brandtile img");if(lg)$("capaLogo").src=lg.src;
   document.querySelectorAll("#capa .cc").forEach(b=>b.onclick=()=>capaGo(b.dataset.go));
