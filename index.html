@@ -666,6 +666,39 @@ html[data-tema="escuro"]:not(.tema-ok) body{opacity:0;animation:temaMostra 0s 1.
 </style>
 </head><body>
 <div id="wipe" aria-hidden="true"><img id="wipeLogo" alt=""></div>
+<style>
+/* ===== fluidez: nada animando escondido ===== */
+#capa.out,#capa.out *{animation-play-state:paused!important}
+.xpane.ok .xload,.xpane.ok .xload *{animation:none!important}
+.header{animation:none!important}
+/* ===== capa ocupando o navegador inteiro ===== */
+#capa{background:radial-gradient(1200px 700px at 84% 16%,rgba(42,143,189,.16),transparent 62%),radial-gradient(1000px 640px at 4% 104%,rgba(242,169,59,.08),transparent 60%),var(--bg)}
+#capa .wrap{max-width:none;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;padding:clamp(26px,3.6vh,52px) clamp(24px,4.6vw,112px) clamp(22px,3vh,40px)}
+#capa .clogo,#capa .top img{height:clamp(44px,3.2vw,62px)}
+#capa .top .ref{font-size:clamp(14px,.86vw,17px)}
+#capa .hero{flex:none;grid-template-columns:minmax(0,1fr) minmax(0,1.22fr);gap:clamp(40px,4.4vw,100px);margin-top:clamp(10px,2vh,40px);height:clamp(230px,calc(100vh - var(--resto)),680px);min-height:0}
+#capa .hr{position:relative;height:100%}
+#capa .hr .map{position:absolute;inset:0;width:100%;height:100%}
+#capa .wrap{--resto:clamp(575px,65.5vh,790px)}
+#capa .list{flex:1 0 auto}
+#capa .kick{font-size:clamp(16px,1.05vw,21px)}
+#capa h1{font-size:clamp(30px,min(6.3vw,9.6vh),136px)}
+#capa h1 span{-webkit-text-stroke-width:clamp(1.6px,.12vw,2.6px)}
+#capa .rh{grid-template-columns:clamp(44px,3vw,66px) clamp(64px,4.4vw,94px) 1fr minmax(260px,22vw) clamp(46px,2.9vw,60px);padding:clamp(10px,1.7vh,28px) 12px}
+#capa .n{font-size:clamp(17px,1.05vw,22px)}
+#capa .ic{width:clamp(46px,min(3.3vw,5.8vh),72px);height:clamp(46px,min(3.3vw,5.8vh),72px)}
+#capa .tt{font-size:clamp(24px,min(2.55vw,4.4vh),52px)}
+#capa .st{font-size:clamp(14.5px,.92vw,18.5px)}
+#capa .st small.lu{font-size:clamp(12px,.74vw,14.5px)}
+#capa .go{width:clamp(46px,2.9vw,60px);height:clamp(46px,2.9vw,60px)}
+#capa .aw{width:clamp(20px,1.2vw,24px);height:clamp(20px,1.2vw,24px)}
+#capa .rb p{margin-left:calc(clamp(44px,3vw,66px) + clamp(64px,4.4vw,94px) + 56px);max-width:min(900px,48vw);font-size:clamp(16px,1vw,19px)}
+#capa .foot{margin-top:clamp(18px,2.4vh,34px);font-size:clamp(13.5px,.8vw,16px)}
+@media(max-width:1000px){#capa .hero{grid-template-columns:1fr;height:auto}#capa .hr{height:auto}#capa .hr .map{position:static;height:auto}
+#capa h1{font-size:clamp(30px,9vw,60px)}
+#capa .rh{grid-template-columns:52px 1fr 46px}
+#capa .rb p{margin-left:74px;max-width:none}}
+</style>
 <div id="capa"><div class="wrap">
   <div class="top up"><img class="clogo" id="capaLogo" alt="Tripoloni Construtora"><div class="ref"><b>Obra 429</b> · Duplicação da BR-277<br>Irati/PR · VIAR-OBR-383-2025</div></div>
   <div class="hero">
@@ -777,8 +810,8 @@ html[data-tema="escuro"]:not(.tema-ok) body{opacity:0;animation:temaMostra 0s 1.
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div class="updc" id="updChip"></div><button type="button" class="temab" aria-pressed="false" title="Mudar para o tema escuro" aria-label="Mudar para o tema escuro"><svg class="lua" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg><svg class="sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg></button><div class="conn" id="conn"><i></i><span id="connT">Conectando…</span></div></div>
     </div>
 
-  <div class="pane xpane" id="pane-pedra"><div class="xload"><span></span>Carregando…</div><iframe title="Custo da pedra" data-src="custo-pedra.html?embed=1&v=2026-11-24-1140"></iframe></div>
-  <div class="pane xpane" id="pane-saldo"><div class="xload"><span></span>Carregando…</div><iframe title="Saldo da obra" data-src="saldo.html?embed=1&v=2026-11-24-1140"></iframe></div>
+  <div class="pane xpane" id="pane-pedra"><div class="xload"><span></span>Carregando…</div><iframe title="Custo da pedra" data-src="custo-pedra.html?embed=1&v=2026-11-24-1200"></iframe></div>
+  <div class="pane xpane" id="pane-saldo"><div class="xload"><span></span>Carregando…</div><iframe title="Saldo da obra" data-src="saldo.html?embed=1&v=2026-11-24-1200"></iframe></div>
 
   <!-- ===================== PAINEL ===================== -->
   <div class="pane on" id="pane-dash">
@@ -1558,7 +1591,7 @@ const XSEL={pedra:"resumo",saldo:"s-saldos"};
 function xOpen(t){const p=$(t),isx=!!(p&&p.classList.contains("xpane"));document.body.classList.toggle("g-x",isx);
   if(!isx)return;const g=grpOf(t),fr=p.querySelector("iframe");
   document.querySelectorAll("#tabs [data-x]").forEach(x=>x.classList.toggle("on",x.dataset.t===t&&x.dataset.x===XSEL[g]));
-  const vai=()=>{try{fr.contentWindow.postMessage({trip:"go",sec:XSEL[g]},"*");}catch(e){}};
+  const vai=()=>{try{fr.contentWindow.postMessage({trip:"go",sec:XSEL[g]},"*");}catch(e){}[60,450].forEach(ms=>setTimeout(()=>{try{fr.contentWindow.dispatchEvent(new Event("scroll"));}catch(e){}},ms));};
   if(!fr.getAttribute("src")){fr.addEventListener("load",()=>{p.classList.add("ok");setTimeout(vai,250);},{once:true});fr.src=fr.dataset.src;}else vai();}
 window.addEventListener("message",e=>{const d=e.data||{};if(d.trip!=="sec"||!XSEL[d.page])return;const pn=$("pane-"+d.page);if(!pn||!pn.classList.contains("on"))return;XSEL[d.page]=d.sec;
   document.querySelectorAll("#tabs [data-x]").forEach(x=>{if(x.dataset.t==="pane-"+d.page)x.classList.toggle("on",x.dataset.x===d.sec);});});
@@ -1999,6 +2032,24 @@ function capaGo(g){const c=$("capa");c.querySelectorAll(".cc").forEach(x=>x.clas
 })();
 </script>
 <script>
+/* ===== Custo da pedra e Saldo carregam em segundo plano, com o navegador ocioso ===== */
+(function(){var c=navigator.connection;if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||(c&&(c.saveData||/2g/.test(c.effectiveType||''))))return;
+  var ids=['pane-pedra','pane-saldo'],i=0;
+  function ocioso(f){(window.requestIdleCallback||function(f){setTimeout(f,400);})(f,{timeout:5000});}
+  function prox(){if(i>=ids.length)return;var p=document.getElementById(ids[i++]),fr=p&&p.querySelector('iframe');
+    if(!fr||fr.getAttribute('src')){prox();return;}
+    fr.addEventListener('load',function(){p.classList.add('ok');
+      if(p.classList.contains('on')){var g=ids[i-1].replace('pane-','');try{fr.contentWindow.postMessage({trip:'go',sec:XSEL[g]},'*');}catch(e){}}
+      ult=performance.now();},{once:true});
+    fr.src=fr.dataset.src;}
+  /* só depois de sair da página inicial e ficar 4 s sem clicar: nada disputa com as animações da capa */
+  var ult=performance.now(),tm=0;['pointerdown','keydown','wheel'].forEach(function(e){addEventListener(e,function(){ult=performance.now();},{passive:true,capture:true});});
+  function vez(){var c=document.getElementById('capa');if(i>=ids.length){clearInterval(tm);return;}
+    if(c&&c.classList.contains('out')&&!document.hidden&&performance.now()-ult>4000&&!vez.on){vez.on=1;ocioso(function(){vez.on=0;prox();});}}
+  tm=setInterval(vez,1500);
+})();
+</script>
+<script>
 /* o index também confere as páginas que abre por dentro (Custo da pedra e Saldo) */
 window.siteVerExtra=function(ar){var velho=false;
   document.querySelectorAll('.xpane iframe').forEach(function(fr){var base=fr.dataset.src.split('&v=')[0],file=base.split('?')[0],pub=ar[file];if(!pub)return;
@@ -2009,7 +2060,7 @@ window.siteVerExtra=function(ar){var velho=false;
 </script>
 <script>
 /* ===== aviso de atualização do site (versao.json) ===== */
-(function(){var FILE="index.html",MYV="2026-11-24-1140";
+(function(){var FILE="index.html",MYV="2026-11-24-1200";
   if(/[?&]embed=1/.test(location.search))return; /* aberto dentro do index: quem avisa é o index */
   window.SITE_VER={file:FILE,v:MYV,pub:null};var bar=null;
   function mostra(){if(bar)return;bar=document.createElement('div');bar.id='updBar';bar.setAttribute('role','status');
